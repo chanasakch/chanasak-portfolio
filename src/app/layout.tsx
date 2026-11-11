@@ -1,5 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import "@fontsource/italiana/400.css";
+import "@fontsource/instrument-serif/400.css";
+import "@fontsource/instrument-serif/400-italic.css";
 import "@fontsource-variable/instrument-sans";
 import "@fontsource-variable/jost";
 import "@fontsource/anuphan/400.css";

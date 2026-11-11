@@ -43,7 +43,7 @@ export default function Home() {
     <main className="mx-auto max-w-[1240px] px-4 pb-24 pt-10 sm:px-8 sm:pt-16">
       <header className="grid gap-6 border-b border-line pb-10 md:grid-cols-[1.4fr_1fr] md:items-end">
         <h1 className="max-w-[17ch] text-[clamp(2.2rem,5vw,3.9rem)] font-[450] leading-[1.02] tracking-[-0.02em]">
-          Three website concepts for Thai craft and hospitality brands
+          Website concepts for Thai brands
         </h1>
         <div className="space-y-3 text-[15px] leading-relaxed text-muted">
           <p>
@@ -53,6 +53,21 @@ export default function Home() {
           <p className="text-ink">Chanasak Choonuch, full-stack engineer and product owner, Bangkok</p>
         </div>
       </header>
+
+      <Link href="/parfum" className="group mt-10 grid gap-8 rounded-[2px] bg-[#1d1a14] p-6 text-[#efe9df] sm:p-10 md:grid-cols-[1fr_1fr] md:items-end">
+        <div>
+          <p className="text-[13px] opacity-60">Fragrance brand, live 3D product</p>
+          <h2 className="mt-3 text-[clamp(3rem,7vw,5.5rem)] leading-none tracking-[0.2em]" style={{ fontFamily: '"Instrument Serif", Georgia, serif' }}>
+            HOM
+          </h2>
+        </div>
+        <div>
+          <p className="max-w-[46ch] text-[16px] leading-relaxed opacity-80">
+            A perfume bottle rendered live in the browser. The camera tours the bottle as you scroll, then you turn it 360 degrees, zoom in, switch scents and watch your initials print on the label.
+          </p>
+          <span className="mt-6 inline-block text-[15px] underline decoration-white/30 underline-offset-[6px] transition-colors group-hover:decoration-white">Open HOM</span>
+        </div>
+      </Link>
 
       <ol className="divide-y divide-line">
         {concepts.map((c) => (
