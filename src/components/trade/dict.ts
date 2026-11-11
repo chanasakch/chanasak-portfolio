@@ -2,6 +2,25 @@ export type Lang = "en" | "th";
 
 export const dict = {
   en: {
+    navCollection: "Collection",
+    navRooms: "Rooms",
+    navNew: "New",
+    menu: "Menu",
+    statement:
+      "Every piece starts as a length of rattan cane, steamed, bent and wrapped by forty weavers in Bang Bua Thong. We design for hotels first, so what goes into your home is built for a thousand guests.",
+    statementLink: "Inside the workshop",
+    newSeason: "New this season",
+    viewAll: "View all pieces",
+    quickView: "Quick view",
+    viewDetails: "Full specifications",
+    searchHint: "Try Kluen, pendant or outdoor",
+    searchNone: (q: string) => `Nothing matches "${q}". Try a collection name or a material.`,
+    suggestions: "Popular searches",
+    drawerEmpty: "Nothing here yet. Pieces you add collect here while you browse.",
+    review: "Review and send request",
+    keepBrowsing: "Keep browsing",
+    workshop: "Workshop in Bang Bua Thong, Nonthaburi",
+    roomsBody: "Pieces chosen for how a room is used, from breakfast service to a pool deck in the rain.",
     heroTitle: "Woven by hand in Bangkok, made for hotels and homes",
     heroBody:
       "Rattan, cane and rope furniture by Thai designers. Browse the catalogue, check specifications and lead times, and send one quote request for your whole project.",
@@ -99,6 +118,25 @@ export const dict = {
     invalidEmail: "Enter an email address like name@company.com",
   },
   th: {
+    navCollection: "คอลเลกชัน",
+    navRooms: "พื้นที่",
+    navNew: "ใหม่",
+    menu: "เมนู",
+    statement:
+      "ทุกชิ้นเริ่มจากเส้นหวาย นำไปอบไอน้ำ ดัดและพันด้วยมือช่างสานสี่สิบคนที่บางบัวทอง เราออกแบบให้โรงแรมก่อน ชิ้นที่อยู่ในบ้านคุณจึงแข็งแรงพอสำหรับแขกนับพันคน",
+    statementLink: "เข้าไปดูในเวิร์กช็อป",
+    newSeason: "ใหม่ในฤดูกาลนี้",
+    viewAll: "ดูสินค้าทั้งหมด",
+    quickView: "ดูแบบย่อ",
+    viewDetails: "ดูสเปกทั้งหมด",
+    searchHint: "ลองค้นหา Kluen, โคมไฟ หรือ กลางแจ้ง",
+    searchNone: (q: string) => `ไม่พบ "${q}" ลองค้นด้วยชื่อคอลเลกชันหรือวัสดุ`,
+    suggestions: "คำค้นยอดนิยม",
+    drawerEmpty: "ยังไม่มีสินค้า สินค้าที่เพิ่มจะรวมอยู่ที่นี่ระหว่างที่คุณดูแคตตาล็อก",
+    review: "ตรวจสอบและส่งคำขอ",
+    keepBrowsing: "ดูต่อ",
+    workshop: "เวิร์กช็อปที่บางบัวทอง นนทบุรี",
+    roomsBody: "คัดชิ้นตามการใช้งานของแต่ละพื้นที่ ตั้งแต่มื้อเช้าในห้องอาหารจนถึงริมสระวันฝนตก",
     heroTitle: "สานด้วยมือในกรุงเทพฯ สำหรับโรงแรมและบ้าน",
     heroBody:
       "เฟอร์นิเจอร์หวาย ไม้สานและเชือก ออกแบบโดยดีไซเนอร์ไทย ดูแคตตาล็อก เช็กสเปกและระยะเวลาผลิต แล้วส่งคำขอใบเสนอราคาครั้งเดียวสำหรับทั้งโครงการ",

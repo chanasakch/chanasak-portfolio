@@ -12,7 +12,7 @@ const concepts = [
     job: "Furniture brand and trade catalogue",
     problem:
       "A woven furniture maker selling to hotels, designers and homeowners. Visitors filter more than a hundred pieces, read the specifications and send one quote request for a whole project.",
-    inside: ["Catalogue with filters", "Spec pages", "Colourway preview", "Quote list", "Thai and English"],
+    inside: ["Hero slideshow", "Live search", "Quick view", "Quote drawer", "Spec pages", "Thai and English"],
   },
   {
     href: "/ceramics",
@@ -23,7 +23,7 @@ const concepts = [
     job: "Craft brand site",
     problem:
       "A small stoneware studio that sells pieces, supplies restaurants and teaches. The site tells the material story and turns it into orders, sample requests and class bookings.",
-    inside: ["Product grid", "Glaze explorer", "Making process", "Restaurant sample request", "Workshop booking"],
+    inside: ["Full-screen menu", "Parallax hero", "Pieces carousel", "Glaze explorer", "Order drawer", "Workshop booking"],
   },
   {
     href: "/hotel",
@@ -34,7 +34,7 @@ const concepts = [
     job: "Boutique hotel",
     problem:
       "A 24-room hotel in the hills of Chiang Rai. Guests check prices for their dates, compare rooms and see the furniture in each space, with links to the maker.",
-    inside: ["Availability check", "Room comparison", "Furniture hotspots", "Spaces gallery", "Stay request"],
+    inside: ["Hero slideshow", "Availability check", "Room carousel", "Furniture hotspots", "Photo viewer", "Booking drawer"],
   },
 ];
 

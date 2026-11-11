@@ -20,6 +20,12 @@ type TradeState = {
   remove: (slug: string, colorway: string) => void;
   clear: () => void;
   count: number;
+  drawer: boolean;
+  setDrawer: (v: boolean) => void;
+  quick: string | null;
+  setQuick: (slug: string | null) => void;
+  searchOpen: boolean;
+  setSearchOpen: (v: boolean) => void;
 };
 
 const Ctx = createContext<TradeState | null>(null);
@@ -50,6 +56,9 @@ export function TradeProvider({ children }: { children: React.ReactNode }) {
   const [query, setQuery] = useState("");
   const [cats, setCats] = useState<Category[]>([]);
   const [loaded, setLoaded] = useState(false);
+  const [drawer, setDrawer] = useState(false);
+  const [quick, setQuick] = useState<string | null>(null);
+  const [searchOpen, setSearchOpen] = useState(false);
 
   useEffect(() => {
     // Restore after hydration so server and client render the same first frame.
@@ -83,6 +92,8 @@ export function TradeProvider({ children }: { children: React.ReactNode }) {
       }
       return [...prev, item];
     });
+    setQuick(null);
+    setDrawer(true);
   }, []);
 
   const setQty = useCallback((slug: string, colorway: string, qty: number) => {
@@ -110,8 +121,14 @@ export function TradeProvider({ children }: { children: React.ReactNode }) {
       remove,
       clear,
       count: items.reduce((n, i) => n + i.qty, 0),
+      drawer,
+      setDrawer,
+      quick,
+      setQuick,
+      searchOpen,
+      setSearchOpen,
     }),
-    [lang, setLang, query, cats, items, add, setQty, remove, clear],
+    [lang, setLang, query, cats, items, add, setQty, remove, clear, drawer, quick, searchOpen],
   );
 
   return <Ctx.Provider value={value}>{children}</Ctx.Provider>;

@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useState } from "react";
 import { Photo } from "@/components/shared/Photo";
+import { Lightbox } from "@/components/shared/ui";
 import { ColorwayPreview } from "@/components/shared/ColorwayPreview";
 import { materialLabels, products, type Product } from "@/data/products";
 import { useTrade } from "./TradeProvider";
@@ -14,6 +15,7 @@ export function ProductDetail({ product }: { product: Product }) {
   const [qty, setQty] = useState(product.moq);
   const [view, setView] = useState<number | "preview">(0);
   const [toast, setToast] = useState(false);
+  const [zoom, setZoom] = useState<number | null>(null);
 
   const related = products.filter((p) => p.collection === product.collection && p.slug !== product.slug).slice(0, 3);
   const { w, d, h, sh } = product.dims;
@@ -67,8 +69,12 @@ export function ProductDetail({ product }: { product: Product }) {
                 <p className="absolute bottom-3 left-4 right-4 text-[12px] text-muted">{t.previewNote}</p>
               </div>
             ) : (
-              <Photo photo={product.photos[view]} className="h-full w-full" priority position={view === 0 ? product.focus : undefined} sizes="(min-width: 1024px) 55vw, 100vw" />
+              <button type="button" onClick={() => setZoom(view as number)} className="group block h-full w-full cursor-zoom-in" aria-label="Open photo full screen">
+                <Photo photo={product.photos[view]} className="h-full w-full" imgClassName="transition-transform duration-700 group-hover:scale-[1.03]" priority position={view === 0 ? product.focus : undefined} sizes="(min-width: 1024px) 55vw, 100vw" />
+                <span className="absolute bottom-3 right-3 rounded-full bg-bg/90 px-3 py-1.5 text-[12px] backdrop-blur">{lang === "th" ? "ขยายดู" : "View larger"}</span>
+              </button>
             )}
+            <Lightbox items={product.photos.map((ph) => ({ photo: ph, caption: ph.alt }))} index={zoom} onClose={() => setZoom(null)} onIndex={setZoom} />
           </div>
           <div className="no-print mt-3 flex gap-3">
             {product.preview && (

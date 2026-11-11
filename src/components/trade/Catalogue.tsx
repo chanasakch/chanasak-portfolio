@@ -2,6 +2,8 @@
 
 import { useMemo, useState } from "react";
 import { categoryLabels, materialLabels, products, type Category, type Material } from "@/data/products";
+import { motion } from "motion/react";
+import { Drawer } from "@/components/shared/ui";
 import { useTrade } from "./TradeProvider";
 import { ProductCard } from "./ProductCard";
 
@@ -12,7 +14,7 @@ const categories = Object.keys(categoryLabels) as Category[];
 const materials = Object.keys(materialLabels) as Material[];
 
 export function Catalogue() {
-  const { t, lang, query, cats, setCats } = useTrade();
+  const { t, lang, query, setQuery, cats, setCats } = useTrade();
   const [mats, setMats] = useState<Material[]>([]);
   const [outdoor, setOutdoor] = useState(false);
   const [contract, setContract] = useState(false);
@@ -56,43 +58,63 @@ export function Catalogue() {
 
   const check = "size-4 accent-[var(--ink)]";
 
+  const pill = (on: boolean) =>
+    `shrink-0 rounded-full border px-4 py-2 text-[14px] transition-colors ${on ? "border-ink bg-ink text-bg" : "border-line hover:border-ink"}`;
+
   return (
-    <div id="catalogue" className="mx-auto grid max-w-[1440px] scroll-mt-20 gap-8 px-4 pb-24 pt-14 sm:px-8 lg:grid-cols-[240px_minmax(0,1fr)]">
-      <button
-        type="button"
-        onClick={() => setShowFilters((v) => !v)}
-        aria-expanded={showFilters}
-        aria-controls="trade-filters"
-        className="rounded-[4px] border border-line px-3 py-2 text-left text-[14px] lg:hidden"
-      >
-        {showFilters ? t.hideFilters : t.showFilters}
-        {active > 0 && <span className="ml-2 text-muted">({active})</span>}
-      </button>
+    <div id="catalogue" className="mx-auto max-w-[1600px] scroll-mt-16 px-4 pb-28 pt-24 sm:px-8">
+      <div className="flex flex-wrap items-end justify-between gap-6">
+        <h2 className="text-[clamp(2rem,4vw,3.4rem)] font-[600] leading-none tracking-[-0.035em]">{t.catalogue}</h2>
+        <p className="max-w-[46ch] text-[15px] leading-relaxed text-muted">{t.introBody}</p>
+      </div>
 
-      <aside id="trade-filters" className={`${showFilters ? "block" : "hidden"} lg:block`} aria-label={t.filters}>
-        <div className="space-y-7 lg:sticky lg:top-24">
-          <div className="flex items-baseline justify-between">
-            <h2 className="text-[15px] font-[600]">{t.filters}</h2>
-            {active > 0 && (
-              <button type="button" onClick={clearAll} className="text-[13px] text-muted underline underline-offset-4">
-                {t.clear}
-              </button>
-            )}
+      <div className="sticky top-16 z-20 -mx-4 mt-10 flex items-center gap-3 border-b border-line bg-bg/90 px-4 py-3 backdrop-blur-md sm:-mx-8 sm:px-8">
+        <div className="flex min-w-0 flex-1 gap-2 overflow-x-auto [scrollbar-width:none]">
+          <button type="button" onClick={() => setCats([])} className={pill(cats.length === 0)}>
+            {t.any}
+          </button>
+          {categories.map((c) => (
+            <button key={c} type="button" aria-pressed={cats.includes(c)} onClick={() => setCats(toggle(cats, c))} className={pill(cats.includes(c))}>
+              {categoryLabels[c][lang]} <span className="tabular opacity-50">{countFor(c)}</span>
+            </button>
+          ))}
+        </div>
+        <button type="button" onClick={() => setShowFilters(true)} className="flex shrink-0 items-center gap-2 rounded-full border border-line px-4 py-2 text-[14px] hover:border-ink">
+          <svg width="14" height="14" viewBox="0 0 14 14" aria-hidden>
+            <path d="M0 3h14M0 11h14" stroke="currentColor" strokeWidth="1.3" />
+            <circle cx="4" cy="3" r="2" fill="var(--bg)" stroke="currentColor" strokeWidth="1.3" />
+            <circle cx="10" cy="11" r="2" fill="var(--bg)" stroke="currentColor" strokeWidth="1.3" />
+          </svg>
+          {t.filters}
+          {active - cats.length > 0 && <span className="tabular">({active - cats.length})</span>}
+        </button>
+      </div>
+
+      <Drawer
+        open={showFilters}
+        onClose={() => setShowFilters(false)}
+        title={t.filters}
+        width="max-w-[400px]"
+        footer={
+          <div className="flex items-center gap-3">
+            <button type="button" onClick={clearAll} className="px-2 py-3 text-[14px] underline underline-offset-4">
+              {t.clear}
+            </button>
+            <button type="button" onClick={() => setShowFilters(false)} className="flex-1 rounded-full bg-ink py-3 text-[15px] font-medium text-bg">
+              {t.results(results.length)}
+            </button>
           </div>
-
-          <fieldset>
-            <legend className="mb-2.5 text-[13px] text-muted">{t.category}</legend>
-            <div className="space-y-2">
-              {categories.map((c) => (
-                <label key={c} className="flex cursor-pointer items-center gap-2.5 text-[14px]">
-                  <input type="checkbox" className={check} checked={cats.includes(c)} onChange={() => setCats(toggle(cats, c))} />
-                  <span className="flex-1">{categoryLabels[c][lang]}</span>
-                  <span className="tabular text-[12px] text-muted">{countFor(c)}</span>
-                </label>
-              ))}
-            </div>
-          </fieldset>
-
+        }
+      >
+        <div className="space-y-8">
+          <label className="grid gap-2 text-[14px]">
+            <span className="text-[13px] text-muted">{t.sort}</span>
+            <select value={sort} onChange={(e) => setSort(e.target.value as Sort)} className="rounded-[4px] border border-line bg-white px-3 py-2.5 text-[14px]">
+              <option value="new">{t.sortNew}</option>
+              <option value="lead">{t.sortLead}</option>
+              <option value="name">{t.sortName}</option>
+            </select>
+          </label>
           <fieldset>
             <legend className="mb-2.5 text-[13px] text-muted">{t.material}</legend>
             <div className="space-y-2">
@@ -137,41 +159,28 @@ export function Catalogue() {
             </div>
           </fieldset>
         </div>
-      </aside>
+      </Drawer>
 
-      <section aria-label={t.catalogue}>
-        <h2 className="mb-5 text-[clamp(1.6rem,2.6vw,2.2rem)] font-[650] tracking-[-0.02em]">{t.catalogue}</h2>
-        <div className="mb-6 flex items-center justify-between gap-4 border-b border-line pb-3">
-          <p className="tabular text-[14px] text-muted" aria-live="polite">
-            {t.results(results.length)}
-          </p>
-          <label className="flex items-center gap-2 text-[14px]">
-            <span className="text-muted">{t.sort}</span>
-            <select
-              value={sort}
-              onChange={(e) => setSort(e.target.value as Sort)}
-              className="rounded-[4px] border border-line bg-white px-2 py-1.5 text-[14px]"
-            >
-              <option value="new">{t.sortNew}</option>
-              <option value="lead">{t.sortLead}</option>
-              <option value="name">{t.sortName}</option>
-            </select>
-          </label>
-        </div>
-
+      <section aria-label={t.catalogue} className="pt-8">
+        <p className="tabular mb-6 text-[14px] text-muted" aria-live="polite">
+          {t.results(results.length)}
+          {query.trim() && <><span className="ml-3">&ldquo;{query.trim()}&rdquo;</span> <button type="button" onClick={() => setQuery("")} className="underline underline-offset-4">{t.clear}</button></>}
+        </p>
         {results.length === 0 ? (
-          <div className="rounded-[4px] border border-dashed border-line p-10 text-center">
+          <div className="border border-dashed border-line p-10 text-center">
             <p className="text-[15px]">{t.empty}</p>
             <button type="button" onClick={clearAll} className="mt-4 text-[14px] underline underline-offset-4">
               {t.clear}
             </button>
           </div>
         ) : (
-          <div className="grid gap-x-6 gap-y-10 sm:grid-cols-2 xl:grid-cols-3">
+          <motion.div layout className="grid gap-x-6 gap-y-12 sm:grid-cols-2 xl:grid-cols-3">
             {results.map((p) => (
-              <ProductCard key={p.slug} product={p} />
+              <motion.div key={p.slug} layout initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.4 }}>
+                <ProductCard product={p} />
+              </motion.div>
             ))}
-          </div>
+          </motion.div>
         )}
       </section>
     </div>

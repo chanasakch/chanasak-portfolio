@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { BackToPortfolio } from "@/components/shared/BackToPortfolio";
+import { DinHeader, DinProvider } from "@/components/ceramics/Din";
 
 export const metadata: Metadata = {
   title: "DIN Studio | Stoneware from Lampang",
@@ -9,7 +10,10 @@ export const metadata: Metadata = {
 export default function CeramicsLayout({ children }: { children: React.ReactNode }) {
   return (
     <div className="brand-din">
-      {children}
+      <DinProvider>
+        <DinHeader />
+        {children}
+      </DinProvider>
       <BackToPortfolio />
     </div>
   );

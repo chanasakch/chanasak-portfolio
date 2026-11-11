@@ -5,9 +5,9 @@ Three working front-end concepts for Thai craft and hospitality brands. All bran
 | Route | Concept | What it shows |
 | --- | --- | --- |
 | `/` | Index | Links to the three concepts |
-| `/furniture` | Loom & Tide, woven furniture brand and trade catalogue | Hero, shop by room, filters, search, spec pages, colourway drawing, printable spec sheet, quote list, Thai and English |
-| `/ceramics` | DIN Studio, stoneware studio | Product grid, glaze explorer, making process, restaurant sample request, workshop booking |
-| `/hotel` | Ruen Doi, boutique hotel | Availability check, room tabs, furniture hotspots linked to the catalogue, spaces, stay request |
+| `/furniture` | Loom & Tide, woven furniture brand and trade catalogue | Hero slideshow, new-in carousel, shop by room, live search overlay, quick view, quote drawer, filter drawer, spec pages with photo viewer, colourway drawing, Thai and English |
+| `/ceramics` | DIN Studio, stoneware studio | Full-screen menu, parallax hero, pieces carousel with quick view, order drawer, glaze explorer, pinned making-process story, restaurant sample request, workshop booking |
+| `/hotel` | Ruen Doi, boutique hotel | Hero slideshow, availability check, room carousel with details, furniture hotspots linked to the catalogue, photo viewer, booking drawer |
 
 ## Run locally
 
@@ -28,6 +28,7 @@ Next.js 16 (App Router), TypeScript, Tailwind CSS 4, Motion. Fonts are self-host
 - Hotel rooms, spaces and hotspot positions: `src/data/hotel.ts`
 - Ceramics pieces, glazes and workshop sessions: `src/data/ceramics.ts`
 - Photos: `src/data/images.ts`
+- Shared interactions (slideshow, carousel, drawer, modal, photo viewer, pinned story): `src/components/shared/ui.tsx`
 - Thai and English text for the trade catalogue: `src/components/trade/dict.ts`
 - Brand colours and fonts: `src/app/globals.css` (`.brand-trade`, `.brand-din`, `.brand-ruen`)
 

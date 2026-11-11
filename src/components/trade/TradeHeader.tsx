@@ -2,70 +2,98 @@
 
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
+import { useScrolled } from "@/components/shared/ui";
 import { useTrade } from "./TradeProvider";
 
-export function TradeHeader() {
-  const { t, lang, setLang, query, setQuery, count } = useTrade();
+/** Scrolls to a section of the catalogue home, going there first if needed. */
+export function useJump() {
   const pathname = usePathname();
   const router = useRouter();
+  return (id: string) => {
+    const go = () => document.getElementById(id)?.scrollIntoView({ behavior: "smooth", block: "start" });
+    if (pathname === "/furniture") go();
+    else {
+      router.push("/furniture");
+      setTimeout(go, 120);
+    }
+  };
+}
+
+export function TradeHeader() {
+  const { t, lang, setLang, count, setDrawer, setSearchOpen } = useTrade();
+  const pathname = usePathname();
+  const jump = useJump();
+  const scrolled = useScrolled(60);
+  const overHero = pathname === "/furniture" && !scrolled;
+
+  const nav: [string, string][] = [
+    [t.navNew, "new"],
+    [t.navRooms, "rooms"],
+    [t.navCollection, "catalogue"],
+  ];
 
   return (
-    <header className="no-print sticky top-0 z-40 border-b border-line bg-bg/95 backdrop-blur">
-      <div className="mx-auto flex max-w-[1440px] flex-wrap items-center gap-x-6 gap-y-3 px-4 py-3 sm:px-8">
-        <Link href="/furniture" className="flex items-baseline gap-2" aria-label="Loom and Tide trade catalogue">
-          <span className="text-[19px] font-[650] tracking-[-0.02em]">Loom &amp; Tide</span>
-          <span className="rounded-[3px] bg-ink px-1.5 py-0.5 text-[11px] font-medium text-bg">{t.brandTag}</span>
-        </Link>
-
-        <form
-          role="search"
-          className="order-3 w-full sm:order-none sm:w-auto sm:flex-1"
-          onSubmit={(e) => {
-            e.preventDefault();
-            if (pathname !== "/furniture") router.push("/furniture");
-          }}
-        >
-          <label className="sr-only" htmlFor="trade-search">
-            {t.search}
-          </label>
-          <input
-            id="trade-search"
-            type="search"
-            value={query}
-            onChange={(e) => {
-              setQuery(e.target.value);
-              if (pathname !== "/furniture") router.push("/furniture");
-            }}
-            placeholder={t.search}
-            className="w-full max-w-[520px] rounded-[4px] border border-line bg-white px-3.5 py-2 text-[14px] outline-none placeholder:text-muted focus:border-ink"
-          />
-        </form>
-
-        <div className="ml-auto flex items-center gap-2">
-          <div className="flex rounded-[4px] border border-line p-0.5 text-[13px]" role="group" aria-label="Language">
-            {(["en", "th"] as const).map((l) => (
-              <button
-                key={l}
-                type="button"
-                aria-pressed={lang === l}
-                onClick={() => setLang(l)}
-                className={`rounded-[4px] px-2.5 py-1 transition-colors ${lang === l ? "bg-ink text-bg" : "text-muted hover:text-ink"}`}
-              >
-                {l === "en" ? "EN" : "ไทย"}
+    <>
+      <header
+        className={`no-print fixed inset-x-0 top-0 z-40 transition-[background-color,color,border-color] duration-500 ${
+          overHero ? "border-b border-transparent text-white" : "border-b border-line bg-bg/90 text-ink backdrop-blur-md"
+        }`}
+      >
+        <div className="mx-auto grid h-16 max-w-[1600px] grid-cols-[1fr_auto_1fr] items-center gap-4 px-4 sm:px-8">
+          <nav aria-label="Catalogue" className="hidden gap-7 text-[14px] md:flex">
+            {nav.map(([label, id]) => (
+              <button key={id} type="button" onClick={() => jump(id)} className="relative py-1 after:absolute after:inset-x-0 after:bottom-0 after:h-px after:origin-left after:scale-x-0 after:bg-current after:transition-transform hover:after:scale-x-100">
+                {label}
               </button>
             ))}
-          </div>
-          <Link
-            href="/furniture/quote"
-            className="flex items-center gap-2 rounded-[4px] bg-accent px-3.5 py-2 text-[14px] font-medium text-accent-ink transition-opacity hover:opacity-90"
-          >
-            {t.quoteList}
-            <span className="tabular min-w-5 rounded-full bg-white/25 px-1.5 text-center text-[12px]" aria-label={`${count} units`}>
-              {count}
-            </span>
+          </nav>
+          <button type="button" onClick={() => setSearchOpen(true)} className="flex items-center gap-2 text-[14px] md:hidden" aria-label={t.search}>
+            <SearchIcon />
+          </button>
+
+          <Link href="/furniture" className="text-center text-[21px] font-[650] tracking-[-0.03em]" aria-label="Loom and Tide, home">
+            Loom &amp; Tide
           </Link>
+
+          <div className="flex items-center justify-end gap-1 sm:gap-3">
+            <button type="button" onClick={() => setSearchOpen(true)} className="hidden items-center gap-2 rounded-full px-3 py-2 text-[14px] md:flex" aria-label={t.search}>
+              <SearchIcon />
+              <span className="hidden lg:inline">{lang === "th" ? "ค้นหา" : "Search"}</span>
+            </button>
+            <button
+              type="button"
+              onClick={() => setLang(lang === "en" ? "th" : "en")}
+              className="rounded-full px-2.5 py-2 text-[13px]"
+              aria-label={lang === "en" ? "เปลี่ยนเป็นภาษาไทย" : "Switch to English"}
+            >
+              {lang === "en" ? "ไทย" : "EN"}
+            </button>
+            <button
+              type="button"
+              onClick={() => setDrawer(true)}
+              className={`flex items-center gap-2 rounded-full border px-3.5 py-1.5 text-[14px] transition-colors ${
+                overHero ? "border-white/50 hover:bg-white hover:text-ink" : "border-ink/20 hover:border-ink"
+              }`}
+            >
+              <span className="hidden sm:inline">{t.quoteList}</span>
+              <span className="sm:hidden">{lang === "th" ? "รายการ" : "Quote"}</span>
+              <span className="tabular" aria-label={`${count} units`}>
+                ({count})
+              </span>
+            </button>
+          </div>
         </div>
-      </div>
-    </header>
+      </header>
+      {pathname !== "/furniture" && <div className="h-16" aria-hidden />}
+    </>
+  );
+}
+
+export function SearchIcon() {
+  return (
+    <svg width="17" height="17" viewBox="0 0 17 17" aria-hidden>
+      <circle cx="7.5" cy="7.5" r="5.5" fill="none" stroke="currentColor" strokeWidth="1.4" />
+      <path d="M11.5 11.5L16 16" stroke="currentColor" strokeWidth="1.4" />
+    </svg>
   );
 }
