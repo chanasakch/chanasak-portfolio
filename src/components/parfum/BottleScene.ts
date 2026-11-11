@@ -11,6 +11,7 @@ export type Pose = {
   spin: number; // 1 = turning on its own, 0 = settle facing the front
   opacity: number;
   scale: number;
+  lift: number; // moves the bottle without moving the camera, used to leave the screen
 };
 
 export type Label = { scent: string; size: string; initials: string; ink: string; paper: string };
@@ -31,8 +32,8 @@ export class BottleScene {
   private fadeMats: THREE.Material[] = [];
   private glowMat: THREE.MeshBasicMaterial;
   private raf = 0;
-  private current: Pose = { x: 0, y: 0, dist: 7, look: 0, spin: 1, opacity: 0, scale: 1 };
-  target: Pose = { x: 0, y: 0, dist: 7, look: 0, spin: 1, opacity: 1, scale: 1 };
+  private current: Pose = { x: 0, y: 0, dist: 7, look: 0, spin: 1, opacity: 0, scale: 1, lift: 0 };
+  target: Pose = { x: 0, y: 0, dist: 7, look: 0, spin: 1, opacity: 1, scale: 1, lift: 0 };
   /** extra zoom from the viewer's own controls, multiplies camera distance */
   zoom = 1;
   private angle = 0.5;
@@ -213,7 +214,7 @@ export class BottleScene {
     }
     this.turn.rotation.y = this.angle;
     this.turn.rotation.x = Math.sin(performance.now() / 2400) * 0.025;
-    this.group.position.set(c.x, c.y + Math.sin(performance.now() / 1800) * 0.03, 0);
+    this.group.position.set(c.x, c.y + c.lift + Math.sin(performance.now() / 1800) * 0.03, 0);
     this.group.scale.setScalar(c.scale);
 
     this.liquid.color.lerp(this.liquidColor, 0.06);
@@ -222,7 +223,7 @@ export class BottleScene {
     this.bg.lerp(this.bgTarget, 0.05);
     this.glass.attenuationColor.copy(this.liquid.color).lerp(new THREE.Color("#ffffff"), 0.8);
     this.fadeMats.forEach((m) => (m.opacity = c.opacity));
-    this.group.visible = c.opacity > 0.01;
+    this.group.visible = c.lift < 7;
 
     const dist = c.dist * this.zoom;
     this.camera.position.set(c.x * 0.15, c.y + c.look + 0.25, dist);

@@ -1,11 +1,5 @@
-import { Catalogue } from "@/components/trade/Catalogue";
-import { FurnitureHero } from "@/components/trade/FurnitureHero";
+import { LampSite } from "@/components/lamp/LampSite";
 
 export default function FurniturePage() {
-  return (
-    <main>
-      <FurnitureHero />
-      <Catalogue />
-    </main>
-  );
+  return <LampSite />;
 }

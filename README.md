@@ -2,12 +2,15 @@
 
 Three working front-end concepts for Thai craft and hospitality brands. All brands, products and places are fictional.
 
-| Route | Concept | What it shows |
+| Route | Concept | Signature interaction |
 | --- | --- | --- |
-| `/` | Index | Links to the three concepts |
-| `/furniture` | Loom & Tide, woven furniture brand and trade catalogue | Hero slideshow, new-in carousel, shop by room, live search overlay, quick view, quote drawer, filter drawer, spec pages with photo viewer, colourway drawing, Thai and English |
-| `/ceramics` | DIN Studio, stoneware studio | Full-screen menu, parallax hero, pieces carousel with quick view, order drawer, glaze explorer, pinned making-process story, restaurant sample request, workshop booking |
-| `/hotel` | Ruen Doi, boutique hotel | Hero slideshow, availability check, room carousel with details, furniture hotspots linked to the catalogue, photo viewer, booking drawer |
+| `/` | Index | Links to the six concepts |
+| `/parfum` | HOM, fragrance house | Live 3D bottle toured on scroll, 360 turn, zoom, scent and size switching, initials printed on the label |
+| `/furniture` | Loom & Tide, rattan lighting | 3D pendant configurator, lights on and off with the weave shadow thrown on the wall |
+| `/jewelry` | PHLOI, fine jewellery | 3D solitaire ring with stone, metal, cut, carat and an engraving preview |
+| `/ceramics` | DIN, stoneware studio | Endless drag-through wall of pieces, magnifier, filters, order drawer |
+| `/hotel` | Ruen Doi, boutique hotel | One day told hour by hour as the page moves from morning to night, rate calendar and room hold |
+| `/residence` | Rim Nam, riverside residences | Stacking plan by floor, interactive floor plan, payment calculator |
 
 ## Run locally
 
@@ -20,7 +23,7 @@ Open http://localhost:3000.
 
 ## Stack
 
-Next.js 16 (App Router), TypeScript, Tailwind CSS 4, Motion, Lenis. Fonts are self-hosted through Fontsource. No backend: product and project data live in `src/data`, the quote list is kept in the browser's localStorage, and forms show a success state without sending anything.
+Next.js 16 (App Router), TypeScript, Tailwind CSS 4, Motion, Lenis, three.js. Fonts are self-hosted through Fontsource. No backend: product and project data live in `src/data`, the quote list is kept in the browser's localStorage, and forms show a success state without sending anything.
 
 ## Where to edit
 

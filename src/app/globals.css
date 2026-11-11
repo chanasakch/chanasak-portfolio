@@ -173,3 +173,67 @@ html.lenis body {
     cursor: none;
   }
 }
+
+/* Second set of concepts. Each wrapper sets the tokens its drawers and type use. */
+.b-lamp,
+.b-din,
+.b-stay,
+.b-phloi,
+.b-rim {
+  font-family: var(--font-body);
+  min-height: 100dvh;
+}
+.b-lamp {
+  --bg: #ece6db;
+  --ink: #1c1a17;
+  --muted: #6d665c;
+  --line: rgb(28 26 23 / 0.14);
+  --soft: #ddd6ca;
+  --font-display: "Instrument Serif", Georgia, serif;
+  --font-body: "Instrument Sans Variable", "Instrument Sans", "Anuphan", system-ui, sans-serif;
+}
+.b-din {
+  --bg: #f2f2ef;
+  --ink: #1b1b19;
+  --muted: #6f6f69;
+  --line: rgb(27 27 25 / 0.12);
+  --soft: #e4e4df;
+  --accent: #5d7a6c;
+  --font-display: "Schibsted Grotesk Variable", "Schibsted Grotesk", system-ui, sans-serif;
+  --font-body: "Schibsted Grotesk Variable", "Schibsted Grotesk", system-ui, sans-serif;
+  background: var(--bg);
+  color: var(--ink);
+}
+.b-stay {
+  --bg: #f1efe9;
+  --ink: #1e2a25;
+  --muted: #5d6b65;
+  --line: rgb(30 42 37 / 0.14);
+  --soft: #e2e2da;
+  --accent: #c58b3e;
+  --font-display: "Bodoni Moda Variable", "Bodoni Moda", Georgia, serif;
+  --font-body: "Work Sans Variable", "Work Sans", "Anuphan", system-ui, sans-serif;
+}
+.b-phloi {
+  --bg: #eceef0;
+  --ink: #15171a;
+  --muted: #646a72;
+  --line: rgb(21 23 26 / 0.12);
+  --soft: #dfe2e6;
+  --font-display: "Italiana", Georgia, serif;
+  --font-body: "Jost Variable", "Jost", system-ui, sans-serif;
+  background: var(--bg);
+  color: var(--ink);
+}
+.b-rim {
+  --bg: #e3e1dc;
+  --ink: #14171a;
+  --muted: #62666b;
+  --line: rgb(20 23 26 / 0.14);
+  --soft: #d4d1ca;
+  --accent: #9c7a4c;
+  --font-display: "Inter Tight Variable", "Inter Tight", system-ui, sans-serif;
+  --font-body: "Inter Tight Variable", "Inter Tight", system-ui, sans-serif;
+  background: var(--bg);
+  color: var(--ink);
+}

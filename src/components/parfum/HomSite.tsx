@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 import { AnimatePresence, motion } from "motion/react";
 import { Drawer } from "@/components/shared/ui";
+import { useSmartHeader } from "@/components/shared/motion";
 import { BottleScene, type Pose } from "./BottleScene";
 
 type Scent = { id: string; name: string; thai: string; line: string; liquid: string; bg: string; notes: [string, string][]; wear: string };
@@ -105,6 +106,7 @@ export function HomSite() {
   const [bag, setBag] = useState<Line[]>([]);
   const [bagOpen, setBagOpen] = useState(false);
   const [ready, setReady] = useState(false);
+  const { hidden, top } = useSmartHeader();
 
   // Start the 3D scene once
   useEffect(() => {
@@ -144,12 +146,12 @@ export function HomSite() {
       const c = clamp(1 - config.current.getBoundingClientRect().top / vh);
       const d = clamp(1 - notes.current.getBoundingClientRect().top / vh);
 
-      const start: Pose = { x: 0, y: wide ? -0.05 : 0.25, dist: wide ? 10 : 13.5, look: 0.15, spin: 1, opacity: 1, scale: size.scale };
+      const start: Pose = { x: 0, y: wide ? -0.05 : 0.25, dist: wide ? 10 : 13.5, look: 0.15, spin: 1, opacity: 1, scale: size.scale, lift: 0 };
       const cap: Pose = { ...start, x: wide ? -0.9 : 0, y: wide ? 0 : 0.5, dist: wide ? 4.2 : 6, look: 1.3, spin: 0 };
       const label: Pose = { ...cap, dist: wide ? 3.6 : 5.4, look: -0.1 };
       const base: Pose = { ...cap, dist: wide ? 4.4 : 6.2, look: -0.7 };
       const shop: Pose = { ...start, x: wide ? -1.75 : 0, y: wide ? 0 : 1.6, dist: wide ? 10 : 14, spin: 0.6 };
-      const gone: Pose = { ...shop, y: shop.y + 9, opacity: 0 };
+      const gone: Pose = { ...shop, lift: 8, opacity: 0 };
 
       let p = mix(start, cap, a);
       if (b > 0) p = b < 0.5 ? mix(cap, label, clamp((b - 0.22) / 0.18)) : mix(label, base, clamp((b - 0.62) / 0.18));
@@ -179,7 +181,7 @@ export function HomSite() {
     <div className="relative text-[#efe9df]">
       <canvas ref={canvas} aria-label={`${scent.name} eau de parfum bottle`} role="img" className="pointer-events-none fixed inset-0 z-0 h-[100svh] w-full" />
 
-      <header className="fixed inset-x-0 top-0 z-30 grid h-16 grid-cols-[1fr_auto_1fr] items-center px-[var(--gutter)] text-[14px]">
+      <header className={`fixed inset-x-0 top-0 z-30 grid h-16 grid-cols-[1fr_auto_1fr] items-center px-[var(--gutter)] text-[14px] transition-[transform,background-color] duration-500 ${top ? "" : "bg-black/30 backdrop-blur-xl"} ${hidden ? "-translate-y-full" : ""}`}>
         <nav className="hidden gap-7 md:flex" aria-label="Main">
           {[
             ["Scents", "#shop"],

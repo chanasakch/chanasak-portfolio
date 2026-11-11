@@ -1,103 +1,51 @@
 import Link from "next/link";
-import { Photo } from "@/components/shared/Photo";
-import { photos } from "@/data/images";
 
 const concepts = [
-  {
-    href: "/furniture",
-    name: "Loom & Tide",
-    nameStyle: { fontFamily: '"Schibsted Grotesk Variable", "Schibsted Grotesk", sans-serif', fontWeight: 650, letterSpacing: "-0.03em" },
-    photo: photos.archedTerraceChairs,
-    position: "50% 70%",
-    job: "Furniture brand and trade catalogue",
-    problem:
-      "A woven furniture maker selling to hotels, designers and homeowners. Visitors filter more than a hundred pieces, read the specifications and send one quote request for a whole project.",
-    inside: ["Hero slideshow", "Live search", "Quick view", "Quote drawer", "Spec pages", "Thai and English"],
-  },
-  {
-    href: "/ceramics",
-    name: "DIN Studio",
-    nameStyle: { fontFamily: '"Italiana", serif', letterSpacing: "0.12em" },
-    photo: photos.budVases,
-    position: "50% 45%",
-    job: "Craft brand site",
-    problem:
-      "A small stoneware studio that sells pieces, supplies restaurants and teaches. The site tells the material story and turns it into orders, sample requests and class bookings.",
-    inside: ["Full-screen menu", "Parallax hero", "Pieces carousel", "Glaze explorer", "Order drawer", "Workshop booking"],
-  },
-  {
-    href: "/hotel",
-    name: "Ruen Doi",
-    nameStyle: { fontFamily: '"Bodoni Moda Variable", "Bodoni Moda", serif', fontStyle: "italic" as const },
-    photo: photos.balconyRattanPods,
-    position: "50% 60%",
-    job: "Boutique hotel",
-    problem:
-      "A 24-room hotel in the hills of Chiang Rai. Guests check prices for their dates, compare rooms and see the furniture in each space, with links to the maker.",
-    inside: ["Hero slideshow", "Availability check", "Room carousel", "Furniture hotspots", "Photo viewer", "Booking drawer"],
-  },
+  { href: "/parfum", name: "HOM", font: '"Cormorant Garamond", Georgia, serif', weight: 300, track: "0.3em", bg: "#1d1a14", ink: "#efe9df", job: "Fragrance house", what: "A perfume bottle rendered live. The camera tours it as you scroll, then you turn it, zoom in, switch scents and print initials on the label.", tags: ["Live 3D", "Scroll tour", "360 turn", "Label preview"] },
+  { href: "/furniture", name: "Loom & Tide", font: '"Instrument Serif", Georgia, serif', weight: 400, track: "0", bg: "#141210", ink: "#ece6db", job: "Rattan lighting", what: "Build a woven pendant in 3D, then switch the light on: the room goes dark and the weave throws its pattern across the wall.", tags: ["Live 3D", "Light on and off", "Weave shadows", "Project list"] },
+  { href: "/jewelry", name: "PHLOI", font: '"Italiana", Georgia, serif', weight: 400, track: "0.4em", bg: "#eceef0", ink: "#15171a", job: "Fine jewellery", what: "A solitaire ring you build in 3D: Thai sapphire, ruby or emerald, metal, cut and carat, with the engraving previewed inside the band.", tags: ["Live 3D", "Gem refraction", "Engraving preview", "Viewing booking"] },
+  { href: "/ceramics", name: "DIN", font: '"Schibsted Grotesk Variable", sans-serif', weight: 800, track: "-0.05em", bg: "#f2f2ef", ink: "#1b1b19", job: "Stoneware studio", what: "The shop is one endless wall of pieces you drag through in any direction. Open one to magnify the glaze and add it to an order.", tags: ["Infinite drag wall", "Magnifier", "Filters", "Order drawer"] },
+  { href: "/hotel", name: "Ruen Doi", font: '"Bodoni Moda Variable", serif', weight: 400, track: "0", bg: "#17221e", ink: "#e9e4d8", job: "Boutique hotel", what: "One day at the hotel, told hour by hour. The page moves from morning mist to night as you scroll, then a calendar shows nightly rates.", tags: ["Time of day scroll", "Rate calendar", "Room hold"] },
+  { href: "/residence", name: "RIM NAM", font: '"Inter Tight Variable", sans-serif', weight: 750, track: "-0.04em", bg: "#e3e1dc", ink: "#14171a", job: "Riverside residences", what: "Pick a floor on the tower to see what is left, open a residence plan room by room and work out the payments.", tags: ["Stacking plan", "Interactive floor plan", "Payment calculator"] },
 ];
 
 export default function Home() {
   return (
-    <main className="mx-auto max-w-[1240px] px-4 pb-24 pt-10 sm:px-8 sm:pt-16">
-      <header className="grid gap-6 border-b border-line pb-10 md:grid-cols-[1.4fr_1fr] md:items-end">
-        <h1 className="max-w-[17ch] text-[clamp(2.2rem,5vw,3.9rem)] font-[450] leading-[1.02] tracking-[-0.02em]">
-          Website concepts for Thai brands
-        </h1>
-        <div className="space-y-3 text-[15px] leading-relaxed text-muted">
-          <p>
-            Working front-ends, not mockups. Every page can be clicked through, every form responds. The brands are fictional,
-            built to show how makers and hotels in Thailand can present themselves to buyers at home and abroad.
-          </p>
-          <p className="text-ink">Chanasak Choonuch, full-stack engineer and product owner, Bangkok</p>
+    <main className="min-h-screen bg-[#e9e8e4] px-[var(--gutter)] pb-24 pt-12 text-[#151514]" style={{ fontFamily: '"Jost Variable", "Jost", system-ui, sans-serif' }}>
+      <header className="grid gap-6 pb-12 md:grid-cols-[1.4fr_1fr] md:items-end">
+        <h1 className="max-w-[16ch] text-[clamp(2.4rem,5vw,4.4rem)] font-[450] leading-[1] tracking-[-0.03em]">Six website concepts for Thai brands</h1>
+        <div className="space-y-3 text-[15px] leading-relaxed text-[#5f5e59]">
+          <p>Working front-ends, not mockups. Each one is built around a single interaction that suits what the brand sells. Brands are fictional.</p>
+          <p className="text-[#151514]">Chanasak Choonuch, full-stack engineer and product owner, Bangkok</p>
         </div>
       </header>
-
-      <Link href="/parfum" className="group mt-10 grid gap-8 rounded-[2px] bg-[#1d1a14] p-6 text-[#efe9df] sm:p-10 md:grid-cols-[1fr_1fr] md:items-end">
-        <div>
-          <p className="text-[13px] opacity-60">Fragrance brand, live 3D product</p>
-          <h2 className="mt-3 text-[clamp(3rem,7vw,5.5rem)] leading-none tracking-[0.2em]" style={{ fontFamily: '"Cormorant Garamond", Georgia, serif', fontWeight: 300 }}>
-            HOM
-          </h2>
-        </div>
-        <div>
-          <p className="max-w-[46ch] text-[16px] leading-relaxed opacity-80">
-            A perfume bottle rendered live in the browser. The camera tours the bottle as you scroll, then you turn it 360 degrees, zoom in, switch scents and watch your initials print on the label.
-          </p>
-          <span className="mt-6 inline-block text-[15px] underline decoration-white/30 underline-offset-[6px] transition-colors group-hover:decoration-white">Open HOM</span>
-        </div>
-      </Link>
-
-      <ol className="divide-y divide-line">
+      <ol className="grid gap-4 md:grid-cols-2">
         {concepts.map((c) => (
           <li key={c.href}>
-            <Link href={c.href} className="group grid gap-6 py-10 md:grid-cols-[minmax(0,1.05fr)_minmax(0,1fr)] md:gap-12">
-              <Photo photo={c.photo} className="aspect-[4/3] rounded-[2px]" position={c.position} sizes="(min-width: 768px) 600px, 100vw" />
-              <div className="flex flex-col">
-                <p className="text-[13px] text-muted">{c.job}</p>
-                <h2 className="mt-3 text-[clamp(2rem,4vw,3rem)] leading-none" style={c.nameStyle}>
+            <Link href={c.href} className="group flex h-full min-h-[340px] flex-col justify-between rounded-[2px] p-7 transition-transform duration-500 hover:-translate-y-1 sm:p-10" style={{ background: c.bg, color: c.ink }}>
+              <div className="flex items-start justify-between gap-6">
+                <span className="text-[13px] opacity-60">{c.job}</span>
+                <span className="text-[14px] underline decoration-current/30 underline-offset-[6px] transition-colors group-hover:decoration-current">Open</span>
+              </div>
+              <div>
+                <h2 className="text-[clamp(2.8rem,6vw,4.6rem)] leading-none" style={{ fontFamily: c.font, fontWeight: c.weight, letterSpacing: c.track }}>
                   {c.name}
                 </h2>
-                <p className="mt-5 max-w-[46ch] text-[16px] leading-relaxed">{c.problem}</p>
-                <ul className="mt-6 flex flex-wrap gap-2">
-                  {c.inside.map((i) => (
-                    <li key={i} className="rounded-full border border-line px-3 py-1 text-[13px] text-muted">
-                      {i}
+                <p className="mt-5 max-w-[46ch] text-[15px] leading-relaxed opacity-75">{c.what}</p>
+                <ul className="mt-5 flex flex-wrap gap-2">
+                  {c.tags.map((t) => (
+                    <li key={t} className="rounded-full border border-current/20 px-3 py-1 text-[12px] opacity-80">
+                      {t}
                     </li>
                   ))}
                 </ul>
-                <span className="mt-auto pt-8 text-[15px] underline decoration-line underline-offset-[6px] transition-colors group-hover:decoration-ink">
-                  Open {c.name}
-                </span>
               </div>
             </Link>
           </li>
         ))}
       </ol>
-
-      <footer className="border-t border-line pt-6 text-[13px] leading-relaxed text-muted">
-        Next.js, TypeScript and Tailwind CSS. Photos from Pexels, used under the Pexels license.{" "}
+      <footer className="pt-8 text-[13px] text-[#5f5e59]">
+        Next.js, TypeScript, Tailwind CSS, Motion and three.js. Photos from Pexels.{" "}
         <Link href="/credits" className="underline underline-offset-4">
           Photo credits
         </Link>
