@@ -1,7 +1,11 @@
 import type { Metadata, Viewport } from "next";
 import "@fontsource/italiana/400.css";
-import "@fontsource/instrument-serif/400.css";
-import "@fontsource/instrument-serif/400-italic.css";
+import "@fontsource/cormorant-garamond/300.css";
+import "@fontsource/cormorant-garamond/400.css";
+import "@fontsource/cormorant-garamond/300-italic.css";
+import "@fontsource/cormorant-garamond/400-italic.css";
+import "@fontsource/noto-serif-thai/300.css";
+import "@fontsource/noto-serif-thai/400.css";
 import "@fontsource-variable/instrument-sans";
 import "@fontsource-variable/jost";
 import "@fontsource/anuphan/400.css";

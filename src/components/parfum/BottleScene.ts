@@ -160,14 +160,18 @@ export class BottleScene {
     c.globalAlpha = 1;
     c.fillStyle = ink;
     c.textAlign = "center";
-    c.font = '150px "Instrument Serif", Georgia, serif';
-    c.fillText("HOM", w / 2, 215);
-    c.font = 'italic 76px "Instrument Serif", Georgia, serif';
+    c.font = '300 150px "Cormorant Garamond", Georgia, serif';
+    c.letterSpacing = "28px";
+    c.fillText("HOM", w / 2 + 14, 215);
+    c.letterSpacing = "0px";
+    c.font = 'italic 300 84px "Cormorant Garamond", Georgia, serif';
     c.fillText(scent, w / 2, 350);
-    c.font = '500 30px "Instrument Sans Variable", "Instrument Sans", sans-serif';
+    c.font = '400 28px "Jost Variable", "Jost", sans-serif';
+    c.letterSpacing = "6px";
     c.fillText(`EAU DE PARFUM   ${size}   BANGKOK`, w / 2, 450);
+    c.letterSpacing = "0px";
     if (initials) {
-      c.font = 'italic 64px "Instrument Serif", Georgia, serif';
+      c.font = 'italic 300 70px "Cormorant Garamond", Georgia, serif';
       c.fillText(initials, w / 2, 560);
     } else {
       c.globalAlpha = 0.5;

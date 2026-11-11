@@ -57,7 +57,7 @@ export default function Home() {
       <Link href="/parfum" className="group mt-10 grid gap-8 rounded-[2px] bg-[#1d1a14] p-6 text-[#efe9df] sm:p-10 md:grid-cols-[1fr_1fr] md:items-end">
         <div>
           <p className="text-[13px] opacity-60">Fragrance brand, live 3D product</p>
-          <h2 className="mt-3 text-[clamp(3rem,7vw,5.5rem)] leading-none tracking-[0.2em]" style={{ fontFamily: '"Instrument Serif", Georgia, serif' }}>
+          <h2 className="mt-3 text-[clamp(3rem,7vw,5.5rem)] leading-none tracking-[0.2em]" style={{ fontFamily: '"Cormorant Garamond", Georgia, serif', fontWeight: 300 }}>
             HOM
           </h2>
         </div>

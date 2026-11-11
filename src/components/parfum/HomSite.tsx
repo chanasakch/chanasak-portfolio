@@ -192,7 +192,7 @@ export function HomSite() {
             </a>
           ))}
         </nav>
-        <a href="#top" className="col-start-2 font-display text-[26px] tracking-[0.3em]">
+        <a href="#top" className="col-start-2 font-display text-[28px] tracking-[0.42em] [margin-right:-0.42em]">
           HOM
         </a>
         <button type="button" onClick={() => setBagOpen(true)} className="justify-self-end">
@@ -301,7 +301,7 @@ export function HomSite() {
               <motion.div key={scent.id} initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} transition={{ duration: 0.45 }}>
                 <h2 className="mt-2 flex items-baseline gap-4 font-display text-[clamp(3.4rem,6vw,6rem)] leading-none">
                   {scent.name}
-                  <span className="text-[0.32em] italic opacity-50">{scent.thai}</span>
+                  <span className="text-[0.3em] opacity-50">{scent.thai}</span>
                 </h2>
                 <p className="mt-4 max-w-[38ch] text-[16px] leading-[1.7] opacity-75">{scent.line}</p>
               </motion.div>
@@ -336,7 +336,7 @@ export function HomSite() {
                 value={initials}
                 onChange={(e) => setInitials(e.target.value.replace(/[^a-zA-Z.]/g, "").toUpperCase().slice(0, 3))}
                 placeholder="Up to 3 letters"
-                className="w-full max-w-[260px] border-b border-white/30 bg-transparent py-2 font-display text-[24px] italic tracking-[0.1em] outline-none placeholder:font-body placeholder:text-[15px] placeholder:not-italic placeholder:tracking-normal placeholder:opacity-40 focus:border-white"
+                className="w-full max-w-[260px] border-b border-white/30 bg-transparent py-2 font-display text-[24px] italic tracking-[0.1em] outline-none placeholder:font-body placeholder:font-normal placeholder:text-[15px] placeholder:not-italic placeholder:tracking-normal placeholder:opacity-40 focus:border-white"
               />
               <span className="mt-2 block text-[13px] opacity-50">Watch the label on the bottle as you type.</span>
             </label>
