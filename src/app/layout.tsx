@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
-import "@fontsource/marcellus/400.css";
+import "@fontsource/italiana/400.css";
+import "@fontsource-variable/instrument-sans";
 import "@fontsource-variable/jost";
 import "@fontsource/anuphan/400.css";
 import "@fontsource/anuphan/500.css";
@@ -14,11 +15,11 @@ import "./globals.css";
 
 export const metadata: Metadata = {
   title: {
-    default: "Furniture and craft web concepts | Chanasak Choonuch",
+    default: "Thai craft web concepts | Chanasak Choonuch",
     template: "%s",
   },
   description:
-    "Three website concepts for a Thai rattan furniture brand: a brand site, a trade catalogue with quote list, and a hospitality projects showcase.",
+    "Three website concepts for Thai craft and hospitality brands: a woven furniture catalogue, a ceramics studio and a boutique hotel.",
 };
 
 export const viewport: Viewport = {
@@ -26,7 +27,7 @@ export const viewport: Viewport = {
   initialScale: 1,
 };
 
-export default function RootLayout({ children }: LayoutProps<"/">) {
+export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en" className="antialiased">
       <body className="min-h-dvh">{children}</body>

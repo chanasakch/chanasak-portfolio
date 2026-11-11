@@ -1,13 +1,13 @@
 # Furniture and craft web concepts
 
-Three working front-end concepts for a Thai rattan furniture brand. All brands, products, clients and projects are fictional.
+Three working front-end concepts for Thai craft and hospitality brands. All brands, products and places are fictional.
 
 | Route | Concept | What it shows |
 | --- | --- | --- |
 | `/` | Index | Links to the three concepts |
-| `/saan` | SAAN Atelier, brand site | Editorial hero, collections, colourway picker, material process, designers, awards, showroom booking |
-| `/trade` | Loom & Tide Trade, B2B catalogue | Filters, search, product spec pages, live colourway drawing, printable spec sheet, quote list, Thai and English |
-| `/projects` | Ruen Projects, hospitality showcase | Case studies by sector, shop-the-space hotspots, project facts, client quotes, inquiry form |
+| `/furniture` | Loom & Tide, woven furniture brand and trade catalogue | Hero, shop by room, filters, search, spec pages, colourway drawing, printable spec sheet, quote list, Thai and English |
+| `/ceramics` | DIN Studio, stoneware studio | Product grid, glaze explorer, making process, restaurant sample request, workshop booking |
+| `/hotel` | Ruen Doi, boutique hotel | Availability check, room tabs, furniture hotspots linked to the catalogue, spaces, stay request |
 
 ## Run locally
 
@@ -25,18 +25,19 @@ Next.js 16 (App Router), TypeScript, Tailwind CSS 4, Motion. Fonts are self-host
 ## Where to edit
 
 - Products: `src/data/products.ts`
-- Projects and hotspot positions: `src/data/projects.ts`
+- Hotel rooms, spaces and hotspot positions: `src/data/hotel.ts`
+- Ceramics pieces, glazes and workshop sessions: `src/data/ceramics.ts`
 - Photos: `src/data/images.ts`
 - Thai and English text for the trade catalogue: `src/components/trade/dict.ts`
-- Brand colours and fonts: `src/app/globals.css` (`.brand-saan`, `.brand-trade`, `.brand-ruen`)
+- Brand colours and fonts: `src/app/globals.css` (`.brand-trade`, `.brand-din`, `.brand-ruen`)
 
 ### Moving the hotspots
 
-Hotspot markers are placed by percentage on each photo. On any project page, press `e` to turn on placement mode, click the spot on the photo, and copy the `{ x, y }` it shows into `src/data/projects.ts`.
+Hotspot markers are placed by percentage on each photo. On the hotel page, press `e` to turn on placement mode, click the spot on the photo, and copy the `{ x, y }` it shows into `src/data/hotel.ts`.
 
 ## Photos
 
-Photos come from Pexels (free under the Pexels license) and load from the Pexels CDN. Before showing this to a client, download the final photos into `public/images` and point `photoUrl` in `src/data/images.ts` at them, so a photo removed from Pexels cannot break the page. Credits are listed at `/credits`.
+Photos come from Pexels (free under the Pexels license), resized to WebP in `public/images` at 800 and 1600 pixels wide. Credits with photographer names are listed at `/credits`.
 
 ## Deploy to Vercel
 

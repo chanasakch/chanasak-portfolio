@@ -12,15 +12,15 @@ export function ProductCard({ product }: { product: Product }) {
 
   return (
     <article className="group flex flex-col">
-      <Link href={`/trade/${product.slug}`} className="block">
+      <Link href={`/furniture/${product.slug}`} className="block">
         <Photo
           photo={product.photos[0]}
-          className="aspect-[4/3] w-full rounded-[6px]"
-          imgClassName="transition-transform duration-700 ease-out group-hover:scale-[1.03]"
+          className="aspect-[4/3] w-full rounded-[4px]"
+          position={product.focus}
           sizes="(min-width: 1280px) 30vw, (min-width: 640px) 45vw, 100vw"
         />
         <div className="mt-3 flex items-baseline justify-between gap-3">
-          <h3 className="text-[16px] font-[600] leading-snug">{lang === "th" ? product.nameTh : product.name}</h3>
+          <h3 className="text-[16px] font-[600] leading-snug group-hover:underline group-hover:underline-offset-4">{lang === "th" ? product.nameTh : product.name}</h3>
           <span className="shrink-0 text-[12px] text-muted">{product.collection}</span>
         </div>
       </Link>
@@ -46,8 +46,8 @@ export function ProductCard({ product }: { product: Product }) {
       <button
         type="button"
         onClick={() => add({ slug: product.slug, colorway: product.colorways[0].id, qty: product.moq })}
-        className={`mt-4 rounded-[6px] border px-3 py-2 text-[14px] font-medium transition-colors ${
-          inList ? "border-[var(--ok)] bg-[var(--ok)] text-white" : "border-ink hover:bg-ink hover:text-bg"
+        className={`mt-4 rounded-[4px] border px-3 py-2 text-[14px] font-medium transition-colors ${
+          inList ? "border-[var(--ok)] bg-[var(--ok)] text-white" : "border-ink/25 hover:border-ink"
         }`}
         aria-live="polite"
       >

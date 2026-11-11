@@ -12,7 +12,7 @@ export function ProductDetail({ product }: { product: Product }) {
   const { t, lang, add } = useTrade();
   const [colorway, setColorway] = useState(product.colorways[0]);
   const [qty, setQty] = useState(product.moq);
-  const [view, setView] = useState<number | "preview">(product.preview ? "preview" : 0);
+  const [view, setView] = useState<number | "preview">(0);
   const [toast, setToast] = useState(false);
 
   const related = products.filter((p) => p.collection === product.collection && p.slug !== product.slug).slice(0, 3);
@@ -38,7 +38,7 @@ export function ProductDetail({ product }: { product: Product }) {
   return (
     <main className="mx-auto max-w-[1440px] px-4 pb-24 pt-6 sm:px-8">
       <nav aria-label="Breadcrumb" className="no-print text-[13px] text-muted">
-        <Link href="/trade" className="hover:text-ink">
+        <Link href="/furniture" className="hover:text-ink">
           {t.catalogue}
         </Link>
         <span className="px-2">/</span>
@@ -53,7 +53,7 @@ export function ProductDetail({ product }: { product: Product }) {
 
       <div className="mt-5 grid gap-10 lg:grid-cols-[minmax(0,1.25fr)_minmax(0,1fr)]">
         <div>
-          <div className="relative aspect-[4/3] overflow-hidden rounded-[6px] bg-white">
+          <div className="relative aspect-[4/5] overflow-hidden rounded-[4px] bg-soft sm:aspect-[5/4]">
             {view === "preview" ? (
               <div className="flex h-full items-center justify-center bg-soft">
                 <ColorwayPreview
@@ -67,7 +67,7 @@ export function ProductDetail({ product }: { product: Product }) {
                 <p className="absolute bottom-3 left-4 right-4 text-[12px] text-muted">{t.previewNote}</p>
               </div>
             ) : (
-              <Photo photo={product.photos[view]} className="h-full w-full" priority sizes="(min-width: 1024px) 55vw, 100vw" />
+              <Photo photo={product.photos[view]} className="h-full w-full" priority position={view === 0 ? product.focus : undefined} sizes="(min-width: 1024px) 55vw, 100vw" />
             )}
           </div>
           <div className="no-print mt-3 flex gap-3">
@@ -77,21 +77,21 @@ export function ProductDetail({ product }: { product: Product }) {
                 onClick={() => setView("preview")}
                 aria-pressed={view === "preview"}
                 aria-label="Colourway drawing"
-                className={`flex size-20 items-center justify-center rounded-[6px] bg-soft ring-2 transition ${view === "preview" ? "ring-ink" : "ring-transparent"}`}
+                className={`flex size-20 items-center justify-center rounded-[4px] bg-soft ring-2 transition ${view === "preview" ? "ring-ink" : "ring-transparent"}`}
               >
                 <ColorwayPreview kind={product.preview} frame={colorway.frame} weaveA={colorway.weaveA} weaveB={colorway.weaveB} className="h-16" />
               </button>
             )}
             {product.photos.map((p, i) => (
               <button
-                key={p.id}
+                key={p.slug}
                 type="button"
                 onClick={() => setView(i)}
                 aria-pressed={view === i}
                 aria-label={`Photo ${i + 1}`}
-                className={`overflow-hidden rounded-[6px] ring-2 transition ${view === i ? "ring-ink" : "ring-transparent"}`}
+                className={`overflow-hidden rounded-[4px] ring-2 transition ${view === i ? "ring-ink" : "ring-transparent"}`}
               >
-                <Photo photo={p} className="size-20" sizes="80px" showAlt={false} />
+                <Photo photo={p} className="size-20" sizes="80px" />
               </button>
             ))}
           </div>
@@ -137,7 +137,7 @@ export function ProductDetail({ product }: { product: Product }) {
               <label htmlFor="qty" className="text-[13px] text-muted">
                 {t.quantity}
               </label>
-              <div className="mt-2 flex items-center rounded-[6px] border border-line bg-white">
+              <div className="mt-2 flex items-center rounded-[4px] border border-line bg-white">
                 <button type="button" onClick={() => setQty((q) => Math.max(1, q - 1))} className="px-3.5 py-2.5 text-[18px] leading-none" aria-label="Decrease quantity">
                   −
                 </button>
@@ -157,7 +157,7 @@ export function ProductDetail({ product }: { product: Product }) {
             <button
               type="button"
               onClick={addToQuote}
-              className="rounded-[6px] bg-accent px-5 py-3 text-[15px] font-medium text-accent-ink transition-opacity hover:opacity-90"
+              className="rounded-[4px] bg-accent px-5 py-3 text-[15px] font-medium text-accent-ink transition-opacity hover:opacity-90"
             >
               {t.addWithQty(qty)}
             </button>
@@ -170,9 +170,9 @@ export function ProductDetail({ product }: { product: Product }) {
 
           <div role="status" aria-live="polite" className="no-print">
             {toast && (
-              <p className="mt-4 flex flex-wrap items-center gap-3 rounded-[6px] bg-[var(--ok)] px-4 py-3 text-[14px] text-white">
+              <p className="mt-4 flex flex-wrap items-center gap-3 rounded-[4px] bg-[var(--ok)] px-4 py-3 text-[14px] text-white">
                 {t.updated}
-                <Link href="/trade/quote" className="underline underline-offset-4">
+                <Link href="/furniture/quote" className="underline underline-offset-4">
                   {t.view}
                 </Link>
               </p>
@@ -197,7 +197,7 @@ export function ProductDetail({ product }: { product: Product }) {
             <button
               type="button"
               onClick={() => window.print()}
-              className="mt-3 rounded-[6px] border border-ink px-4 py-2 text-[14px] transition-colors hover:bg-ink hover:text-bg"
+              className="mt-3 rounded-[4px] border border-ink px-4 py-2 text-[14px] transition-colors hover:bg-ink hover:text-bg"
             >
               {t.printSheet}
             </button>

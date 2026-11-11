@@ -2,6 +2,17 @@ export type Lang = "en" | "th";
 
 export const dict = {
   en: {
+    heroTitle: "Woven by hand in Bangkok, made for hotels and homes",
+    heroBody:
+      "Rattan, cane and rope furniture by Thai designers. Browse the catalogue, check specifications and lead times, and send one quote request for your whole project.",
+    heroCta: "Browse the catalogue",
+    heroQuote: "Your quote list",
+    heroCaption: "Malai lounge chair, natural rattan",
+    shopBy: "Shop by room",
+    tileDining: "Dining",
+    tileOutdoor: "Outdoor and pool",
+    tileLighting: "Lighting",
+    pieces: (n: number) => `${n} pieces`,
     brandTag: "Trade",
     search: "Search pieces, collections or designers",
     quoteList: "Quote list",
@@ -34,7 +45,7 @@ export const dict = {
     empty: "No pieces match these filters. Remove a filter to see more.",
     showFilters: "Show filters",
     hideFilters: "Hide filters",
-    catalogue: "Catalogue",
+    catalogue: "All pieces",
     designedBy: "Designed by",
     colourway: "Colourway",
     quantity: "Quantity",
@@ -88,6 +99,17 @@ export const dict = {
     invalidEmail: "Enter an email address like name@company.com",
   },
   th: {
+    heroTitle: "สานด้วยมือในกรุงเทพฯ สำหรับโรงแรมและบ้าน",
+    heroBody:
+      "เฟอร์นิเจอร์หวาย ไม้สานและเชือก ออกแบบโดยดีไซเนอร์ไทย ดูแคตตาล็อก เช็กสเปกและระยะเวลาผลิต แล้วส่งคำขอใบเสนอราคาครั้งเดียวสำหรับทั้งโครงการ",
+    heroCta: "ดูแคตตาล็อก",
+    heroQuote: "รายการขอใบเสนอราคา",
+    heroCaption: "เก้าอี้พักผ่อนมาลัย หวายธรรมชาติ",
+    shopBy: "เลือกตามพื้นที่",
+    tileDining: "ห้องอาหาร",
+    tileOutdoor: "กลางแจ้งและริมสระ",
+    tileLighting: "โคมไฟ",
+    pieces: (n: number) => `${n} รายการ`,
     brandTag: "สำหรับธุรกิจ",
     search: "ค้นหาสินค้า คอลเลกชัน หรือดีไซเนอร์",
     quoteList: "รายการขอใบเสนอราคา",
@@ -120,7 +142,7 @@ export const dict = {
     empty: "ไม่พบสินค้าที่ตรงกับตัวกรอง ลองเอาตัวกรองออกบางส่วน",
     showFilters: "แสดงตัวกรอง",
     hideFilters: "ซ่อนตัวกรอง",
-    catalogue: "แคตตาล็อก",
+    catalogue: "สินค้าทั้งหมด",
     designedBy: "ออกแบบโดย",
     colourway: "สี",
     quantity: "จำนวน",

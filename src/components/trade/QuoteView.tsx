@@ -9,7 +9,7 @@ import { useTrade } from "./TradeProvider";
 type Errors = Partial<Record<"name" | "company" | "email" | "country", string>>;
 
 const field =
-  "w-full rounded-[6px] border bg-white px-3.5 py-2.5 text-[15px] outline-none transition-colors focus:border-ink";
+  "w-full rounded-[4px] border bg-white px-3.5 py-2.5 text-[15px] outline-none transition-colors focus:border-ink";
 
 export function QuoteView() {
   const { t, lang, items, setQty, remove, clear, count } = useTrade();
@@ -40,11 +40,11 @@ export function QuoteView() {
   if (sent) {
     return (
       <main className="mx-auto max-w-[720px] px-4 py-16 sm:px-8">
-        <div role="status" className="rounded-[6px] border border-line bg-white p-8">
+        <div role="status" className="rounded-[4px] border border-line bg-white p-8">
           <p className="text-[13px] font-medium text-[var(--ok)]">✓ {sent.ref}</p>
           <h1 className="mt-2 text-[2rem] font-[650] tracking-[-0.02em]">{t.sentTitle}</h1>
           <p className="mt-3 text-[16px] leading-relaxed text-muted">{t.sentBody(sent.ref, sent.email)}</p>
-          <Link href="/trade" className="mt-6 inline-block rounded-[6px] bg-ink px-4 py-2.5 text-[14px] text-bg">
+          <Link href="/furniture" className="mt-6 inline-block rounded-[4px] bg-ink px-4 py-2.5 text-[14px] text-bg">
             {t.backToCatalogue}
           </Link>
         </div>
@@ -57,9 +57,9 @@ export function QuoteView() {
       <h1 className="text-[clamp(1.9rem,3.4vw,2.75rem)] font-[650] tracking-[-0.02em]">{t.quoteTitle}</h1>
 
       {items.length === 0 ? (
-        <div className="mt-8 max-w-[560px] rounded-[6px] border border-dashed border-line p-10">
+        <div className="mt-8 max-w-[560px] rounded-[4px] border border-dashed border-line p-10">
           <p className="text-[16px]">{t.quoteEmpty}</p>
-          <Link href="/trade" className="mt-5 inline-block rounded-[6px] bg-ink px-4 py-2.5 text-[14px] text-bg">
+          <Link href="/furniture" className="mt-5 inline-block rounded-[4px] bg-ink px-4 py-2.5 text-[14px] text-bg">
             {t.browse}
           </Link>
         </div>
@@ -73,11 +73,11 @@ export function QuoteView() {
                 const cw = product.colorways.find((c) => c.id === item.colorway) ?? product.colorways[0];
                 return (
                   <li key={`${item.slug}-${item.colorway}`} className="grid grid-cols-[88px_minmax(0,1fr)] gap-4 py-4 sm:grid-cols-[112px_minmax(0,1fr)_auto] sm:items-center">
-                    <Link href={`/trade/${product.slug}`}>
-                      <Photo photo={product.photos[0]} className="aspect-square w-full rounded-[6px]" sizes="112px" showAlt={false} />
+                    <Link href={`/furniture/${product.slug}`}>
+                      <Photo photo={product.photos[0]} className="aspect-square w-full rounded-[4px]" sizes="112px" />
                     </Link>
                     <div>
-                      <Link href={`/trade/${product.slug}`} className="text-[16px] font-[600] hover:underline">
+                      <Link href={`/furniture/${product.slug}`} className="text-[16px] font-[600] hover:underline">
                         {lang === "th" ? product.nameTh : product.name}
                       </Link>
                       <p className="mt-1 flex items-center gap-2 text-[13px] text-muted">
@@ -89,7 +89,7 @@ export function QuoteView() {
                       </p>
                     </div>
                     <div className="col-start-2 flex items-center gap-4 sm:col-start-auto">
-                      <div className="flex items-center rounded-[6px] border border-line bg-white">
+                      <div className="flex items-center rounded-[4px] border border-line bg-white">
                         <button type="button" onClick={() => setQty(item.slug, item.colorway, item.qty - 1)} className="px-3 py-1.5" aria-label="Decrease quantity">
                           −
                         </button>
@@ -111,7 +111,7 @@ export function QuoteView() {
             <p className="tabular mt-3 text-[14px] text-muted">{t.totalUnits(count)}</p>
           </section>
 
-          <section aria-labelledby="project-heading" className="rounded-[6px] border border-line bg-white p-6 lg:self-start">
+          <section aria-labelledby="project-heading" className="rounded-[4px] border border-line bg-white p-6 lg:self-start">
             <h2 id="project-heading" className="text-[18px] font-[650]">
               {t.project}
             </h2>
@@ -168,7 +168,7 @@ export function QuoteView() {
                 </label>
                 <textarea id="q-notes" name="notes" rows={4} placeholder={t.notesHint} className={`${field} border-line placeholder:text-muted/70`} />
               </div>
-              <button type="submit" className="rounded-[6px] bg-accent px-5 py-3 text-[15px] font-medium text-accent-ink transition-opacity hover:opacity-90 sm:col-span-2">
+              <button type="submit" className="rounded-[4px] bg-accent px-5 py-3 text-[15px] font-medium text-accent-ink transition-opacity hover:opacity-90 sm:col-span-2">
                 {t.send}
               </button>
             </form>

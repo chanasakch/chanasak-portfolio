@@ -4,37 +4,37 @@ import { photos } from "@/data/images";
 
 const concepts = [
   {
-    href: "/saan",
-    name: "SAAN Atelier",
-    nameStyle: { fontFamily: "Marcellus, serif", letterSpacing: "0.08em" },
-    swatch: "#8c2b26",
-    photo: photos.bambooChairStudio,
-    job: "Brand website",
+    href: "/furniture",
+    name: "Loom & Tide",
+    nameStyle: { fontFamily: '"Schibsted Grotesk Variable", "Schibsted Grotesk", sans-serif', fontWeight: 650, letterSpacing: "-0.03em" },
+    photo: photos.archedTerraceChairs,
+    position: "50% 70%",
+    job: "Furniture brand and trade catalogue",
     problem:
-      "A rattan maker with 35 years of craft, award-winning designers and a material story, presented with the confidence of a European design brand.",
-    inside: ["Editorial product hero", "Colourway picker", "Material process", "Designers and awards", "Showroom booking"],
+      "A woven furniture maker selling to hotels, designers and homeowners. Visitors filter more than a hundred pieces, read the specifications and send one quote request for a whole project.",
+    inside: ["Catalogue with filters", "Spec pages", "Colourway preview", "Quote list", "Thai and English"],
   },
   {
-    href: "/trade",
-    name: "Loom & Tide Trade",
-    nameStyle: { fontFamily: '"Schibsted Grotesk Variable", "Schibsted Grotesk", sans-serif', fontWeight: 650 },
-    swatch: "#d4501c",
-    photo: photos.cafeRattanRow,
-    job: "Trade catalogue",
+    href: "/ceramics",
+    name: "DIN Studio",
+    nameStyle: { fontFamily: '"Italiana", serif', letterSpacing: "0.12em" },
+    photo: photos.budVases,
+    position: "50% 45%",
+    job: "Craft brand site",
     problem:
-      "Hundreds of products and no prices online. Interior designers and distributors filter, compare specs and send one quote request instead of five emails.",
-    inside: ["Filters by use and material", "Spec sheets you can print", "Live colourway preview", "Quote list", "Thai and English"],
+      "A small stoneware studio that sells pieces, supplies restaurants and teaches. The site tells the material story and turns it into orders, sample requests and class bookings.",
+    inside: ["Product grid", "Glaze explorer", "Making process", "Restaurant sample request", "Workshop booking"],
   },
   {
-    href: "/projects",
-    name: "Ruen Projects",
+    href: "/hotel",
+    name: "Ruen Doi",
     nameStyle: { fontFamily: '"Bodoni Moda Variable", "Bodoni Moda", serif', fontStyle: "italic" as const },
-    swatch: "#e7a336",
-    photo: photos.pergolaPool,
-    job: "Hospitality showcase",
+    photo: photos.balconyRattanPods,
+    position: "50% 60%",
+    job: "Boutique hotel",
     problem:
-      "Hotels, condos and screen work turned into case studies that sell. Tap a piece in the photo to see what it is and request it for your own project.",
-    inside: ["Case studies by sector", "Shop-the-space hotspots", "Project facts", "Client quotes", "Project inquiry form"],
+      "A 24-room hotel in the hills of Chiang Rai. Guests check prices for their dates, compare rooms and see the furniture in each space, with links to the maker.",
+    inside: ["Availability check", "Room comparison", "Furniture hotspots", "Spaces gallery", "Stay request"],
   },
 ];
 
@@ -42,13 +42,13 @@ export default function Home() {
   return (
     <main className="mx-auto max-w-[1240px] px-4 pb-24 pt-10 sm:px-8 sm:pt-16">
       <header className="grid gap-6 border-b border-line pb-10 md:grid-cols-[1.4fr_1fr] md:items-end">
-        <h1 className="max-w-[16ch] text-[clamp(2.2rem,5vw,3.9rem)] font-[450] leading-[1.02] tracking-[-0.02em]">
-          Three website concepts for a Thai rattan furniture maker
+        <h1 className="max-w-[17ch] text-[clamp(2.2rem,5vw,3.9rem)] font-[450] leading-[1.02] tracking-[-0.02em]">
+          Three website concepts for Thai craft and hospitality brands
         </h1>
         <div className="space-y-3 text-[15px] leading-relaxed text-muted">
           <p>
-            Built as working front-ends, not mockups. Every brand, product and project here is fictional, made to show
-            how a craft furniture company could present itself to homeowners, designers and hotels.
+            Working front-ends, not mockups. Every page can be clicked through, every form responds. The brands are fictional,
+            built to show how makers and hotels in Thailand can present themselves to buyers at home and abroad.
           </p>
           <p className="text-ink">Chanasak Choonuch, full-stack engineer and product owner, Bangkok</p>
         </div>
@@ -57,21 +57,10 @@ export default function Home() {
       <ol className="divide-y divide-line">
         {concepts.map((c) => (
           <li key={c.href}>
-            <Link
-              href={c.href}
-              className="group grid gap-6 py-10 md:grid-cols-[minmax(0,1.05fr)_minmax(0,1fr)] md:gap-12"
-            >
-              <Photo
-                photo={c.photo}
-                className="aspect-[4/3] rounded-[2px]"
-                imgClassName="transition-transform duration-[1200ms] ease-out group-hover:scale-[1.03]"
-                sizes="(min-width: 768px) 600px, 100vw"
-              />
+            <Link href={c.href} className="group grid gap-6 py-10 md:grid-cols-[minmax(0,1.05fr)_minmax(0,1fr)] md:gap-12">
+              <Photo photo={c.photo} className="aspect-[4/3] rounded-[2px]" position={c.position} sizes="(min-width: 768px) 600px, 100vw" />
               <div className="flex flex-col">
-                <p className="flex items-center gap-2 text-[13px] text-muted">
-                  <span className="inline-block size-2.5 rounded-full" style={{ background: c.swatch }} />
-                  {c.job}
-                </p>
+                <p className="text-[13px] text-muted">{c.job}</p>
                 <h2 className="mt-3 text-[clamp(2rem,4vw,3rem)] leading-none" style={c.nameStyle}>
                   {c.name}
                 </h2>

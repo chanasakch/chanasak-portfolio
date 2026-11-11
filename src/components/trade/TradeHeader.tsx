@@ -12,7 +12,7 @@ export function TradeHeader() {
   return (
     <header className="no-print sticky top-0 z-40 border-b border-line bg-bg/95 backdrop-blur">
       <div className="mx-auto flex max-w-[1440px] flex-wrap items-center gap-x-6 gap-y-3 px-4 py-3 sm:px-8">
-        <Link href="/trade" className="flex items-baseline gap-2" aria-label="Loom and Tide trade catalogue">
+        <Link href="/furniture" className="flex items-baseline gap-2" aria-label="Loom and Tide trade catalogue">
           <span className="text-[19px] font-[650] tracking-[-0.02em]">Loom &amp; Tide</span>
           <span className="rounded-[3px] bg-ink px-1.5 py-0.5 text-[11px] font-medium text-bg">{t.brandTag}</span>
         </Link>
@@ -22,7 +22,7 @@ export function TradeHeader() {
           className="order-3 w-full sm:order-none sm:w-auto sm:flex-1"
           onSubmit={(e) => {
             e.preventDefault();
-            if (pathname !== "/trade") router.push("/trade");
+            if (pathname !== "/furniture") router.push("/furniture");
           }}
         >
           <label className="sr-only" htmlFor="trade-search">
@@ -34,15 +34,15 @@ export function TradeHeader() {
             value={query}
             onChange={(e) => {
               setQuery(e.target.value);
-              if (pathname !== "/trade") router.push("/trade");
+              if (pathname !== "/furniture") router.push("/furniture");
             }}
             placeholder={t.search}
-            className="w-full max-w-[520px] rounded-[6px] border border-line bg-white px-3.5 py-2 text-[14px] outline-none placeholder:text-muted focus:border-ink"
+            className="w-full max-w-[520px] rounded-[4px] border border-line bg-white px-3.5 py-2 text-[14px] outline-none placeholder:text-muted focus:border-ink"
           />
         </form>
 
         <div className="ml-auto flex items-center gap-2">
-          <div className="flex rounded-[6px] border border-line p-0.5 text-[13px]" role="group" aria-label="Language">
+          <div className="flex rounded-[4px] border border-line p-0.5 text-[13px]" role="group" aria-label="Language">
             {(["en", "th"] as const).map((l) => (
               <button
                 key={l}
@@ -56,8 +56,8 @@ export function TradeHeader() {
             ))}
           </div>
           <Link
-            href="/trade/quote"
-            className="flex items-center gap-2 rounded-[6px] bg-accent px-3.5 py-2 text-[14px] font-medium text-accent-ink transition-opacity hover:opacity-90"
+            href="/furniture/quote"
+            className="flex items-center gap-2 rounded-[4px] bg-accent px-3.5 py-2 text-[14px] font-medium text-accent-ink transition-opacity hover:opacity-90"
           >
             {t.quoteList}
             <span className="tabular min-w-5 rounded-full bg-white/25 px-1.5 text-center text-[12px]" aria-label={`${count} units`}>

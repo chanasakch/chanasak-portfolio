@@ -1,85 +1,86 @@
-// All photos are free to use under the Pexels license (https://www.pexels.com/license/).
-// Before going live, download the final picks into /public/images and point `src` at them,
-// so a photo removed from Pexels can never break the page.
+// Photos from Pexels (free to use under the Pexels license, https://www.pexels.com/license/).
+// Files live in /public/images as <slug>-800.webp and <slug>-1600.webp.
 
 export type Photo = {
-  id: number;
+  slug: string;
   alt: string;
-  /** Pexels page, used on the credits list */
-  page: string;
+  /** pixel size of the 1600 file, used for aspect ratio */
+  w: number;
+  h: number;
+  pexelsId: number;
+  photographer?: string;
 };
 
-const p = (id: number, slug: string, alt: string): Photo => ({
-  id,
+const p = (slug: string, alt: string, w: number, h: number, pexelsId: number, photographer?: string): Photo => ({
+  slug,
   alt,
-  page: `https://www.pexels.com/photo/${slug}-${id}/`,
+  w,
+  h,
+  pexelsId,
+  photographer,
 });
 
 export const photos = {
-  // Studio and product-led
-  bambooChairStudio: p(9396422, "brown-wooden-armchair-on-concrete-floor", "Woven armchair on a concrete floor against a white wall"),
-  minimalRattanRoom: p(9396399, "rattan-furniture-in-minimalist-house-interior", "Rattan furniture in a minimal interior"),
-  wickerArmchairTable: p(8987823, "brown-wooden-framed-gray-padded-armchair", "Hand-woven armchair with a side table"),
-  weaveCloseUp: p(14957889, "wicker-armchair-in-close-up", "Close-up of a woven armchair"),
-  armrestDetail: p(16647086, "close-up-of-wooden-and-wickered-chair", "Detail of a woven armrest on a wooden frame"),
-  greenCushionChair: p(16647088, "wickered-chairs-by-table", "Woven chair with a green cushion beside a glass table"),
-  greenCushionDetail: p(16647089, "close-up-of-wickered-and-wooden-chair", "Woven chair and wooden frame in daylight"),
-  chairsPatternFloor: p(18464896, "design-chairs-on-display", "Rattan chairs on a patterned floor"),
-  chevronResortSet: p(12713220, "customized-furniture-made-of-rattan", "Rattan set on chevron tiles in a Thai resort"),
-  wovenChairsInterior: p(9381048, "brown-wooden-chair-beside-round-table", "Woven chairs and tables in a contemporary room"),
-  cafeRattanRow: p(25328879, "chairs-and-tables-in-row-in-restaurant", "Rattan chairs and tables in a sunlit café"),
-  tropicalCushionPair: p(32497580, "cozy-patio-seating-with-tropical-plant-decor", "Two rattan chairs beside a tall plant"),
-  pampasRattanChair: p(30059653, "cozy-modern-interior-with-pampas-and-rattan-chair", "Rattan chair in a modern interior"),
-  sunlitWickerChair: p(18396532, "elegant-wicker-chair", "Woven chair in a sunlit apartment"),
-  windowArmchair: p(5825409, "cozy-interior-with-wicker-chair-in-corner", "Woven armchair with cushion by a window"),
-  windowArmchairTop: p(5825410, "wicker-chair-with-cushion-near-window", "Woven armchair seen from above"),
-  sunlitRattanArmchair: p(9890646, "patio-furniture-set", "Rattan armchair and table in a sunlit room"),
-  brightRoomSet: p(21614915, "wicker-table-and-chairs", "Woven table and chairs in a bright room"),
-  loveseatBase: p(271648, "white-suede-loveseat-with-brown-wicker-base", "Sofa on a woven base"),
-  patioModernSet: p(8041135, "an-empty-sofa-set", "Outdoor patio with woven seating"),
-  rooftopSet: p(11888487, "sofa-set-on-the-roof-top", "Rooftop terrace with woven furniture"),
-  terraceSet: p(26793170, "sofa-and-chairs-on-house-terrace", "Outdoor rattan set on a terrace"),
-  gardenPatioSet: p(27975920, "gc-rattan-outdoor-crafts", "Rattan seating on a garden patio"),
-  baliDining: p(32675934, "elegant-outdoor-dining-in-bali-with-wicker-chairs", "Outdoor dining with white woven chairs"),
-  gardenSofa: p(6430742, "cozy-rattan-sofa-with-cushions-in-tropical-garden", "Rattan sofa in a tropical garden"),
-
-  // Material and craft
-  hexWeave: p(6594391, "close-up-photo-of-natural-rattan-hexagonal-woven-material", "Hexagonal rattan weave"),
-  rawRattan: p(14055719, "pile-of-rattan-raw-materials-photo", "Bundles of raw rattan"),
-  naturalWeave: p(36299694, "natural-wicker-texture-close-up-pattern", "Natural woven texture"),
-  woodWeave: p(18372339, "close-up-a-woven-wicker-structure", "Woven structure in close-up"),
-  rattanMat: p(265009, "round-wicker-board-on-wooden-surface", "Woven rattan mat"),
-  workshop: p(32403960, "traditional-handicraft-workshop-in-ha-n-i", "Handicraft workshop"),
-  handsWeaving: p(4219654, "top-view-photo-of-two-person-s-hands-weaving", "Two pairs of hands weaving"),
-
-  // Lighting
-  wickerPendants: p(17299918, "wicker-lamps-hanging", "Three woven pendant lamps against a grey wall"),
-  rattanLamps: p(235187, "beige-pendant-lamp-switch-on-outside-house", "Rattan lamps hanging indoors"),
-  wovenCeilingLights: p(39078818, "modern-ceiling-lamps-in-contemporary-interior", "Woven ceiling shades in a modern interior"),
-  wovenFixtures: p(34941015, "cozy-display-of-rustic-woven-light-fixtures", "Display of woven light fixtures"),
-
-  // Hospitality
-  rattanHeadboard: p(39836709, "cozy-boutique-hotel-room-with-rattan-headboard", "Hotel room with a rattan headboard"),
-  canopyBedroom: p(29000313, "luxurious-tropical-resort-bedroom-with-canopy-bed", "Tropical resort bedroom with a canopy bed"),
-  villaInterior: p(4917176, "interior-of-typical-villa-located-in-lush-tropical-garden", "Villa interior in a tropical garden"),
-  hotelLobby: p(31080809, "elegant-luxury-hotel-lobby-with-warm-ambiance", "Hotel lobby in warm light"),
-  baliPool: p(2259226, "swimming-pool-beside-cottages", "Pool beside resort cottages"),
-  pergolaPool: p(32516576, "luxurious-poolside-retreat-with-wooden-pergola", "Pool with a wooden pergola and loungers"),
-  poolWicker: p(11045257, "wicker-table-and-chairs-near-swimming-pool", "Woven table and chairs near a pool"),
-  tropicalPoolside: p(37517002, "luxurious-tropical-poolside-with-lounge-chairs", "Tropical poolside with lounge chairs"),
-  modernHotelPool: p(33881123, "modern-and-luxurious-outdoor-hotel-pool-area", "Modern hotel pool with sun loungers"),
-  palmLoungers: p(11448503, "patio-chaise-lounge-chairs-by-the-pool", "Chaise loungers among palm trees"),
-  cafeWarm: p(28704256, "cozy-parisian-cafe-interior-with-warm-lighting", "Café interior in warm light"),
-  sunsetHotel: p(37031491, "sunset-view-of-modern-tropical-hotel", "Tropical hotel at sunset"),
-  quietRoom: p(4995109, "chairs-for-relaxation-in-empty-room", "Lounge chairs in a quiet room"),
+  rattanArmchairStudio: p("rattan-armchair-studio", "Rattan armchair against a white plaster wall", 1664, 2432, 9396424, "Labskiii"),
+  caneFoldingChair: p("cane-folding-chair", "Teak folding chair with a cane seat", 1664, 2432, 7193570, "www.kaboompics.com"),
+  caneSideChairSunlight: p("cane-side-chair-sunlight", "Cane side chair in late afternoon light", 1664, 2432, 8516702, "Anna Nekrashevich"),
+  balconyRattanPods: p("balcony-rattan-pods", "Two woven lounge chairs on a balcony facing misty hills", 2432, 1664, 6130068, "Quang Nguyen Vinh"),
+  wanPod: p("wan-pod", "Woven lounge chair", 997, 866, 6130068, "Quang Nguyen Vinh"),
+  wanTable: p("wan-table", "Woven drum side table", 730, 699, 6130068, "Quang Nguyen Vinh"),
+  bellPendantsKitchen: p("bell-pendants-kitchen", "Three woven bell pendants over a kitchen island", 1664, 2432, 29589458, "Andrea Davis"),
+  bellPendantsLiving: p("bell-pendants-living", "Woven bell pendants in a timber-ceilinged living room", 2432, 1664, 30018179, "Andrea Davis"),
+  domePendant: p("dome-pendant", "Large woven dome pendant over a dining table", 2432, 1664, 33054911, "Mateusz Pielech"),
+  trioPendants: p("trio-pendants", "Three woven pendants of different shapes on a brass bar", 1664, 2304, 15948527, "Mia Dalisay"),
+  globePendant: p("globe-pendant", "Woven globe pendant above a round dining table", 1664, 2432, 29559667, "Juan Tapias"),
+  caneDiningChairs: p("cane-dining-chairs", "Teak dining chairs with cane backs in a double-height room", 1664, 2432, 33479124, "Siddanth Sawant"),
+  cafeCaneChairs: p("cafe-cane-chairs", "Cane-back bistro chairs in a bright caf\u00e9", 1536, 2688, 23895207, "Ayşegül"),
+  bistroChairsTerrace: p("bistro-chairs-terrace", "Rows of rattan bistro chairs on a terrace", 1792, 2176, 21835298, "Iryna Varanovich"),
+  archedTerraceChairs: p("arched-terrace-chairs", "Two woven armchairs under stone arches facing the sea", 2304, 1664, 37564040, "Elmer Domingo"),
+  outdoorDiningWoven: p("outdoor-dining-woven", "Woven outdoor dining armchairs on a terrace above the sea", 2432, 1664, 31817166, "Ahmet ÇÖTÜR"),
+  loungeTeakCane: p("lounge-teak-cane", "Teak and cane lounge chairs around a round side table", 1664, 2304, 28744513, "Charm Andaya"),
+  outdoorSofaPergola: p("outdoor-sofa-pergola", "Woven outdoor sofa under a pergola at dusk", 2432, 1664, 27626171, "Ahmet ÇÖTÜR"),
+  sunbedsSand: p("sunbeds-sand", "Woven sunbeds on sand under thatched parasols", 2432, 1664, 3620235, "Engin Akyurt"),
+  wovenPendantStudio: p("woven-pendant-studio", "Woven cylinder pendant against a white wall", 6000, 4000, 3554241, undefined),
+  wovenPendantLit: p("woven-pendant-lit", "Woven pendant lamp glowing at night", 5184, 3456, 234780, undefined),
+  rattanLoungeSet: p("rattan-lounge-set", "Rattan lounge set under a timber pergola", 4320, 3240, 279867, undefined),
+  outdoorDiningSet: p("outdoor-dining-set", "Woven armchairs around a teak garden table", 3497, 2063, 238377, undefined),
+  lakeRoom: p("lake-room", "Bedroom with woven pendants and a lake view", 2432, 1664, 35261473, "果 芒"),
+  gardenRoom: p("garden-room", "Bedroom with a wall of glass onto palms", 2432, 1664, 33467180, "Siddanth Sawant"),
+  forestSuite: p("forest-suite", "Suite with a low bed and a door onto a planted terrace", 2432, 1664, 27604102, "Ansar Muhammad"),
+  readingCorner: p("reading-corner", "Woven chairs by tall timber windows", 1536, 2688, 15062485, "Matteo Milan"),
+  terraceDining: p("terrace-dining", "Long dining table on a stone terrace among trees", 1536, 2688, 28277111, "nur telli"),
+  mistyTerrace: p("misty-terrace", "Terrace tables under a pergola above a misty valley", 2432, 1664, 15551725, "Luis Becerra  Fotógrafo"),
+  resortPool: p("resort-pool", "Pool lined with palms and thatched pavilions", 1664, 2304, 27817324, "ĐỨCANH MEDIA"),
+  indoorPool: p("indoor-pool", "Glass-walled pool hall with tiled floor and loungers", 1664, 2304, 9973710, "Aljona Ovtšinnikova"),
+  courtyardHouse: p("courtyard-house", "Old house courtyard with lanterns and a dining table", 2048, 2048, 31213888, "Thới Nam Cao"),
+  budVases: p("bud-vases", "Two stoneware bud vases with dried lavender", 3376, 5040, 2789545, undefined),
+  fernPitcher: p("fern-pitcher", "Grey glazed pitcher with an embossed fern pattern", 2432, 1664, 7851712, "İbrahim Doğan"),
+  whiteTablewareSet: p("white-tableware-set", "White stoneware pitcher, cup, bowl and saucer", 1792, 2176, 9223173, "DRAKE NICOLLS"),
+  pitchersMimosa: p("pitchers-mimosa", "Two white pitchers, one holding mimosa", 1792, 2176, 20433164, "Ayako S"),
+  vesselsShelf: p("vessels-shelf", "Three vessels on a lit plaster shelf", 1664, 2304, 10467462, "Valeriya Kobzar"),
+  placeSetting: p("place-setting", "Matte white plate with a linen napkin on a woven charger", 1664, 2304, 28951621, "bissinbloguu"),
+  clayWorkbench: p("clay-workbench", "Clay being worked on a studio bench", 1664, 2304, 33799212, "Bilge ."),
+  throwing: p("throwing", "Hands throwing a vase on the wheel", 1664, 2304, 36370412, "Narasimhan AVPL"),
+  bisqueShelves: p("bisque-shelves", "Unglazed pieces drying on studio shelves", 1664, 2304, 8063869, "ROMAN ODINTSOV"),
+  glazedShelves: p("glazed-shelves", "Potter placing a finished vase on the studio shelf", 2432, 1664, 37827245, "Onur Burak Akın"),
+  twoHandsWheel: p("two-hands-wheel", "Teacher guiding a student at the wheel", 2048, 1920, 36739021, "3B"),
+  mugsPair: p("mugs-pair", "Two matte iron-glaze mugs", 3775, 2512, 50676, undefined),
+  porcelainService: p("porcelain-service", "Faceted white porcelain tea service", 5448, 3632, 5975, undefined),
+  whiteVesselsSoft: p("white-vessels-soft", "White vessels drying on a shelf", 2782, 4165, 3094032, undefined),
 } satisfies Record<string, Photo>;
 
 export type PhotoKey = keyof typeof photos;
 
-export function photoUrl(photo: Photo, width = 1600) {
-  return `https://images.pexels.com/photos/${photo.id}/pexels-photo-${photo.id}.jpeg?auto=compress&cs=tinysrgb&w=${width}`;
+const BASE = process.env.NEXT_PUBLIC_IMG_BASE ?? "/images/";
+
+export function photoUrl(photo: Photo, width: 800 | 1600 = 1600) {
+  return `${BASE}${photo.slug}-${width}.webp`;
 }
 
-export function photoSrcSet(photo: Photo, widths = [640, 1024, 1600, 2200]) {
-  return widths.map((w) => `${photoUrl(photo, w)} ${w}w`).join(", ");
+export function photoSrcSet(photo: Photo) {
+  return `${photoUrl(photo, 800)} 800w, ${photoUrl(photo, 1600)} ${Math.min(1600, photo.w)}w`;
+}
+
+export function pexelsPage(photo: Photo) {
+  return `https://www.pexels.com/photo/${photo.pexelsId}/`;
 }

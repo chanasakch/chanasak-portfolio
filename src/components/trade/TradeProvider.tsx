@@ -2,6 +2,7 @@
 
 import { createContext, useCallback, useContext, useEffect, useMemo, useState } from "react";
 import { dict, type Dict, type Lang } from "./dict";
+import type { Category } from "@/data/products";
 
 export type QuoteItem = { slug: string; colorway: string; qty: number };
 
@@ -11,6 +12,8 @@ type TradeState = {
   t: Dict;
   query: string;
   setQuery: (q: string) => void;
+  cats: Category[];
+  setCats: (c: Category[]) => void;
   items: QuoteItem[];
   add: (item: QuoteItem) => void;
   setQty: (slug: string, colorway: string, qty: number) => void;
@@ -45,6 +48,7 @@ export function TradeProvider({ children }: { children: React.ReactNode }) {
   const [lang, setLangState] = useState<Lang>("en");
   const [items, setItems] = useState<QuoteItem[]>([]);
   const [query, setQuery] = useState("");
+  const [cats, setCats] = useState<Category[]>([]);
   const [loaded, setLoaded] = useState(false);
 
   useEffect(() => {
@@ -98,6 +102,8 @@ export function TradeProvider({ children }: { children: React.ReactNode }) {
       t: dict[lang] as unknown as Dict,
       query,
       setQuery,
+      cats,
+      setCats,
       items,
       add,
       setQty,
@@ -105,7 +111,7 @@ export function TradeProvider({ children }: { children: React.ReactNode }) {
       clear,
       count: items.reduce((n, i) => n + i.qty, 0),
     }),
-    [lang, setLang, query, items, add, setQty, remove, clear],
+    [lang, setLang, query, cats, items, add, setQty, remove, clear],
   );
 
   return <Ctx.Provider value={value}>{children}</Ctx.Provider>;

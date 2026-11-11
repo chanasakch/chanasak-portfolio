@@ -12,8 +12,7 @@ const categories = Object.keys(categoryLabels) as Category[];
 const materials = Object.keys(materialLabels) as Material[];
 
 export function Catalogue() {
-  const { t, lang, query } = useTrade();
-  const [cats, setCats] = useState<Category[]>([]);
+  const { t, lang, query, cats, setCats } = useTrade();
   const [mats, setMats] = useState<Material[]>([]);
   const [outdoor, setOutdoor] = useState(false);
   const [contract, setContract] = useState(false);
@@ -58,13 +57,13 @@ export function Catalogue() {
   const check = "size-4 accent-[var(--ink)]";
 
   return (
-    <div className="mx-auto grid max-w-[1440px] gap-8 px-4 pb-24 sm:px-8 lg:grid-cols-[240px_minmax(0,1fr)]">
+    <div id="catalogue" className="mx-auto grid max-w-[1440px] scroll-mt-20 gap-8 px-4 pb-24 pt-14 sm:px-8 lg:grid-cols-[240px_minmax(0,1fr)]">
       <button
         type="button"
         onClick={() => setShowFilters((v) => !v)}
         aria-expanded={showFilters}
         aria-controls="trade-filters"
-        className="rounded-[6px] border border-line px-3 py-2 text-left text-[14px] lg:hidden"
+        className="rounded-[4px] border border-line px-3 py-2 text-left text-[14px] lg:hidden"
       >
         {showFilters ? t.hideFilters : t.showFilters}
         {active > 0 && <span className="ml-2 text-muted">({active})</span>}
@@ -141,6 +140,7 @@ export function Catalogue() {
       </aside>
 
       <section aria-label={t.catalogue}>
+        <h2 className="mb-5 text-[clamp(1.6rem,2.6vw,2.2rem)] font-[650] tracking-[-0.02em]">{t.catalogue}</h2>
         <div className="mb-6 flex items-center justify-between gap-4 border-b border-line pb-3">
           <p className="tabular text-[14px] text-muted" aria-live="polite">
             {t.results(results.length)}
@@ -150,7 +150,7 @@ export function Catalogue() {
             <select
               value={sort}
               onChange={(e) => setSort(e.target.value as Sort)}
-              className="rounded-[6px] border border-line bg-white px-2 py-1.5 text-[14px]"
+              className="rounded-[4px] border border-line bg-white px-2 py-1.5 text-[14px]"
             >
               <option value="new">{t.sortNew}</option>
               <option value="lead">{t.sortLead}</option>
@@ -160,7 +160,7 @@ export function Catalogue() {
         </div>
 
         {results.length === 0 ? (
-          <div className="rounded-[6px] border border-dashed border-line p-10 text-center">
+          <div className="rounded-[4px] border border-dashed border-line p-10 text-center">
             <p className="text-[15px]">{t.empty}</p>
             <button type="button" onClick={clearAll} className="mt-4 text-[14px] underline underline-offset-4">
               {t.clear}

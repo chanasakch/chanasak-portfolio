@@ -12,49 +12,44 @@ type Props = {
   priority?: boolean;
   /** Override the alt text when the photo plays a specific role on the page */
   alt?: string;
-  /** Show the alt text inside the frame if the image fails. Turn off for small thumbnails. */
-  showAlt?: boolean;
+  /** CSS object-position, for photos whose subject is off-centre */
+  position?: string;
 };
 
 /**
- * A photo inside a woven placeholder frame. The frame shows while the image
- * loads, and stays (with the alt text) if the image ever fails.
+ * A photo inside a quiet placeholder frame. The frame shows while the image
+ * loads and keeps the layout steady.
  */
-export function Photo({ photo, className = "", imgClassName = "", sizes = "100vw", priority, alt, showAlt = true }: Props) {
+export function Photo({ photo, className = "", imgClassName = "", sizes = "100vw", priority, alt, position }: Props) {
   const ref = useRef<HTMLImageElement>(null);
-  const [state, setState] = useState<"loading" | "ready" | "failed">("loading");
+  const [ready, setReady] = useState(false);
 
   useEffect(() => {
     const img = ref.current;
-    if (!img || !img.complete) return;
-    // The image may have finished before hydration attached the handlers.
-    const next = img.naturalWidth > 0 ? "ready" : "failed";
-    queueMicrotask(() => setState(next));
+    // The image may have finished before hydration attached the handler.
+    if (img?.complete && img.naturalWidth > 0) queueMicrotask(() => setReady(true));
   }, []);
 
   return (
-    <div className={`weave relative overflow-hidden ${className}`}>
-      {state !== "failed" && (
-        // eslint-disable-next-line @next/next/no-img-element
-        <img
-          ref={ref}
-          src={photoUrl(photo, 1600)}
-          srcSet={photoSrcSet(photo)}
-          sizes={sizes}
-          alt={alt ?? photo.alt}
-          loading={priority ? "eager" : "lazy"}
-          fetchPriority={priority ? "high" : "auto"}
-          decoding="async"
-          onLoad={() => setState("ready")}
-          onError={() => setState("failed")}
-          className={`absolute inset-0 h-full w-full object-cover transition-opacity duration-700 ${
-            state === "ready" ? "opacity-100" : "opacity-0"
-          } ${imgClassName}`}
-        />
-      )}
-      {state === "failed" && showAlt && (
-        <span className="absolute inset-x-0 bottom-0 p-3 text-xs text-muted">{alt ?? photo.alt}</span>
-      )}
+    <div className={`${/\b(absolute|fixed)\b/.test(className) ? "" : "relative "}overflow-hidden bg-soft ${className}`}>
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img
+        ref={ref}
+        src={photoUrl(photo, 1600)}
+        srcSet={photoSrcSet(photo)}
+        sizes={sizes}
+        alt={alt ?? photo.alt}
+        width={photo.w}
+        height={photo.h}
+        loading={priority ? "eager" : "lazy"}
+        fetchPriority={priority ? "high" : "auto"}
+        decoding="async"
+        onLoad={() => setReady(true)}
+        style={position ? { objectPosition: position } : undefined}
+        className={`absolute inset-0 h-full w-full object-cover transition-opacity duration-500 ${
+          ready ? "opacity-100" : "opacity-0"
+        } ${imgClassName}`}
+      />
     </div>
   );
 }
