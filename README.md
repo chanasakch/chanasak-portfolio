@@ -1,36 +1,47 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Furniture and craft web concepts
 
-## Getting Started
+Three working front-end concepts for a Thai rattan furniture brand. All brands, products, clients and projects are fictional.
 
-First, run the development server:
+| Route | Concept | What it shows |
+| --- | --- | --- |
+| `/` | Index | Links to the three concepts |
+| `/saan` | SAAN Atelier, brand site | Editorial hero, collections, colourway picker, material process, designers, awards, showroom booking |
+| `/trade` | Loom & Tide Trade, B2B catalogue | Filters, search, product spec pages, live colourway drawing, printable spec sheet, quote list, Thai and English |
+| `/projects` | Ruen Projects, hospitality showcase | Case studies by sector, shop-the-space hotspots, project facts, client quotes, inquiry form |
+
+## Run locally
 
 ```bash
+npm install
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open http://localhost:3000.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Stack
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+Next.js 16 (App Router), TypeScript, Tailwind CSS 4, Motion. Fonts are self-hosted through Fontsource. No backend: product and project data live in `src/data`, the quote list is kept in the browser's localStorage, and forms show a success state without sending anything.
 
-## Learn More
+## Where to edit
 
-To learn more about Next.js, take a look at the following resources:
+- Products: `src/data/products.ts`
+- Projects and hotspot positions: `src/data/projects.ts`
+- Photos: `src/data/images.ts`
+- Thai and English text for the trade catalogue: `src/components/trade/dict.ts`
+- Brand colours and fonts: `src/app/globals.css` (`.brand-saan`, `.brand-trade`, `.brand-ruen`)
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+### Moving the hotspots
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+Hotspot markers are placed by percentage on each photo. On any project page, press `e` to turn on placement mode, click the spot on the photo, and copy the `{ x, y }` it shows into `src/data/projects.ts`.
 
-## Deploy on Vercel
+## Photos
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+Photos come from Pexels (free under the Pexels license) and load from the Pexels CDN. Before showing this to a client, download the final photos into `public/images` and point `photoUrl` in `src/data/images.ts` at them, so a photo removed from Pexels cannot break the page. Credits are listed at `/credits`.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## Deploy to Vercel
+
+1. Push this folder to a new GitHub repository.
+2. On vercel.com, choose Add New, then Project, and import the repository.
+3. Keep the defaults (Next.js is detected automatically) and deploy.
+
+Every push to the main branch redeploys.

@@ -1,0 +1,455 @@
+import { photos, type Photo } from "./images";
+
+export type Category = "dining" | "lounge" | "bar" | "outdoor" | "lighting" | "tables";
+export type Material =
+  | "natural-rattan"
+  | "rattan-peel"
+  | "poly-rope"
+  | "rice-husk-pe"
+  | "aluminium"
+  | "teak";
+
+export type Colorway = {
+  id: string;
+  name: { en: string; th: string };
+  frame: string;
+  weaveA: string;
+  weaveB: string;
+};
+
+export type Product = {
+  slug: string;
+  name: string;
+  nameTh: string;
+  collection: string;
+  designer: string;
+  year: number;
+  category: Category;
+  materials: Material[];
+  outdoor: boolean;
+  contract: boolean;
+  /** cm */
+  dims: { w: number; d: number; h: number; sh?: number };
+  weightKg: number;
+  cbm: number;
+  moq: number;
+  leadWeeks: number;
+  photos: Photo[];
+  colorways: Colorway[];
+  preview?: "stool" | "chair";
+  summary: { en: string; th: string };
+};
+
+export const categoryLabels: Record<Category, { en: string; th: string }> = {
+  dining: { en: "Dining chairs", th: "เก้าอี้ทานอาหาร" },
+  lounge: { en: "Lounge", th: "เก้าอี้พักผ่อน/โซฟา" },
+  bar: { en: "Bar stools", th: "สตูลบาร์" },
+  outdoor: { en: "Outdoor", th: "เฟอร์นิเจอร์กลางแจ้ง" },
+  tables: { en: "Tables", th: "โต๊ะ" },
+  lighting: { en: "Lighting", th: "โคมไฟ" },
+};
+
+export const materialLabels: Record<Material, { en: string; th: string }> = {
+  "natural-rattan": { en: "Natural rattan", th: "หวายธรรมชาติ" },
+  "rattan-peel": { en: "Rattan peel", th: "ผิวหวาย" },
+  "poly-rope": { en: "Poly-rope", th: "เชือกโพลี" },
+  "rice-husk-pe": { en: "Rice-husk PE rattan", th: "หวายเทียมแกลบข้าว" },
+  aluminium: { en: "Aluminium", th: "อะลูมิเนียม" },
+  teak: { en: "Teak", th: "ไม้สัก" },
+};
+
+const cw = (id: string, en: string, th: string, frame: string, weaveA: string, weaveB: string): Colorway => ({
+  id,
+  name: { en, th },
+  frame,
+  weaveA,
+  weaveB,
+});
+
+export const colorways = {
+  lacquer: cw("lacquer", "Lacquer red", "แดงแล็กเกอร์", "#8E2B27", "#EFE7DA", "#8E2B27"),
+  cobalt: cw("cobalt", "Cobalt", "น้ำเงินโคบอลต์", "#2D3F8C", "#EDEAE2", "#2E6B78"),
+  ink: cw("ink", "Ink and cane", "ดำหมึก", "#2A2926", "#EAE2D3", "#B8894C"),
+  moss: cw("moss", "Moss", "เขียวมอส", "#4A5640", "#E9E5DA", "#C36A2D"),
+  sand: cw("sand", "Sand", "ทราย", "#CBBBA0", "#F2EEE6", "#9C8463"),
+  natural: cw("natural", "Natural", "ธรรมชาติ", "#B68C55", "#D9BD8C", "#B68C55"),
+  smoke: cw("smoke", "Smoked", "รมควัน", "#5A4632", "#8E7253", "#5A4632"),
+  pool: cw("pool", "Pool", "สระน้ำ", "#E9E6DF", "#3FA7A0", "#E06B3A"),
+};
+
+export const products: Product[] = [
+  {
+    slug: "prang-bar-stool",
+    name: "Prang Bar Stool",
+    nameTh: "สตูลบาร์ ปราง",
+    collection: "Prang",
+    designer: "Studio Noknoi",
+    year: 2026,
+    category: "bar",
+    materials: ["aluminium", "poly-rope"],
+    outdoor: true,
+    contract: true,
+    dims: { w: 52, d: 50, h: 98, sh: 75 },
+    weightKg: 6.4,
+    cbm: 0.21,
+    moq: 12,
+    leadWeeks: 8,
+    photos: [photos.chairsPatternFloor, photos.cafeRattanRow],
+    colorways: [colorways.lacquer, colorways.cobalt, colorways.ink, colorways.moss],
+    preview: "stool",
+    summary: {
+      en: "A powder-coated aluminium frame laced with hand-woven poly-rope. Light enough to stack behind a pool bar, tough enough for salt air.",
+      th: "โครงอะลูมิเนียมพ่นสี สานด้วยเชือกโพลีด้วยมือ น้ำหนักเบา วางริมบาร์สระว่ายน้ำได้ ทนลมทะเล",
+    },
+  },
+  {
+    slug: "prang-dining-armchair",
+    name: "Prang Dining Armchair",
+    nameTh: "เก้าอี้ทานอาหารมีพนักแขน ปราง",
+    collection: "Prang",
+    designer: "Studio Noknoi",
+    year: 2026,
+    category: "dining",
+    materials: ["aluminium", "poly-rope"],
+    outdoor: true,
+    contract: true,
+    dims: { w: 56, d: 55, h: 78, sh: 45 },
+    weightKg: 5.2,
+    cbm: 0.24,
+    moq: 12,
+    leadWeeks: 8,
+    photos: [photos.baliDining, photos.poolWicker],
+    colorways: [colorways.lacquer, colorways.cobalt, colorways.ink, colorways.moss],
+    preview: "chair",
+    summary: {
+      en: "The dining height version of Prang. Open weave on the back keeps it cool in tropical heat.",
+      th: "เวอร์ชันความสูงโต๊ะทานอาหารของคอลเลกชันปราง พนักพิงสานโปร่ง ระบายอากาศดีในอากาศร้อน",
+    },
+  },
+  {
+    slug: "malai-lounge-chair",
+    name: "Malai Lounge Chair",
+    nameTh: "เก้าอี้พักผ่อน มาลัย",
+    collection: "Malai",
+    designer: "Pim Asavarat",
+    year: 2026,
+    category: "lounge",
+    materials: ["rattan-peel", "teak"],
+    outdoor: false,
+    contract: true,
+    dims: { w: 78, d: 80, h: 74, sh: 40 },
+    weightKg: 11,
+    cbm: 0.52,
+    moq: 2,
+    leadWeeks: 10,
+    photos: [photos.bambooChairStudio, photos.wickerArmchairTable],
+    colorways: [colorways.natural, colorways.smoke],
+    summary: {
+      en: "Rattan peel woven tight over a curved cane shell, set on a solid teak base. Each shell takes one weaver three days.",
+      th: "ผิวหวายสานแน่นบนโครงหวายดัดโค้ง วางบนฐานไม้สักจริง ช่างหนึ่งคนใช้เวลาสานสามวันต่อตัว",
+    },
+  },
+  {
+    slug: "malai-sofa",
+    name: "Malai Two-Seat Sofa",
+    nameTh: "โซฟาสองที่นั่ง มาลัย",
+    collection: "Malai",
+    designer: "Pim Asavarat",
+    year: 2026,
+    category: "lounge",
+    materials: ["rattan-peel", "teak"],
+    outdoor: false,
+    contract: true,
+    dims: { w: 152, d: 82, h: 74, sh: 40 },
+    weightKg: 24,
+    cbm: 1.1,
+    moq: 1,
+    leadWeeks: 12,
+    photos: [photos.loveseatBase, photos.minimalRattanRoom],
+    colorways: [colorways.natural, colorways.smoke],
+    summary: {
+      en: "Two-seat sofa from the Malai collection, with loose cushions in performance linen.",
+      th: "โซฟาสองที่นั่งจากคอลเลกชันมาลัย เบาะถอดได้ ผ้าลินินกันคราบ",
+    },
+  },
+  {
+    slug: "kluen-dining-chair",
+    name: "Kluen Dining Chair",
+    nameTh: "เก้าอี้ทานอาหาร คลื่น",
+    collection: "Kluen",
+    designer: "Krit Wattanapong",
+    year: 2025,
+    category: "dining",
+    materials: ["aluminium", "poly-rope"],
+    outdoor: true,
+    contract: true,
+    dims: { w: 50, d: 54, h: 82, sh: 46 },
+    weightKg: 4.1,
+    cbm: 0.22,
+    moq: 12,
+    leadWeeks: 6,
+    photos: [photos.greenCushionChair, photos.greenCushionDetail],
+    colorways: [colorways.sand, colorways.ink, colorways.cobalt],
+    preview: "chair",
+    summary: {
+      en: "Rope woven in a wave pattern over a light aluminium frame. Stacks four high.",
+      th: "สานเชือกเป็นลายคลื่นบนโครงอะลูมิเนียมน้ำหนักเบา ซ้อนได้สี่ตัว",
+    },
+  },
+  {
+    slug: "kluen-lounge-set",
+    name: "Kluen Lounge Set",
+    nameTh: "ชุดนั่งเล่น คลื่น",
+    collection: "Kluen",
+    designer: "Krit Wattanapong",
+    year: 2025,
+    category: "outdoor",
+    materials: ["aluminium", "poly-rope", "teak"],
+    outdoor: true,
+    contract: true,
+    dims: { w: 210, d: 86, h: 72, sh: 38 },
+    weightKg: 38,
+    cbm: 1.6,
+    moq: 1,
+    leadWeeks: 8,
+    photos: [photos.terraceSet, photos.rooftopSet],
+    colorways: [colorways.sand, colorways.ink],
+    summary: {
+      en: "Sofa, two lounge chairs and a teak coffee table for terraces and pool decks.",
+      th: "ชุดโซฟา เก้าอี้นั่งเล่นสองตัว และโต๊ะกลางไม้สัก สำหรับระเบียงและริมสระ",
+    },
+  },
+  {
+    slug: "tor-cane-chair",
+    name: "Tor Cane Chair",
+    nameTh: "เก้าอี้สานหวาย ต่อ",
+    collection: "Tor",
+    designer: "Mali & Ton",
+    year: 2024,
+    category: "dining",
+    materials: ["natural-rattan", "rattan-peel"],
+    outdoor: false,
+    contract: false,
+    dims: { w: 54, d: 52, h: 80, sh: 46 },
+    weightKg: 4.6,
+    cbm: 0.26,
+    moq: 4,
+    leadWeeks: 8,
+    photos: [photos.sunlitWickerChair, photos.armrestDetail],
+    colorways: [colorways.natural, colorways.smoke, colorways.ink],
+    summary: {
+      en: "Bent rattan frame with a hand-caned back. A quiet chair for long dinners.",
+      th: "โครงหวายดัด พนักสานลายอ้อยด้วยมือ เก้าอี้เรียบๆ สำหรับมื้อค่ำยาวๆ",
+    },
+  },
+  {
+    slug: "saeng-pendant",
+    name: "Saeng Pendant",
+    nameTh: "โคมไฟแขวน แสง",
+    collection: "Saeng",
+    designer: "Arun Sae-lim",
+    year: 2026,
+    category: "lighting",
+    materials: ["natural-rattan"],
+    outdoor: false,
+    contract: true,
+    dims: { w: 60, d: 60, h: 34 },
+    weightKg: 1.8,
+    cbm: 0.14,
+    moq: 6,
+    leadWeeks: 6,
+    photos: [photos.wickerPendants, photos.rattanLamps],
+    colorways: [colorways.natural, colorways.smoke],
+    summary: {
+      en: "Rattan rod wrapped in a single continuous spiral. Throws a woven shadow across the ceiling.",
+      th: "หวายเส้นพันเป็นเกลียวต่อเนื่องเส้นเดียว ส่องเงาลายสานบนเพดาน",
+    },
+  },
+  {
+    slug: "saeng-floor-lamp",
+    name: "Saeng Floor Lamp",
+    nameTh: "โคมไฟตั้งพื้น แสง",
+    collection: "Saeng",
+    designer: "Arun Sae-lim",
+    year: 2026,
+    category: "lighting",
+    materials: ["natural-rattan", "rice-husk-pe"],
+    outdoor: false,
+    contract: true,
+    dims: { w: 42, d: 42, h: 120 },
+    weightKg: 4.2,
+    cbm: 0.2,
+    moq: 4,
+    leadWeeks: 6,
+    photos: [photos.wovenFixtures, photos.wovenCeilingLights],
+    colorways: [colorways.natural, colorways.smoke],
+    summary: {
+      en: "A tall woven lantern on a slim stand, made with our rice-husk PE rattan for humid rooms.",
+      th: "โคมไฟสานทรงสูงบนขาเรียว ใช้หวายเทียมแกลบข้าว เหมาะกับห้องที่มีความชื้น",
+    },
+  },
+  {
+    slug: "wan-daybed",
+    name: "Wan Daybed",
+    nameTh: "เดย์เบด วัน",
+    collection: "Wan",
+    designer: "Studio Noknoi",
+    year: 2025,
+    category: "outdoor",
+    materials: ["rice-husk-pe", "aluminium"],
+    outdoor: true,
+    contract: true,
+    dims: { w: 180, d: 180, h: 70, sh: 36 },
+    weightKg: 42,
+    cbm: 2.4,
+    moq: 1,
+    leadWeeks: 10,
+    photos: [photos.gardenSofa, photos.gardenPatioSet],
+    colorways: [colorways.pool, colorways.sand],
+    summary: {
+      en: "A round daybed woven in three colours of rice-husk PE rattan. Built for gardens and pool lawns.",
+      th: "เดย์เบดทรงกลม สานด้วยหวายเทียมแกลบข้าวสามสี สำหรับสวนและสนามหญ้าริมสระ",
+    },
+  },
+  {
+    slug: "duang-sunbed",
+    name: "Duang Sunbed",
+    nameTh: "เตียงอาบแดด ดวง",
+    collection: "Duang",
+    designer: "Krit Wattanapong",
+    year: 2026,
+    category: "outdoor",
+    materials: ["aluminium", "poly-rope"],
+    outdoor: true,
+    contract: true,
+    dims: { w: 72, d: 200, h: 38, sh: 32 },
+    weightKg: 17,
+    cbm: 0.62,
+    moq: 6,
+    leadWeeks: 8,
+    photos: [photos.palmLoungers, photos.tropicalPoolside],
+    colorways: [colorways.pool, colorways.sand, colorways.ink],
+    summary: {
+      en: "Flat-strap sunbed with a five-position back. Strap colours can be matched to a resort palette.",
+      th: "เตียงอาบแดดสานสายแบน ปรับพนักได้ห้าระดับ เลือกสีสายให้เข้ากับโทนรีสอร์ตได้",
+    },
+  },
+  {
+    slug: "noi-side-table",
+    name: "Noi Side Table",
+    nameTh: "โต๊ะข้าง น้อย",
+    collection: "Noi",
+    designer: "Mali & Ton",
+    year: 2025,
+    category: "tables",
+    materials: ["rice-husk-pe", "aluminium"],
+    outdoor: true,
+    contract: true,
+    dims: { w: 45, d: 45, h: 50 },
+    weightKg: 6,
+    cbm: 0.11,
+    moq: 6,
+    leadWeeks: 6,
+    photos: [photos.brightRoomSet, photos.tropicalCushionPair],
+    colorways: [colorways.pool, colorways.lacquer, colorways.sand],
+    summary: {
+      en: "A woven drum base with a terrazzo top. Pairs with Duang and Kluen by the pool.",
+      th: "ฐานทรงกลองสานหวาย ท็อปหินขัด เข้าชุดกับดวงและคลื่นริมสระ",
+    },
+  },
+  {
+    slug: "chan-dining-table",
+    name: "Chan Dining Table",
+    nameTh: "โต๊ะทานอาหาร จันทร์",
+    collection: "Chan",
+    designer: "Pim Asavarat",
+    year: 2024,
+    category: "tables",
+    materials: ["teak", "rattan-peel"],
+    outdoor: false,
+    contract: true,
+    dims: { w: 220, d: 100, h: 75 },
+    weightKg: 48,
+    cbm: 0.9,
+    moq: 1,
+    leadWeeks: 12,
+    photos: [photos.wovenChairsInterior, photos.minimalRattanRoom],
+    colorways: [colorways.natural, colorways.smoke],
+    summary: {
+      en: "Solid teak top on woven rattan-peel legs. Seats eight.",
+      th: "ท็อปไม้สักจริง ขาสานผิวหวาย นั่งได้แปดคน",
+    },
+  },
+  {
+    slug: "lom-easy-chair",
+    name: "Lom Easy Chair",
+    nameTh: "เก้าอี้นั่งเล่น ลม",
+    collection: "Lom",
+    designer: "Arun Sae-lim",
+    year: 2025,
+    category: "lounge",
+    materials: ["natural-rattan", "rattan-peel"],
+    outdoor: false,
+    contract: false,
+    dims: { w: 70, d: 76, h: 80, sh: 38 },
+    weightKg: 8,
+    cbm: 0.46,
+    moq: 2,
+    leadWeeks: 8,
+    photos: [photos.windowArmchair, photos.windowArmchairTop],
+    colorways: [colorways.natural, colorways.ink],
+    summary: {
+      en: "Low, wide and deep. A reading chair with a woven back that flexes as you lean.",
+      th: "เตี้ย กว้าง ลึก เก้าอี้อ่านหนังสือ พนักสานยืดหยุ่นตามแรงพิง",
+    },
+  },
+  {
+    slug: "phai-armchair",
+    name: "Phai Armchair",
+    nameTh: "เก้าอี้มีพนักแขน ไผ่",
+    collection: "Phai",
+    designer: "Mali & Ton",
+    year: 2024,
+    category: "lounge",
+    materials: ["natural-rattan", "teak"],
+    outdoor: false,
+    contract: true,
+    dims: { w: 64, d: 66, h: 76, sh: 42 },
+    weightKg: 7.5,
+    cbm: 0.38,
+    moq: 4,
+    leadWeeks: 8,
+    photos: [photos.sunlitRattanArmchair, photos.pampasRattanChair],
+    colorways: [colorways.natural, colorways.smoke],
+    summary: {
+      en: "Thick cane arms wrapped at the joints in rattan peel. Built for hotel lounges.",
+      th: "แขนหวายเส้นใหญ่ พันข้อต่อด้วยผิวหวาย ออกแบบสำหรับล็อบบี้โรงแรม",
+    },
+  },
+  {
+    slug: "kaew-counter-stool",
+    name: "Kaew Counter Stool",
+    nameTh: "สตูลเคาน์เตอร์ แก้ว",
+    collection: "Prang",
+    designer: "Studio Noknoi",
+    year: 2025,
+    category: "bar",
+    materials: ["aluminium", "rice-husk-pe"],
+    outdoor: true,
+    contract: true,
+    dims: { w: 48, d: 48, h: 88, sh: 65 },
+    weightKg: 5.6,
+    cbm: 0.18,
+    moq: 12,
+    leadWeeks: 8,
+    photos: [photos.cafeRattanRow, photos.chairsPatternFloor],
+    colorways: [colorways.sand, colorways.moss, colorways.cobalt],
+    preview: "stool",
+    summary: {
+      en: "Counter height sister of Prang, woven in rice-husk PE rattan instead of rope.",
+      th: "สตูลความสูงเคาน์เตอร์ คู่กับปราง สานด้วยหวายเทียมแกลบข้าวแทนเชือก",
+    },
+  },
+];
+
+export const getProduct = (slug: string) => products.find((p) => p.slug === slug);

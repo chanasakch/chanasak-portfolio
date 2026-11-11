@@ -1,26 +1,132 @@
 @import "tailwindcss";
 
+/*
+  One token set, three brands. Each brand wrapper (.brand-*) redefines the same
+  variables, so Tailwind classes like bg-bg, text-ink and font-display work everywhere.
+*/
+
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --bg: #edeeea;
+  --ink: #1d1e1b;
+  --muted: #6a6c66;
+  --line: rgb(29 30 27 / 0.14);
+  --soft: #e1e2dd;
+  --accent: #1d1e1b;
+  --accent-ink: #ffffff;
+  --font-display: "Jost Variable", "Anuphan", system-ui, sans-serif;
+  --font-body: "Jost Variable", "Anuphan", system-ui, sans-serif;
 }
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --color-bg: var(--bg);
+  --color-ink: var(--ink);
+  --color-muted: var(--muted);
+  --color-line: var(--line);
+  --color-soft: var(--soft);
+  --color-accent: var(--accent);
+  --color-accent-ink: var(--accent-ink);
+  --font-display: var(--font-display);
+  --font-body: var(--font-body);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+/* Project 1: studio grey like a photo backdrop, lacquer red, Trajan-like display */
+.brand-saan {
+  --bg: #e6e5e1;
+  --ink: #1c1b19;
+  --muted: #6b6861;
+  --line: rgb(28 27 25 / 0.16);
+  --soft: #d9d7d0;
+  --accent: #8c2b26;
+  --accent-ink: #f6f2ec;
+  --rattan: #b48a4e;
+  --cobalt: #2e3f86;
+  --font-display: "Marcellus", "Anuphan", Georgia, serif;
+  --font-body: "Jost Variable", "Anuphan", system-ui, sans-serif;
+}
+
+/* Project 2: bright, functional trade catalogue, signal orange from the rope stripes */
+.brand-trade {
+  --bg: #f4f4f1;
+  --ink: #1f2120;
+  --muted: #646761;
+  --line: #d8d9d3;
+  --soft: #e9eae5;
+  --accent: #d4501c;
+  --accent-ink: #ffffff;
+  --ok: #2c6a4d;
+  --font-display: "Schibsted Grotesk Variable", "IBM Plex Sans Thai", system-ui, sans-serif;
+  --font-body: "Schibsted Grotesk Variable", "IBM Plex Sans Thai", system-ui, sans-serif;
+}
+
+/* Project 3: pool tile and deep garden green, marigold for things you can tap */
+.brand-ruen {
+  --bg: #e2ebe8;
+  --ink: #15302a;
+  --muted: #4f6660;
+  --line: rgb(21 48 42 / 0.16);
+  --soft: #d3e0dc;
+  --accent: #e7a336;
+  --accent-ink: #15302a;
+  --forest: #15302a;
+  --forest-2: #1d3d36;
+  --font-display: "Bodoni Moda Variable", Georgia, serif;
+  --font-body: "Work Sans Variable", "Anuphan", system-ui, sans-serif;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+  text-rendering: optimizeLegibility;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--font-body);
+  font-feature-settings: "kern", "liga";
+}
+
+.brand-saan,
+.brand-trade,
+.brand-ruen {
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--font-body);
+  min-height: 100dvh;
+}
+
+.tabular {
+  font-variant-numeric: tabular-nums;
+}
+
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+}
+
+/* Woven placeholder, shown while a photo loads or if it fails */
+.weave {
+  background-color: var(--soft);
+  background-image:
+    repeating-linear-gradient(45deg, rgb(0 0 0 / 0.06) 0 6px, transparent 6px 14px),
+    repeating-linear-gradient(-45deg, rgb(255 255 255 / 0.35) 0 6px, transparent 6px 14px);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+@media print {
+  .no-print {
+    display: none !important;
+  }
+  .brand-trade {
+    background: #fff;
+  }
 }
