@@ -17,7 +17,7 @@ const concepts = [
   {
     href: "/trade",
     name: "Loom & Tide Trade",
-    nameStyle: { fontFamily: '"Schibsted Grotesk Variable", sans-serif', fontWeight: 650 },
+    nameStyle: { fontFamily: '"Schibsted Grotesk Variable", "Schibsted Grotesk", sans-serif', fontWeight: 650 },
     swatch: "#d4501c",
     photo: photos.cafeRattanRow,
     job: "Trade catalogue",
@@ -28,7 +28,7 @@ const concepts = [
   {
     href: "/projects",
     name: "Ruen Projects",
-    nameStyle: { fontFamily: '"Bodoni Moda Variable", serif', fontStyle: "italic" as const },
+    nameStyle: { fontFamily: '"Bodoni Moda Variable", "Bodoni Moda", serif', fontStyle: "italic" as const },
     swatch: "#e7a336",
     photo: photos.pergolaPool,
     job: "Hospitality showcase",

@@ -193,6 +193,7 @@ export function ProductDetail({ product }: { product: Product }) {
 
           <section className="no-print mt-8">
             <h2 className="text-[15px] font-[600]">{t.files}</h2>
+            {process.env.NEXT_PUBLIC_PREVIEW !== "1" && (
             <button
               type="button"
               onClick={() => window.print()}
@@ -200,6 +201,7 @@ export function ProductDetail({ product }: { product: Product }) {
             >
               {t.printSheet}
             </button>
+            )}
             <p className="mt-2 text-[13px] text-muted">{t.cadNote}</p>
           </section>
         </div>

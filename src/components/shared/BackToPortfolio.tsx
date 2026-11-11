@@ -10,7 +10,7 @@ export function BackToPortfolio({ tone = "light" }: { tone?: "light" | "dark" })
     <Link
       href="/"
       className={`no-print fixed bottom-4 left-4 z-50 rounded-full px-4 py-2 text-[13px] shadow-[0_6px_24px_rgb(0_0_0/0.12)] backdrop-blur transition-colors ${colors}`}
-      style={{ fontFamily: '"Jost Variable", system-ui, sans-serif' }}
+      style={{ fontFamily: '"Jost Variable", "Jost", system-ui, sans-serif' }}
     >
       All concepts
     </Link>

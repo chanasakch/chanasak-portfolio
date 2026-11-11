@@ -13,8 +13,8 @@
   --soft: #e1e2dd;
   --accent: #1d1e1b;
   --accent-ink: #ffffff;
-  --font-display: "Jost Variable", "Anuphan", system-ui, sans-serif;
-  --font-body: "Jost Variable", "Anuphan", system-ui, sans-serif;
+  --font-display: "Jost Variable", "Jost", "Anuphan", system-ui, sans-serif;
+  --font-body: "Jost Variable", "Jost", "Anuphan", system-ui, sans-serif;
 }
 
 @theme inline {
@@ -41,7 +41,7 @@
   --rattan: #b48a4e;
   --cobalt: #2e3f86;
   --font-display: "Marcellus", "Anuphan", Georgia, serif;
-  --font-body: "Jost Variable", "Anuphan", system-ui, sans-serif;
+  --font-body: "Jost Variable", "Jost", "Anuphan", system-ui, sans-serif;
 }
 
 /* Project 2: bright, functional trade catalogue, signal orange from the rope stripes */
@@ -54,8 +54,8 @@
   --accent: #d4501c;
   --accent-ink: #ffffff;
   --ok: #2c6a4d;
-  --font-display: "Schibsted Grotesk Variable", "IBM Plex Sans Thai", system-ui, sans-serif;
-  --font-body: "Schibsted Grotesk Variable", "IBM Plex Sans Thai", system-ui, sans-serif;
+  --font-display: "Schibsted Grotesk Variable", "Schibsted Grotesk", "IBM Plex Sans Thai", system-ui, sans-serif;
+  --font-body: "Schibsted Grotesk Variable", "Schibsted Grotesk", "IBM Plex Sans Thai", system-ui, sans-serif;
 }
 
 /* Project 3: pool tile and deep garden green, marigold for things you can tap */
@@ -69,8 +69,8 @@
   --accent-ink: #15302a;
   --forest: #15302a;
   --forest-2: #1d3d36;
-  --font-display: "Bodoni Moda Variable", Georgia, serif;
-  --font-body: "Work Sans Variable", "Anuphan", system-ui, sans-serif;
+  --font-display: "Bodoni Moda Variable", "Bodoni Moda", Georgia, serif;
+  --font-body: "Work Sans Variable", "Work Sans", "Anuphan", system-ui, sans-serif;
 }
 
 html {
