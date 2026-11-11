@@ -14,12 +14,12 @@ export function ProductCard({ product }: { product: Product }) {
   return (
     <article className="group flex flex-col">
       <div className="relative overflow-hidden bg-soft">
-        <Link href={`/furniture/${product.slug}`} className="block" aria-label={product.name}>
+        <Link href={`/furniture/${product.slug}`} className="block" aria-label={product.name} data-cursor={lang === "th" ? "ดู" : "View"}>
           <Photo
             photo={product.photos[0]}
             className="aspect-[4/5] w-full"
             position={product.focus}
-            imgClassName="transition-transform duration-[1.2s] ease-out group-hover:scale-[1.04]"
+            imgClassName="transition-transform duration-[1.4s] ease-[cubic-bezier(.22,1,.36,1)] group-hover:scale-[1.06]"
             sizes="(min-width: 1280px) 30vw, (min-width: 640px) 45vw, 100vw"
           />
           {alt && (

@@ -3,7 +3,8 @@
 import { createContext, useContext, useMemo, useRef, useState, type ReactNode } from "react";
 import { AnimatePresence, motion, useScroll, useTransform } from "motion/react";
 import { Photo } from "@/components/shared/Photo";
-import { CloseButton, Drawer, Modal, Rail, useScrolled } from "@/components/shared/ui";
+import { CloseButton, Drawer, Modal } from "@/components/shared/ui";
+import { HoverIndex, easeInOut, useSmartHeader } from "@/components/shared/motion";
 import { photos } from "@/data/images";
 import { pieces, type Piece } from "@/data/ceramics";
 
@@ -51,14 +52,14 @@ const menu = [
 export function DinHeader() {
   const [open, setOpen] = useState(false);
   const [hover, setHover] = useState(0);
-  const scrolled = useScrolled(80);
+  const { hidden, top } = useSmartHeader();
   const { lines, setOpen: openBag } = useBag();
   const count = lines.reduce((n, l) => n + l.qty, 0);
 
   return (
     <>
-      <header className={`fixed inset-x-0 top-0 z-40 transition-colors duration-500 ${scrolled ? "bg-bg/85 backdrop-blur-md" : ""}`}>
-        <div className="mx-auto grid h-16 max-w-[1600px] grid-cols-3 items-center px-4 sm:px-8">
+      <header className={`fixed inset-x-0 top-0 z-40 transition-[transform,background-color] duration-500 ease-[cubic-bezier(.22,1,.36,1)] ${top ? "" : "bg-bg/85 backdrop-blur-md"} ${hidden ? "-translate-y-full" : ""}`}>
+        <div className="grid h-16 grid-cols-3 items-center px-[var(--gutter)]">
           <button type="button" onClick={() => setOpen(true)} className="flex items-center gap-3 justify-self-start text-[14px]" aria-expanded={open}>
             <span className="grid gap-[5px]" aria-hidden>
               <span className="block h-px w-6 bg-current" />
@@ -125,44 +126,50 @@ export function DinHeader() {
   );
 }
 
-/** Wordmark hero with three photos drifting at different speeds as the page scrolls. */
+/** Title split around an arched photo, like the mouth of a vase. */
 export function DinHero() {
   const ref = useRef<HTMLElement>(null);
   const { scrollYProgress } = useScroll({ target: ref, offset: ["start start", "end start"] });
-  const yA = useTransform(scrollYProgress, [0, 1], ["0%", "-30%"]);
-  const yB = useTransform(scrollYProgress, [0, 1], ["0%", "-60%"]);
-  const yC = useTransform(scrollYProgress, [0, 1], ["0%", "-12%"]);
-  const yT = useTransform(scrollYProgress, [0, 1], ["0%", "40%"]);
+  const y = useTransform(scrollYProgress, [0, 1], ["0%", "18%"]);
+  const left = useTransform(scrollYProgress, [0, 1], ["0%", "-30%"]);
+  const right = useTransform(scrollYProgress, [0, 1], ["0%", "30%"]);
 
   return (
-    <section id="top" ref={ref} className="relative min-h-[100svh] overflow-hidden pt-16">
-      <motion.div style={{ y: yT }} className="pointer-events-none absolute inset-x-0 top-[18vh] z-10 px-4 text-center sm:px-8">
-        <motion.h1
-          initial={{ opacity: 0, y: 40 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 1.4, ease }}
-          className="mx-auto max-w-[12ch] font-display text-[clamp(3.4rem,10vw,10rem)] leading-[0.9]"
+    <section id="top" ref={ref} className="relative flex min-h-[100svh] flex-col overflow-hidden px-[var(--gutter)] pb-8 pt-24">
+      <div className="relative flex flex-1 flex-col items-center justify-center gap-6 lg:flex-row lg:gap-0">
+        <motion.div
+          className="relative h-[46svh] w-[min(70vw,420px)] overflow-hidden rounded-t-[999px] lg:h-[70svh] lg:w-[30vw]"
+          initial={{ clipPath: "inset(100% 0% 0% 0%)" }}
+          animate={{ clipPath: "inset(0% 0% 0% 0%)" }}
+          transition={{ duration: 1.6, ease: easeInOut, delay: 0.2 }}
         >
-          Stoneware from Lampang
-        </motion.h1>
+          <motion.div className="absolute inset-x-0 -bottom-[10%] -top-[10%]" style={{ y }} initial={{ scale: 1.3 }} animate={{ scale: 1 }} transition={{ duration: 2.2, ease }}>
+            <Photo photo={photos.budVases} priority position="50% 45%" className="h-full w-full" sizes="(min-width:1024px) 30vw, 78vw" />
+          </motion.div>
+        </motion.div>
+        <h1 className="pointer-events-none order-first flex w-full flex-col font-display text-[clamp(3rem,11vw,12.5rem)] leading-[0.9] lg:absolute lg:inset-0 lg:order-none lg:justify-center lg:leading-[0.86]">
+          <motion.span style={{ x: left }} className="block self-start overflow-hidden lg:pl-[2vw]">
+            <motion.span className="block" initial={{ y: "105%" }} animate={{ y: "0%" }} transition={{ duration: 1.3, ease, delay: 0.7 }}>
+              Stoneware
+            </motion.span>
+          </motion.span>
+          <motion.span style={{ x: right }} className="block self-end overflow-hidden lg:mt-[22svh] lg:pr-[2vw]">
+            <motion.span className="block" initial={{ y: "105%" }} animate={{ y: "0%" }} transition={{ duration: 1.3, ease, delay: 0.85 }}>
+              from Lampang
+            </motion.span>
+          </motion.span>
+        </h1>
+      </div>
+      <motion.div className="mt-6 grid grid-cols-2 items-end gap-6 text-[14px] lg:grid-cols-3" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 1, delay: 1.4 }}>
+        <p className="max-w-[34ch] leading-[1.6]">Vases and tableware thrown, glazed and wood-fired by four potters on the edge of Lampang.</p>
+        <span className="hidden justify-self-center lg:flex lg:flex-col lg:items-center lg:gap-2">
+          Scroll
+          <span className="relative block h-10 w-px overflow-hidden bg-current/20">
+            <motion.span className="absolute inset-x-0 top-0 h-1/2 bg-current" animate={{ y: ["-100%", "200%"] }} transition={{ duration: 1.8, repeat: Infinity, ease: "easeInOut" }} />
+          </span>
+        </span>
+        <p className="justify-self-end text-right text-muted">Bud vases in iron and rice-husk white<br />฿1,450 the pair</p>
       </motion.div>
-
-      <div className="relative mx-auto h-[calc(100svh-4rem)] min-h-[560px] max-w-[1600px] px-4 sm:px-8">
-        <motion.div style={{ y: yA }} initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 1.2, delay: 0.3 }} className="absolute left-[4%] top-[44vh] w-[40%] sm:top-[36vh] sm:w-[20%]">
-          <Photo photo={photos.budVases} priority className="aspect-[3/4] w-full" position="50% 45%" sizes="30vw" />
-          <p className="mt-2 text-[13px] text-muted">Bud vases, ฿1,450 the pair</p>
-        </motion.div>
-        <motion.div style={{ y: yB }} initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 1.2, delay: 0.5 }} className="absolute right-[4%] top-[52vh] w-[44%] sm:right-[6%] sm:top-[44vh] sm:w-[24%]">
-          <Photo photo={photos.throwing} className="aspect-[4/5] w-full" sizes="34vw" />
-        </motion.div>
-        <motion.div style={{ y: yC }} initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 1.2, delay: 0.7 }} className="absolute left-[40%] top-[58vh] hidden w-[15%] sm:block">
-          <Photo photo={photos.fernPitcher} className="aspect-[3/4] w-full" position="30% 50%" sizes="20vw" />
-        </motion.div>
-      </div>
-
-      <div className="absolute bottom-6 left-0 right-0 z-10 mx-auto flex max-w-[1600px] items-end justify-between gap-6 px-4 sm:px-8">
-        <p className="max-w-[36ch] bg-bg/80 py-1 text-[15px] leading-[1.6] backdrop-blur-sm sm:bg-transparent">Vases and tableware thrown, glazed and wood-fired by four potters. Each glaze is mixed from local ash and earth.</p>
-      </div>
     </section>
   );
 }
@@ -170,34 +177,58 @@ export function DinHero() {
 export function PiecesRail() {
   const [open, setOpen] = useState<Piece | null>(null);
   const [qty, setQty] = useState(1);
+  const [mode, setMode] = useState<"grid" | "index">("grid");
   const { add } = useBag();
+  const show = (p: Piece) => {
+    setQty(1);
+    setOpen(p);
+  };
 
   return (
     <>
-      <Rail label="Pieces">
-        {pieces.map((p, i) => (
-          <button
-            key={p.name}
-            type="button"
-            onClick={() => {
-              setQty(1);
-              setOpen(p);
-            }}
-            className={`group w-[70vw] shrink-0 snap-start text-left sm:w-[38vw] lg:w-[24vw] ${i % 2 ? "lg:mt-20" : ""}`}
-          >
-            <div className="overflow-hidden">
-              <Photo photo={p.photo} position={p.focus} className="aspect-[3/4] w-full" imgClassName="transition-transform duration-[1.4s] ease-out group-hover:scale-[1.05]" sizes="(min-width:1024px) 24vw, 70vw" />
-            </div>
-            <div className="mt-3 flex items-baseline justify-between gap-3">
-              <h3 className="font-display text-[1.6rem] leading-none">{p.name}</h3>
-              <span className="tabular shrink-0 text-[14px]">
-                {p.note ? `${p.note} ` : ""}฿{fmt.format(p.priceThb)}
-              </span>
-            </div>
-            <p className="mt-1 text-[13px] text-muted">{p.glaze}</p>
+      <div className="mb-10 flex justify-end gap-1 text-[14px]" role="group" aria-label="Layout">
+        {(["grid", "index"] as const).map((m) => (
+          <button key={m} type="button" aria-pressed={mode === m} onClick={() => setMode(m)} className={`rounded-full px-4 py-1.5 capitalize transition-colors ${mode === m ? "bg-ink text-bg" : "hover:bg-soft"}`}>
+            {m}
           </button>
         ))}
-      </Rail>
+      </div>
+      <AnimatePresence mode="wait" initial={false}>
+        {mode === "grid" ? (
+          <motion.ul key="grid" className="grid grid-cols-2 gap-x-[var(--gutter)] gap-y-16 lg:grid-cols-4" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.4 }}>
+            {pieces.map((p, i) => (
+              <motion.li key={p.name} className={i % 4 === 1 || i % 4 === 3 ? "lg:translate-y-16" : ""} initial={{ opacity: 0, y: 40 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: "-5% 0px" }} transition={{ duration: 1, ease, delay: (i % 4) * 0.08 }}>
+                <button type="button" onClick={() => show(p)} data-cursor="View" className="group block w-full text-left">
+                  <div className="overflow-hidden">
+                    <Photo photo={p.photo} position={p.focus} className="aspect-[4/5] w-full" imgClassName="transition-transform duration-[1.6s] ease-[cubic-bezier(.22,1,.36,1)] group-hover:scale-[1.06]" sizes="(min-width:1024px) 24vw, 50vw" />
+                  </div>
+                  <div className="mt-4 flex items-baseline justify-between gap-3">
+                    <h3 className="font-display text-[clamp(1.3rem,1.8vw,1.7rem)] leading-none">{p.name}</h3>
+                    <span className="tabular shrink-0 text-[14px]">
+                      {p.note ? `${p.note} ` : ""}฿{fmt.format(p.priceThb)}
+                    </span>
+                  </div>
+                  <p className="mt-1.5 text-[13px] text-muted">{p.glaze}</p>
+                </button>
+              </motion.li>
+            ))}
+          </motion.ul>
+        ) : (
+          <motion.div key="index" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.4 }}>
+            <HoverIndex
+              items={pieces.map((p) => ({
+                key: p.name,
+                title: <span className="font-display text-[clamp(1.8rem,4vw,3.6rem)] leading-none">{p.name}</span>,
+                meta: `${p.glaze}, ${p.detail}`,
+                aside: `${p.note ? `${p.note} ` : ""}฿${fmt.format(p.priceThb)}`,
+                photo: p.photo,
+                position: p.focus,
+                onClick: () => show(p),
+              }))}
+            />
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       <Modal open={!!open} onClose={() => setOpen(null)} label={open?.name ?? "Piece"}>
         {open && (

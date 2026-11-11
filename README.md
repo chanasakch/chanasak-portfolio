@@ -20,7 +20,7 @@ Open http://localhost:3000.
 
 ## Stack
 
-Next.js 16 (App Router), TypeScript, Tailwind CSS 4, Motion. Fonts are self-hosted through Fontsource. No backend: product and project data live in `src/data`, the quote list is kept in the browser's localStorage, and forms show a success state without sending anything.
+Next.js 16 (App Router), TypeScript, Tailwind CSS 4, Motion, Lenis. Fonts are self-hosted through Fontsource. No backend: product and project data live in `src/data`, the quote list is kept in the browser's localStorage, and forms show a success state without sending anything.
 
 ## Where to edit
 
@@ -29,6 +29,7 @@ Next.js 16 (App Router), TypeScript, Tailwind CSS 4, Motion. Fonts are self-host
 - Ceramics pieces, glazes and workshop sessions: `src/data/ceramics.ts`
 - Photos: `src/data/images.ts`
 - Shared interactions (slideshow, carousel, drawer, modal, photo viewer, pinned story): `src/components/shared/ui.tsx`
+- Motion (smooth scroll with Lenis, cursor, intro curtain, line reveals, scroll-lit text, image reveals, pinned sideways scroll, hover index): `src/components/shared/motion.tsx`
 - Thai and English text for the trade catalogue: `src/components/trade/dict.ts`
 - Brand colours and fonts: `src/app/globals.css` (`.brand-trade`, `.brand-din`, `.brand-ruen`)
 

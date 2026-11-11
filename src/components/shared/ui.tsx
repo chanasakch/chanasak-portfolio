@@ -25,10 +25,12 @@ function useOverlay(open: boolean, onClose: () => void) {
     if (!open) return;
     const prev = document.body.style.overflow;
     document.body.style.overflow = "hidden";
+    window.__lenis?.stop();
     const onKey = (e: KeyboardEvent) => e.key === "Escape" && onClose();
     window.addEventListener("keydown", onKey);
     return () => {
       document.body.style.overflow = prev;
+      window.__lenis?.start();
       window.removeEventListener("keydown", onKey);
     };
   }, [open, onClose]);

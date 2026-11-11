@@ -62,13 +62,13 @@ export function Catalogue() {
     `shrink-0 rounded-full border px-4 py-2 text-[14px] transition-colors ${on ? "border-ink bg-ink text-bg" : "border-line hover:border-ink"}`;
 
   return (
-    <div id="catalogue" className="mx-auto max-w-[1600px] scroll-mt-16 px-4 pb-28 pt-24 sm:px-8">
+    <div id="catalogue" className="scroll-mt-16 px-[var(--gutter)] pb-[16vh] pt-[16vh]">
       <div className="flex flex-wrap items-end justify-between gap-6">
-        <h2 className="text-[clamp(2rem,4vw,3.4rem)] font-[600] leading-none tracking-[-0.035em]">{t.catalogue}</h2>
+        <h2 className="text-[clamp(2.4rem,5vw,4.6rem)] font-[600] leading-[0.9] tracking-[-0.045em]">{t.catalogue}</h2>
         <p className="max-w-[46ch] text-[15px] leading-relaxed text-muted">{t.introBody}</p>
       </div>
 
-      <div className="sticky top-16 z-20 -mx-4 mt-10 flex items-center gap-3 border-b border-line bg-bg/90 px-4 py-3 backdrop-blur-md sm:-mx-8 sm:px-8">
+      <div className="sticky top-0 z-20 -mx-[var(--gutter)] mt-12 flex items-center gap-3 border-b border-line bg-bg/90 px-[var(--gutter)] py-3 backdrop-blur-md">
         <div className="flex min-w-0 flex-1 gap-2 overflow-x-auto [scrollbar-width:none]">
           <button type="button" onClick={() => setCats([])} className={pill(cats.length === 0)}>
             {t.any}

@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { useScrolled } from "@/components/shared/ui";
+import { scrollToId, useSmartHeader } from "@/components/shared/motion";
 import { useTrade } from "./TradeProvider";
 
 /** Scrolls to a section of the catalogue home, going there first if needed. */
@@ -10,7 +10,7 @@ export function useJump() {
   const pathname = usePathname();
   const router = useRouter();
   return (id: string) => {
-    const go = () => document.getElementById(id)?.scrollIntoView({ behavior: "smooth", block: "start" });
+    const go = () => scrollToId(id);
     if (pathname === "/furniture") go();
     else {
       router.push("/furniture");
@@ -23,8 +23,7 @@ export function TradeHeader() {
   const { t, lang, setLang, count, setDrawer, setSearchOpen } = useTrade();
   const pathname = usePathname();
   const jump = useJump();
-  const scrolled = useScrolled(60);
-  const overHero = pathname === "/furniture" && !scrolled;
+  const { hidden, top } = useSmartHeader();
 
   const nav: [string, string][] = [
     [t.navNew, "new"],
@@ -35,11 +34,11 @@ export function TradeHeader() {
   return (
     <>
       <header
-        className={`no-print fixed inset-x-0 top-0 z-40 transition-[background-color,color,border-color] duration-500 ${
-          overHero ? "border-b border-transparent text-white" : "border-b border-line bg-bg/90 text-ink backdrop-blur-md"
-        }`}
+        className={`no-print fixed inset-x-0 top-0 z-40 border-b text-ink transition-[transform,background-color,border-color] duration-500 ease-[cubic-bezier(.22,1,.36,1)] ${
+          top ? "border-transparent" : "border-line bg-bg/85 backdrop-blur-md"
+        } ${hidden ? "-translate-y-full" : ""}`}
       >
-        <div className="mx-auto grid h-16 max-w-[1600px] grid-cols-[1fr_auto_1fr] items-center gap-4 px-4 sm:px-8">
+        <div className="mx-auto grid h-16 grid-cols-[1fr_auto_1fr] items-center gap-4 px-[var(--gutter)]">
           <nav aria-label="Catalogue" className="hidden gap-7 text-[14px] md:flex">
             {nav.map(([label, id]) => (
               <button key={id} type="button" onClick={() => jump(id)} className="relative py-1 after:absolute after:inset-x-0 after:bottom-0 after:h-px after:origin-left after:scale-x-0 after:bg-current after:transition-transform hover:after:scale-x-100">
@@ -71,9 +70,7 @@ export function TradeHeader() {
             <button
               type="button"
               onClick={() => setDrawer(true)}
-              className={`flex items-center gap-2 rounded-full border px-3.5 py-1.5 text-[14px] transition-colors ${
-                overHero ? "border-white/50 hover:bg-white hover:text-ink" : "border-ink/20 hover:border-ink"
-              }`}
+              className={`flex items-center gap-2 rounded-full border px-3.5 py-1.5 text-[14px] transition-colors border-ink/20 hover:border-ink`}
             >
               <span className="hidden sm:inline">{t.quoteList}</span>
               <span className="sm:hidden">{lang === "th" ? "รายการ" : "Quote"}</span>
