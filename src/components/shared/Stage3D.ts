@@ -22,6 +22,8 @@ export class Stage3D {
   shift = 0;
   shiftTarget = 0;
   autoSpin = 0.003;
+  /** when set, the object eases round to this angle instead of spinning */
+  aim: number | null = null;
   tilt = 0.15;
   onFrame?: (t: number) => void;
   private bg = new THREE.Color();
@@ -85,7 +87,10 @@ export class Stage3D {
     const t = performance.now() / 1000;
     if (!this.dragging) {
       this.vel *= 0.94;
-      this.angle += this.vel + (this.reduce ? 0 : this.autoSpin);
+      if (this.aim !== null) {
+        const d = Math.atan2(Math.sin(this.aim - this.angle), Math.cos(this.aim - this.angle));
+        this.angle += d * 0.08;
+      } else this.angle += this.vel + (this.reduce ? 0 : this.autoSpin);
     }
     this.turn.rotation.y = this.angle;
     this.bg.lerp(this.bgTarget, 0.05);

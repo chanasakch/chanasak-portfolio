@@ -233,11 +233,12 @@ html.lenis body {
   --font-body: "Work Sans Variable", "Work Sans", "Anuphan", system-ui, sans-serif;
 }
 .b-phloi {
-  --bg: #eceef0;
-  --ink: #15171a;
-  --muted: #646a72;
-  --line: rgb(21 23 26 / 0.12);
-  --soft: #dfe2e6;
+  --bg: #0b0d11;
+  --ink: #eee9df;
+  --muted: #9b978e;
+  --line: rgb(238 233 223 / 0.14);
+  --soft: #161920;
+  color-scheme: dark;
   --font-display: "Italiana", Georgia, serif;
   --font-body: "Jost Variable", "Jost", system-ui, sans-serif;
   background: var(--bg);
