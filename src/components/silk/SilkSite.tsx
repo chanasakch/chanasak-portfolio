@@ -159,8 +159,8 @@ function Loom({
     if (!cv) return;
     const W = 720;
     const H = 540;
-    cv.width = W;
-    cv.height = H;
+    if (cv.width !== W) cv.width = W;
+    if (cv.height !== H) cv.height = H;
     const g = cv.getContext("2d")!;
     const rh = 3;
     const pal = colors.map((c) => [shade(c.hex, 1), shade(c.hex, 0.86)]);
@@ -269,7 +269,7 @@ export function SilkSite() {
   return (
     <div>
       <header
-        className={`fixed inset-x-0 top-0 z-30 flex h-16 items-center justify-between px-[var(--gutter)] text-[14px] transition-colors duration-500 ${scrolled ? "bg-bg/85 backdrop-blur" : ""}`}
+        className={`fixed inset-x-0 top-0 z-30 flex h-16 items-center justify-between px-[var(--gutter)] text-[14px] transition-colors duration-500 ${scrolled ? "bg-bg/95 lg:bg-bg/85 lg:backdrop-blur" : ""}`}
       >
         <span className="font-display text-[22px] tracking-[0.02em]">
           Mudmee House

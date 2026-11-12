@@ -20,11 +20,11 @@ export function BackToPortfolio({ tone = "light" }: { tone?: "light" | "dark" })
     window.addEventListener("scroll", on, { passive: true });
     return () => window.removeEventListener("scroll", on);
   }, []);
-  const colors = tone === "dark" ? "bg-[#15302a] text-[#eef1ec] hover:bg-[#1d3d36]" : "bg-white/90 text-[#1d1e1b] hover:bg-white";
+  const colors = tone === "dark" ? "bg-[#15302a] text-[#eef1ec] hover:bg-[#1d3d36]" : "bg-white/95 text-[#1d1e1b] hover:bg-white";
   return (
     <Link
       href="/"
-      className={`no-print fixed bottom-4 right-4 z-50 rounded-full px-4 py-2 text-[13px] shadow-[0_6px_24px_rgb(0_0_0/0.18)] backdrop-blur transition-[transform,opacity,background-color] duration-300 sm:left-4 sm:right-auto ${colors} ${hidden ? "pointer-events-none translate-y-16 opacity-0" : ""}`}
+      className={`no-print fixed bottom-4 right-4 z-50 rounded-full px-4 py-2 text-[13px] shadow-[0_6px_24px_rgb(0_0_0/0.18)] transition-[transform,opacity,background-color] duration-300 sm:left-4 sm:right-auto ${colors} ${hidden ? "pointer-events-none translate-y-16 opacity-0" : ""}`}
       style={{ fontFamily: '"Jost Variable", "Jost", system-ui, sans-serif' }}
     >
       Portfolio

@@ -389,13 +389,13 @@ function WallScroll() {
     >
       <motion.div
         style={{ rotateX, scale }}
-        className="origin-top space-y-4 sm:space-y-6"
+        className="origin-top space-y-4 will-change-transform sm:space-y-6"
       >
         {rows.map(([items, x], r) => (
           <motion.div
             key={r}
             style={{ x }}
-            className="flex w-max gap-4 sm:gap-6"
+            className="flex w-max gap-4 will-change-transform sm:gap-6"
           >
             {[...items, ...items.slice(0, 2)].map((s, i) => {
               const w = work.find((k) => k.shot === s)!;
@@ -1371,7 +1371,7 @@ function Reel() {
           type="button"
           onClick={toggle}
           aria-label={playing ? "Pause the showreel" : "Play the showreel"}
-          className="absolute bottom-4 right-4 flex size-11 items-center justify-center rounded-full bg-white/85 text-[#141413] shadow-lg backdrop-blur transition-transform hover:scale-105 sm:bottom-6 sm:right-6"
+          className="absolute bottom-4 right-4 flex size-11 items-center justify-center rounded-full bg-white/90 text-[#141413] shadow-lg transition-transform hover:scale-105 sm:bottom-6 sm:right-6"
         >
           {playing ? (
             <svg viewBox="0 0 12 12" className="size-3.5" aria-hidden>
@@ -1439,7 +1439,7 @@ function WorkCard({
           color: w.ink,
           top: fine ? `${i * 14}px` : 0,
         }}
-        className="relative grid origin-top items-center gap-8 overflow-hidden rounded-2xl p-6 sm:p-10 lg:grid-cols-[minmax(0,0.9fr)_minmax(0,1.3fr)] lg:gap-14 lg:p-14"
+        className="relative grid origin-top items-center gap-8 overflow-hidden rounded-2xl will-change-transform p-6 sm:p-10 lg:grid-cols-[minmax(0,0.9fr)_minmax(0,1.3fr)] lg:gap-14 lg:p-14"
       >
         <div className="min-w-0">
           <p className="text-[13px] opacity-60">{w.job}</p>

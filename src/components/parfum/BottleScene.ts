@@ -48,6 +48,8 @@ export class BottleScene {
     this.reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     this.renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: false, powerPreference: "high-performance" });
     this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, window.matchMedia("(pointer: coarse)").matches ? 1.5 : 2));
+    // phones: render the see-through glass at half resolution, which halves its cost and looks the same at that size
+    if (window.matchMedia("(pointer: coarse)").matches) this.renderer.transmissionResolutionScale = 0.5;
     this.renderer.toneMapping = THREE.ACESFilmicToneMapping;
     this.renderer.toneMappingExposure = 1.05;
     this.renderer.outputColorSpace = THREE.SRGBColorSpace;
@@ -196,8 +198,11 @@ export class BottleScene {
     this.dragging = false;
   }
 
+  private hiddenFrames = 0;
+
   private loop = () => {
     this.raf = requestAnimationFrame(this.loop);
+    if (document.hidden) return;
     const c = this.current;
     const t = this.target;
     const k = this.reduce ? 1 : 0.075;
@@ -228,6 +233,10 @@ export class BottleScene {
     const dist = c.dist * this.zoom;
     this.camera.position.set(c.x * 0.15, c.y + c.look + 0.25, dist);
     this.camera.lookAt(c.x * 0.15, c.y + c.look, 0);
+    // once the bottle has left and the background has settled, stop redrawing an empty frame
+    if (!this.group.visible) {
+      if (++this.hiddenFrames > 45) return;
+    } else this.hiddenFrames = 0;
     this.renderer.render(this.scene, this.camera);
   };
 

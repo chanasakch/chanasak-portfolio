@@ -565,7 +565,7 @@ export function NavaSite() {
         <button
           type="button"
           onClick={() => setOpen(true)}
-          className="rounded-full border border-ink/40 px-4 py-2 backdrop-blur transition-colors hover:bg-ink hover:text-bg"
+          className="rounded-full border border-ink/40 px-4 py-2 transition-colors lg:backdrop-blur hover:bg-ink hover:text-bg"
         >
           Enquire
         </button>

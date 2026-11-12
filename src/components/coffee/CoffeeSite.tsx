@@ -711,7 +711,7 @@ export function CoffeeSite() {
 
   return (
     <div>
-      <header className="fixed inset-x-0 top-0 z-30 flex h-16 items-center justify-between border-b border-line bg-bg/70 px-[var(--gutter)] text-[14px] backdrop-blur-md">
+      <header className="fixed inset-x-0 top-0 z-30 flex h-16 items-center justify-between border-b border-line bg-bg/95 px-[var(--gutter)] text-[14px] lg:bg-bg/70 lg:backdrop-blur-md">
         <span className="font-display text-[22px] tracking-[-0.01em]">
           Sung Coffee
         </span>

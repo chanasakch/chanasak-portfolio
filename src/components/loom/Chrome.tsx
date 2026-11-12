@@ -40,7 +40,7 @@ export function Header({ path }: { path: string }) {
       <p className="bg-ink px-[var(--gutter)] py-2 text-center text-[12.5px] text-bg/85">
         Free delivery in Bangkok on orders over ฿40,000. Showroom on Charoen Krung open Tuesday to Sunday.
       </p>
-      <header className="sticky top-0 z-40 border-b border-line bg-bg/95 backdrop-blur">
+      <header className="sticky top-0 z-40 border-b border-line bg-bg/[0.97]">
         <div className="mx-auto flex h-16 max-w-[1440px] items-center gap-6 px-[var(--gutter)]">
           <button type="button" className="-ml-2 p-2 lg:hidden" aria-label="Menu" onClick={() => setMenu(true)}>
             <svg width="20" height="20" viewBox="0 0 20 20" aria-hidden>

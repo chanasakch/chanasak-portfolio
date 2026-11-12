@@ -129,6 +129,9 @@ export function PhloiSite() {
   useEffect(() => {
     if (!canvas.current) return;
     const s = new Stage3D(canvas.current, "#0b0d11", 0.02);
+    // the canvas is fixed on large screens, so stop drawing once the ring section has scrolled away
+    const section = canvas.current.closest("section");
+    if (section) s.watch(section);
     s.scene.environment = studio(s.renderer);
     s.renderer.toneMappingExposure = 1.05;
     s.tilt = 0.32;
@@ -157,7 +160,7 @@ export function PhloiSite() {
     }
     const seat = new THREE.Mesh(new THREE.CylinderGeometry(0.26, 0.14, 0.22, 48), band);
     seat.position.y = 1.08;
-    const gemMat = new THREE.MeshPhysicalMaterial({ color: stones[0].color, transmission: 1, ior: 1.77, thickness: 0.8, roughness: 0, dispersion: 5, specularIntensity: 1, envMapIntensity: 4, flatShading: true, attenuationColor: new THREE.Color(stones[0].color), attenuationDistance: 1.4, emissive: new THREE.Color(stones[0].color), emissiveIntensity: 0.28 });
+    const gemMat = new THREE.MeshPhysicalMaterial({ color: stones[0].color, transmission: 1, ior: 1.77, thickness: 0.8, roughness: 0, dispersion: window.matchMedia("(pointer: coarse)").matches ? 2 : 5, specularIntensity: 1, envMapIntensity: 4, flatShading: true, attenuationColor: new THREE.Color(stones[0].color), attenuationDistance: 1.4, emissive: new THREE.Color(stones[0].color), emissiveIntensity: 0.28 });
 
     // engraving on the inside of the band
     const ec = document.createElement("canvas");
@@ -383,7 +386,7 @@ export function PhloiSite() {
                 onPointerDown={(e) => e.stopPropagation()}
                 onClick={() => setView(v)}
                 aria-pressed={view === v}
-                className={`rounded-full border px-3.5 py-1.5 text-[12.5px] backdrop-blur transition-colors ${view === v ? "border-ink/70 bg-ink text-bg" : "border-ink/20 bg-bg/40 text-ink/80 hover:border-ink/50"}`}
+                className={`rounded-full border px-3.5 py-1.5 text-[12.5px] transition-colors ${view === v ? "border-ink/70 bg-ink text-bg" : "border-ink/20 bg-bg/70 text-ink/80 hover:border-ink/50"}`}
               >
                 {label}
               </button>

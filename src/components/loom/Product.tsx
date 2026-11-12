@@ -298,12 +298,16 @@ function ZoomViewer({ photos, index, onIndex, title }: { photos: PhotoType[]; in
                 src={photoUrl(photos[index!], 1600)}
                 alt={photos[index!].alt}
                 draggable={false}
+                onLoad={(e) => (e.currentTarget.style.opacity = "1")}
+                ref={(el) => {
+                  if (el?.complete) el.style.opacity = "1";
+                }}
                 onPointerDown={(e) => {
                   track(e);
                   setZoomed((z) => !z);
                 }}
                 onPointerMove={(e) => zoomed && track(e)}
-                className="max-h-full max-w-full touch-none select-none object-contain transition-transform duration-300 ease-out"
+                className="max-h-full max-w-full touch-none select-none object-contain opacity-0 transition-[transform,opacity] duration-300 ease-out"
                 style={{ cursor: zoomed ? "zoom-out" : "zoom-in", transform: zoomed ? "scale(2.5)" : "none", transformOrigin: `${origin.x}% ${origin.y}%` }}
               />
             </div>

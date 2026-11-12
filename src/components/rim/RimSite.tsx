@@ -38,7 +38,7 @@ export function RimSite() {
 
   return (
     <div>
-      <header className="fixed inset-x-0 top-0 z-30 flex h-16 items-center justify-between bg-bg/80 px-[var(--gutter)] text-[14px] backdrop-blur-md">
+      <header className="fixed inset-x-0 top-0 z-30 flex h-16 items-center justify-between bg-bg/95 px-[var(--gutter)] text-[14px] lg:bg-bg/80 lg:backdrop-blur-md">
         <span className="text-[20px] font-[750] tracking-[-0.04em]">RIM NAM</span>
         <nav className="hidden gap-8 md:flex" aria-label="Main">
           <a href="#residences" className="opacity-70 hover:opacity-100">Residences</a>

@@ -64,8 +64,10 @@ export function DinWall() {
   useEffect(() => {
     let raf = 0;
     const p = pos.current;
+    let last = "";
     const tick = () => {
       raf = requestAnimationFrame(tick);
+      if (!p.down && Math.abs(p.vx) < 0.02 && Math.abs(p.vy) < 0.02 && last) return; // at rest: nothing to redraw
       if (!p.down) {
         p.x += p.vx;
         p.y += p.vy;
@@ -75,7 +77,9 @@ export function DinWall() {
       const ox = (((p.x % W) + W) % W) - W;
       const oy = (((p.y % H) + H) % H) - H;
       const speed = Math.min(1, Math.hypot(p.vx, p.vy) / 60);
-      if (plane.current) plane.current.style.transform = `translate3d(${ox}px, ${oy}px, 0) scale(${1 - speed * 0.06})`;
+      const tf = `translate3d(${ox.toFixed(1)}px, ${oy.toFixed(1)}px, 0) scale(${(1 - speed * 0.06).toFixed(4)})`;
+      if (plane.current && tf !== last) plane.current.style.transform = tf;
+      last = tf;
     };
     tick();
     return () => cancelAnimationFrame(raf);
@@ -178,7 +182,7 @@ export function DinWall() {
         </div>
       </header>
 
-      <nav aria-label="Filter" className="fixed bottom-20 left-1/2 z-20 flex -translate-x-1/2 gap-1 rounded-full bg-ink/90 p-1 text-[13px] text-bg backdrop-blur-md">
+      <nav aria-label="Filter" className="fixed bottom-20 left-1/2 z-20 flex -translate-x-1/2 gap-1 rounded-full bg-ink/90 p-1 text-[13px] text-bg">
         {(["all", "vases", "tableware", "studio"] as const).map((f) => (
           <button key={f} type="button" onClick={() => setFilter(f)} aria-pressed={filter === f} className={`rounded-full px-3.5 py-2 capitalize transition-colors sm:px-5 ${filter === f ? "bg-bg text-ink" : "hover:bg-white/10"}`}>
             {f}
@@ -275,7 +279,7 @@ function Detail({ item, onClose, onAdd }: { item: Item; onClose: () => void; onA
           className="absolute inset-0 transition-opacity duration-300"
           style={{ opacity: zoom ? 1 : 0, backgroundImage: `url(${photoUrl(item.photo, 1600)})`, backgroundSize: "240%", backgroundPosition: zoom ? `${zoom.x}% ${zoom.y}%` : "50% 50%" }}
         />
-        <span className="absolute bottom-4 left-4 rounded-full bg-bg/90 px-3 py-1.5 text-[12px] backdrop-blur lg:hidden">Pinch to look closer</span>
+        <span className="absolute bottom-4 left-4 rounded-full bg-bg/90 px-3 py-1.5 text-[12px] lg:hidden">Pinch to look closer</span>
       </div>
       <div className="flex flex-col px-[var(--gutter)] py-10 lg:py-16">
         <div className="flex justify-end"><CloseButton onClick={onClose} /></div>

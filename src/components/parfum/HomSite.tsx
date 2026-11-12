@@ -180,7 +180,7 @@ export function HomSite() {
     <div className="relative text-[#efe9df]">
       <canvas ref={canvas} aria-label={`${scent.name} eau de parfum bottle`} role="img" className="pointer-events-none fixed inset-0 z-0 h-[100svh] w-full" />
 
-      <header className={`fixed inset-x-0 top-0 z-30 grid h-16 grid-cols-[1fr_auto_1fr] items-center px-[var(--gutter)] text-[14px] transition-[transform,background-color] duration-500 ${top ? "" : "bg-black/30 backdrop-blur-xl"} ${hidden ? "-translate-y-full" : ""}`}>
+      <header className={`fixed inset-x-0 top-0 z-30 grid h-16 grid-cols-[1fr_auto_1fr] items-center px-[var(--gutter)] text-[14px] transition-[transform,background-color] duration-500 ${top ? "" : "bg-black/70 lg:bg-black/30 lg:backdrop-blur-xl"} ${hidden ? "-translate-y-full" : ""}`}>
         <nav className="hidden gap-7 md:flex" aria-label="Main">
           {[
             ["Scents", "#shop"],
@@ -277,13 +277,13 @@ export function HomSite() {
           }}
         >
           <div className="absolute bottom-6 left-[var(--gutter)] flex items-center gap-3 text-[13px]">
-            <span className="flex items-center gap-2 rounded-full border border-white/20 px-3 py-2 backdrop-blur-sm">
+            <span className="flex items-center gap-2 rounded-full border border-white/20 bg-black/30 px-3 py-2">
               <svg width="18" height="10" viewBox="0 0 18 10" aria-hidden>
                 <path d="M1 5h16M4 2L1 5l3 3M14 2l3 3-3 3" fill="none" stroke="currentColor" strokeWidth="1.2" />
               </svg>
               Drag to turn 360°
             </span>
-            <div className="flex overflow-hidden rounded-full border border-white/20 backdrop-blur-sm" role="group" aria-label="Zoom">
+            <div className="flex overflow-hidden rounded-full border border-white/20 bg-black/30" role="group" aria-label="Zoom">
               <button type="button" onPointerDown={(e) => e.stopPropagation()} onClick={() => setZoom((z) => Math.min(1.25, z + 0.15))} className="size-9 hover:bg-white/10" aria-label="Zoom out">
                 −
               </button>
@@ -296,7 +296,7 @@ export function HomSite() {
         </div>
 
         <div className="relative z-20 flex flex-col justify-center px-[var(--gutter)] py-16 lg:py-24 lg:pr-[6vw]">
-          <div className="rounded-[2px] bg-black/25 p-6 backdrop-blur-xl sm:p-10 lg:bg-transparent lg:p-0 lg:backdrop-blur-none">
+          <div className="rounded-[2px] bg-black/55 p-6 sm:p-10 lg:bg-transparent lg:p-0">
             <p className="text-[13px] opacity-60">Eau de parfum</p>
             <AnimatePresence mode="wait">
               <motion.div key={scent.id} initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} transition={{ duration: 0.45 }}>

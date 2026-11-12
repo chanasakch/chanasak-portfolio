@@ -206,7 +206,7 @@ export function Shop({ category }: { category?: Category }) {
                 : "Everything we make, priced including VAT. Each piece is made to order in our workshop."}
       </p>
 
-      <div className="sticky top-16 z-30 -mx-[var(--gutter)] mt-8 border-y border-line bg-bg/95 px-[var(--gutter)] backdrop-blur">
+      <div className="sticky top-16 z-30 -mx-[var(--gutter)] mt-8 border-y border-line bg-bg/[0.97] px-[var(--gutter)]">
         <div className="flex flex-wrap items-center gap-x-6 gap-y-2 py-3 text-[14px]">
           <nav className="-my-1 flex gap-1 overflow-x-auto [scrollbar-width:none]" aria-label="Categories">
             {tabs.map(([label, slug]) => {

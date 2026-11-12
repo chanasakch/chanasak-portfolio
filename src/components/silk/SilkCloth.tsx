@@ -25,7 +25,8 @@ export function SilkCloth({ url, background, className = "", shift = 0, dist = 6
     s.renderer.toneMappingExposure = 0.92;
     const W = 2.4;
     const H = 3.6;
-    const geo = new THREE.PlaneGeometry(W, H, 64, 96);
+    const coarse = window.matchMedia("(pointer: coarse)").matches;
+    const geo = new THREE.PlaneGeometry(W, H, coarse ? 44 : 64, coarse ? 66 : 96);
     const base = Float32Array.from(geo.attributes.position.array);
     const m = new THREE.MeshPhysicalMaterial({ color: "#ffffff", roughness: 0.48, sheen: 1, sheenRoughness: 0.32, sheenColor: new THREE.Color("#ffe6bd"), side: THREE.DoubleSide });
     const cloth = new THREE.Mesh(geo, m);
