@@ -1300,6 +1300,119 @@ function Faq() {
   );
 }
 
+/**
+ * The sites in use, recorded from the browser. Plays muted when it scrolls
+ * into view and pauses when it leaves, with a button to stop it.
+ */
+function Reel() {
+  const video = useRef<HTMLVideoElement>(null);
+  const [playing, setPlaying] = useState(false);
+  const [userPaused, setUserPaused] = useState(false);
+  const [progress, setProgress] = useState(0);
+
+  useEffect(() => {
+    const v = video.current;
+    if (!v) return;
+    const reduce = window.matchMedia(
+      "(prefers-reduced-motion: reduce)",
+    ).matches;
+    const io = new IntersectionObserver(
+      ([e]) => {
+        if (e.isIntersecting && !userPaused && !reduce)
+          v.play().catch(() => {});
+        else v.pause();
+      },
+      { threshold: 0.35 },
+    );
+    io.observe(v);
+    return () => io.disconnect();
+  }, [userPaused]);
+
+  const toggle = () => {
+    const v = video.current;
+    if (!v) return;
+    if (v.paused) {
+      setUserPaused(false);
+      v.play().catch(() => {});
+    } else {
+      setUserPaused(true);
+      v.pause();
+    }
+  };
+
+  return (
+    <section className="px-[var(--gutter)] pt-24" aria-label="Showreel">
+      <motion.div
+        initial={{ opacity: 0, y: 40, scale: 0.97 }}
+        whileInView={{ opacity: 1, y: 0, scale: 1 }}
+        viewport={{ once: true, margin: "-10% 0px" }}
+        transition={{ duration: 1.1, ease }}
+        className="group relative overflow-hidden rounded-2xl bg-ink shadow-[0_50px_100px_-50px_rgb(20_20_19/0.6)]"
+      >
+        <video
+          ref={video}
+          className="block aspect-[16/10] w-full object-cover"
+          poster="/video/showreel.jpg"
+          muted
+          loop
+          playsInline
+          preload="metadata"
+          onPlay={() => setPlaying(true)}
+          onPause={() => setPlaying(false)}
+          onTimeUpdate={(e) =>
+            setProgress(
+              e.currentTarget.currentTime / (e.currentTarget.duration || 1),
+            )
+          }
+        >
+          <source src="/video/showreel.mp4" type="video/mp4" />
+        </video>
+        <button
+          type="button"
+          onClick={toggle}
+          aria-label={playing ? "Pause the showreel" : "Play the showreel"}
+          className="absolute bottom-4 right-4 flex size-11 items-center justify-center rounded-full bg-white/85 text-[#141413] shadow-lg backdrop-blur transition-transform hover:scale-105 sm:bottom-6 sm:right-6"
+        >
+          {playing ? (
+            <svg viewBox="0 0 12 12" className="size-3.5" aria-hidden>
+              <rect
+                x="2.5"
+                y="2"
+                width="2.4"
+                height="8"
+                rx="0.6"
+                fill="currentColor"
+              />
+              <rect
+                x="7.1"
+                y="2"
+                width="2.4"
+                height="8"
+                rx="0.6"
+                fill="currentColor"
+              />
+            </svg>
+          ) : (
+            <svg viewBox="0 0 12 12" className="ml-0.5 size-3.5" aria-hidden>
+              <path d="M3 1.8v8.4L10 6z" fill="currentColor" />
+            </svg>
+          )}
+        </button>
+        <span className="absolute inset-x-0 bottom-0 h-0.5 bg-white/15">
+          <span
+            className="block h-full bg-white/80"
+            style={{ width: `${progress * 100}%` }}
+          />
+        </span>
+      </motion.div>
+      <p className="mt-4 text-[14px] text-muted">
+        The sites in use, recorded straight from the browser. Each one is live
+        below.
+      </p>
+    </section>
+  );
+}
+
 function WorkCard({
   w,
   i,
@@ -1405,7 +1518,9 @@ function Work() {
           Selected work
         </h2>
         <p className="max-w-[46ch] text-[16px] leading-relaxed text-muted lg:justify-self-end">
-          Shops, booking, configurators and planners for nine kinds of business, designed and built in Next.js. Open any of them and use it on your phone or laptop.
+          Shops, booking, configurators and planners for nine kinds of business,
+          designed and built in Next.js. Open any of them and use it on your
+          phone or laptop.
         </p>
       </div>
       <div ref={ref} className="mt-12 space-y-6 lg:mt-4 lg:space-y-0">
@@ -1471,6 +1586,8 @@ export function Profile() {
       <div className="mt-16">
         <Wall />
       </div>
+
+      <Reel />
 
       <Work />
       <Process />
