@@ -294,7 +294,8 @@ export function PhloiSite() {
         s.aim = null;
         s.tilt = 0.32;
         s.zoom = 1;
-        s.lookTarget.set(0, 0, 0);
+        // on phones the header sits over the canvas, so keep the stone clear of it
+        s.lookTarget.set(0, wide ? 0 : 0.45, 0);
       } else if (view === "close") {
         s.aim = null;
         s.tilt = 0.22;
