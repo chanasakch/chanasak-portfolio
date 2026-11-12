@@ -12,6 +12,9 @@ const work = [
   { href: "/jewelry", shot: "jewelry", name: "PHLOI", font: '"Italiana", Georgia, serif', weight: 400, track: "0.4em", bg: "#0b0d11", ink: "#eee9df", job: "Fine jewellery", what: "Build a solitaire ring in 3D under studio light. Stone, metal, cut and carat change the ring and the price, and your engraving appears inside the band.", tags: ["Three.js", "Configurator", "Booking"] },
   { href: "/ceramics", shot: "ceramics", name: "DIN", font: '"Schibsted Grotesk Variable", sans-serif', weight: 800, track: "-0.05em", bg: "#ecebe6", ink: "#1b1b19", job: "Stoneware studio", what: "The shop is one wall of pieces you drag in any direction. Open a piece to magnify the glaze and add it to an order.", tags: ["Infinite canvas", "Magnifier", "Order drawer"] },
   { href: "/hotel", shot: "hotel", name: "Ruen Doi", font: '"Bodoni Moda Variable", serif', weight: 400, track: "0", bg: "#17221e", ink: "#e9e4d8", job: "Boutique hotel", what: "One day at the hotel, from morning mist to night. The colours change with the hour, then a calendar shows rates and holds a room.", tags: ["Scroll story", "Rate calendar", "Room hold"] },
+  { href: "/silk", shot: "silk", name: "Mudmee House", font: '"Fraunces Variable", Georgia, serif', weight: 300, track: "-0.02em", bg: "#dcd6e6", ink: "#221a33", job: "Hand-woven silk", what: "Design an ikat scarf in natural dyes. The pattern is woven on screen row by row, hangs in folds, and the price and weaving time follow the size.", tags: ["Generative weaving", "Drape preview", "Made to order"] },
+  { href: "/coffee", shot: "coffee", name: "Sung Coffee", font: '"Familjen Grotesk Variable", sans-serif', weight: 600, track: "-0.04em", bg: "#dfe3d6", ink: "#1f2a1e", job: "Coffee roaster", what: "A contour map of the farms, a taste chart that reshapes for each coffee, a brew timer that walks you through the pour, and subscriptions.", tags: ["Map", "Taste chart", "Brew timer", "Cart"] },
+  { href: "/charter", shot: "charter", name: "nava", font: '"Bricolage Grotesque Variable", sans-serif', weight: 700, track: "-0.04em", bg: "#eaf1f2", ink: "#0b3540", job: "Boat charter, Phuket", what: "Tap islands on a sea chart and the route, the day's timeline, sunset warnings and the price are worked out as you go.", tags: ["Route planner", "Timeline", "Live pricing"] },
   { href: "/residence", shot: "residence", name: "RIM NAM", font: '"Inter Tight Variable", sans-serif', weight: 750, track: "-0.04em", bg: "#dddbd5", ink: "#14171a", job: "Riverside condominium", what: "Pick a floor on the tower to see which units are left, open the plan room by room and work out the down payment.", tags: ["Stacking plan", "Floor plans", "Payment calculator"] },
 ];
 
@@ -81,8 +84,8 @@ function Nav() {
 }
 
 const wallRows = [
-  ["furniture", "parfum", "jewelry", "ceramics", "hotel", "residence"],
-  ["hotel", "residence", "ceramics", "furniture", "jewelry", "parfum"],
+  ["furniture", "parfum", "silk", "jewelry", "ceramics", "charter", "hotel", "coffee", "residence"],
+  ["hotel", "coffee", "residence", "charter", "ceramics", "furniture", "jewelry", "silk", "parfum"],
 ];
 
 /** Phones: the same tilted wall drifting on its own, so it runs on the GPU and never fights the finger. */
@@ -103,7 +106,7 @@ function WallTouch() {
   );
 }
 
-/** Tilted wall of the six sites that straightens as you scroll. */
+/** Tilted wall of the sites that straightens as you scroll. */
 function Wall() {
   return useFinePointer() ? <WallScroll /> : <WallTouch />;
 }
@@ -116,8 +119,8 @@ function WallScroll() {
   const x1 = useTransform(scrollYProgress, [0, 1], ["0%", "-22%"]);
   const x2 = useTransform(scrollYProgress, [0, 1], ["-22%", "0%"]);
   const rows: [string[], MotionValue<string>][] = [
-    [["furniture", "parfum", "jewelry", "ceramics", "hotel", "residence"], x1],
-    [["hotel", "residence", "ceramics", "furniture", "jewelry", "parfum"], x2],
+    [wallRows[0], x1],
+    [wallRows[1], x2],
   ];
   return (
     <div ref={ref} className="relative overflow-hidden py-6 [perspective:1400px]">
@@ -189,7 +192,7 @@ function Work() {
   return (
     <section id="work" className="px-[var(--gutter)] pt-28">
       <div className="grid gap-4 lg:grid-cols-2 lg:items-end">
-        <h2 className="text-[clamp(2rem,4vw,3.4rem)] font-semibold leading-[1.02] tracking-[-0.035em]">Six sites for Thai brands</h2>
+        <h2 className="text-[clamp(2rem,4vw,3.4rem)] font-semibold leading-[1.02] tracking-[-0.035em]">Nine sites for Thai brands</h2>
         <p className="max-w-[46ch] text-[16px] leading-relaxed text-muted lg:justify-self-end">
           Designed and built in Next.js, each around what the brand sells. Open any of them and use it on your phone or laptop.
         </p>

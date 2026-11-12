@@ -9,7 +9,7 @@ export const metadata: Metadata = {
 
 export default function JewelryLayout({ children }: { children: React.ReactNode }) {
   return (
-    <div className="b-phloi [--cursor-ink:#eceef0] [--cursor:#15171a]">
+    <div className="b-phloi [--cursor-ink:#0b0d11] [--cursor:#eee9df]">
       <SmoothScroll />
       <Cursor />
       {children}

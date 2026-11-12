@@ -180,6 +180,9 @@ html.lenis body {
 .b-din,
 .b-stay,
 .b-phloi,
+.b-silk,
+.b-sung,
+.b-nava,
 .b-rim {
   font-family: var(--font-body);
   min-height: 100dvh;
@@ -266,4 +269,46 @@ html.lenis body {
   [class*="animate-[wall"] {
     animation: none !important;
   }
+}
+
+/* Mudmee House: mangosteen-tinted silk grey, lac red for actions */
+.b-silk {
+  --bg: #dcd6e6;
+  --ink: #221a33;
+  --muted: #645b78;
+  --line: rgb(34 26 51 / 0.15);
+  --soft: #cfc8dc;
+  --accent: #9b1d24;
+  --font-display: "Fraunces Variable", Georgia, serif;
+  --font-body: "Albert Sans Variable", system-ui, sans-serif;
+  background: var(--bg);
+  color: var(--ink);
+}
+/* Sung Coffee: hillside sage, coffee-cherry red */
+.b-sung {
+  --bg: #dfe3d6;
+  --ink: #1f2a1e;
+  --muted: #5d6859;
+  --line: rgb(31 42 30 / 0.14);
+  --soft: #d3d9c8;
+  --accent: #b5321f;
+  --font-display: "Familjen Grotesk Variable", system-ui, sans-serif;
+  --font-body: "Familjen Grotesk Variable", system-ui, sans-serif;
+  background: var(--bg);
+  color: var(--ink);
+}
+/* Nava: sea mist and chart ink, buoy orange for the route */
+.b-nava {
+  --bg: #eaf1f2;
+  --ink: #0b3540;
+  --muted: #55707a;
+  --line: rgb(11 53 64 / 0.14);
+  --soft: #cfe2e7;
+  --land: #efe8d6;
+  --land-on: #dfe9c9;
+  --accent: #e8552a;
+  --font-display: "Bricolage Grotesque Variable", system-ui, sans-serif;
+  --font-body: "Manrope Variable", system-ui, sans-serif;
+  background: var(--bg);
+  color: var(--ink);
 }

@@ -6,6 +6,9 @@ Three working front-end concepts for Thai craft and hospitality brands. All bran
 | --- | --- | --- |
 | `/` | Index | Links to the six concepts |
 | `/parfum` | HOM, fragrance house | Live 3D bottle toured on scroll, 360 turn, zoom, scent and size switching, initials printed on the label |
+| `/silk` | Mudmee House | Ikat silk: pattern woven on screen, drape preview, made-to-order pricing |
+| `/coffee` | Sung Coffee | Farm contour map, taste chart, brew timer, subscriptions, cart |
+| `/charter` | Nava | Boat charter route planner on a sea chart, timeline, pricing |
 | `/furniture` | Loom & Tide | Full rattan furniture shop: home, collection with filters, product pages with photo zoom, quote list, projects, trade programme, contact |
 | `/jewelry` | PHLOI, fine jewellery | 3D solitaire ring with stone, metal, cut, carat and an engraving preview |
 | `/ceramics` | DIN, stoneware studio | Endless drag-through wall of pieces, magnifier, filters, order drawer |

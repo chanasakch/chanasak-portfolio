@@ -21,6 +21,11 @@ import "@fontsource/instrument-serif/400-italic.css";
 import "@fontsource-variable/bodoni-moda/wght-italic.css";
 import "@fontsource-variable/work-sans";
 import "@fontsource-variable/hanken-grotesk";
+import "@fontsource-variable/fraunces";
+import "@fontsource-variable/albert-sans";
+import "@fontsource-variable/familjen-grotesk";
+import "@fontsource-variable/bricolage-grotesque";
+import "@fontsource-variable/manrope";
 import "./globals.css";
 
 export const metadata: Metadata = {
