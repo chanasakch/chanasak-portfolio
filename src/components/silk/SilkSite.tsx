@@ -99,6 +99,13 @@ const motifs: Motif[] = [
   },
 ];
 
+const presets = [
+  { name: "Temple", ids: ["lac", "jack", "ebony"] },
+  { name: "Monsoon", ids: ["indigo", "raw", "mangosteen"] },
+  { name: "Harvest", ids: ["jack", "lac", "raw"] },
+  { name: "Night market", ids: ["ebony", "mangosteen", "jack"] },
+];
+
 const pieces = [
   { id: "scarf", name: "Scarf", size: "55 × 180 cm", cm: 180, price: 18500 },
   { id: "shawl", name: "Shawl", size: "90 × 200 cm", cm: 200, price: 32000 },
@@ -391,6 +398,43 @@ export function SilkSite() {
               ))}
             </div>
           </fieldset>
+
+          <div className="mt-8 flex flex-wrap items-center gap-2 text-[13px]">
+            <span className="mr-1 text-muted">Colourways</span>
+            {presets.map((p) => {
+              const on = p.ids.every((id, k) => colors[k].id === id);
+              return (
+                <button
+                  key={p.name}
+                  type="button"
+                  onClick={() =>
+                    setColors(
+                      p.ids.map((id) => dyes.find((d) => d.id === id)!) as [
+                        Dye,
+                        Dye,
+                        Dye,
+                      ],
+                    )
+                  }
+                  aria-pressed={on}
+                  className={`flex items-center gap-2 rounded-full border px-3 py-1.5 transition-colors ${on ? "border-accent text-ink" : "border-line text-muted hover:text-ink"}`}
+                >
+                  <span className="flex -space-x-1">
+                    {p.ids.map((id) => (
+                      <span
+                        key={id}
+                        className="size-3 rounded-full ring-1 ring-bg"
+                        style={{
+                          background: dyes.find((d) => d.id === id)!.hex,
+                        }}
+                      />
+                    ))}
+                  </span>
+                  {p.name}
+                </button>
+              );
+            })}
+          </div>
 
           <div className="mt-8 space-y-4">
             {["Ground", "Pattern", "Edge"].map((label, slot) => (

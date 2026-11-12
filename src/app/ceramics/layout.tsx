@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { BackToPortfolio } from "@/components/shared/BackToPortfolio";
-import { Cursor } from "@/components/shared/motion";
+import { Cursor, ResetScroll } from "@/components/shared/motion";
 
 export const metadata: Metadata = {
   title: "DIN | Stoneware from Lampang",
@@ -10,6 +10,7 @@ export const metadata: Metadata = {
 export default function CeramicsLayout({ children }: { children: React.ReactNode }) {
   return (
     <div className="b-din [--cursor-ink:#f2f2ef] [--cursor:#1b1b19]">
+      <ResetScroll />
       <Cursor />
       {children}
       <BackToPortfolio />

@@ -31,9 +31,32 @@ export function useFinePointer() {
   );
 }
 
+/**
+ * Every page opens at the top. Without this, a page opened while the previous
+ * one was still gliding (inertia scroll) can land halfway down.
+ */
+export function resetScroll() {
+  if (window.location.hash) return;
+  window.history.scrollRestoration = "manual";
+  const top = () => {
+    const l = window.__lenis;
+    l?.stop(); // drop any inertia left over from the last page
+    window.scrollTo(0, 0);
+    l?.scrollTo(0, { immediate: true, force: true });
+    l?.start();
+  };
+  top();
+  requestAnimationFrame(top);
+}
+export function ResetScroll() {
+  useEffect(resetScroll, []);
+  return null;
+}
+
 /** Inertia scrolling for the whole page. Dialogs keep native scrolling. */
 export function SmoothScroll() {
   const reduce = useReducedMotion();
+  useEffect(resetScroll, []);
   useEffect(() => {
     if (reduce) return;
     const lenis = new Lenis({

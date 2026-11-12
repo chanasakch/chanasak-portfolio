@@ -95,6 +95,14 @@ const stops: Stop[] = [
     note: "Clear water in Batok Bay and a long swim off the stern.",
   },
 ];
+// the days most guests ask for
+const routes = [
+  { name: "Limestone bay", ids: ["jb", "hong", "naka"] },
+  { name: "Phi Phi", ids: ["khai", "phiphi"] },
+  { name: "Snorkel Racha", ids: ["racha"] },
+  { name: "Slow island day", ids: ["yao", "naka"] },
+];
+
 const boats = [
   {
     id: "lomkhai",
@@ -590,6 +598,24 @@ export function NavaSite() {
         </div>
 
         <div className="min-w-0">
+          <div className="mb-8 flex flex-wrap gap-2 text-[13px]">
+            {routes.map((r) => {
+              const on =
+                r.ids.length === chosen.size &&
+                r.ids.every((id) => chosen.has(id));
+              return (
+                <button
+                  key={r.name}
+                  type="button"
+                  onClick={() => setChosen(new Set(r.ids))}
+                  aria-pressed={on}
+                  className={`rounded-full border px-3.5 py-1.5 transition-colors ${on ? "border-accent bg-accent text-[#0b1d27]" : "border-line text-muted hover:text-ink"}`}
+                >
+                  {r.name}
+                </button>
+              );
+            })}
+          </div>
           <ol className="relative border-l border-line pl-6">
             <li className="relative pb-5">
               <span className="absolute -left-[29px] top-1.5 size-2.5 rounded-full bg-ink" />
