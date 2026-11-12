@@ -209,7 +209,6 @@ export function DinWall() {
             <div><dt className="text-muted">Wheel classes</dt><dd>Saturdays, ฿2,200, six people</dd></div>
             <div><dt className="text-muted">Restaurants</dt><dd>From 48 pieces per design</dd></div>
           </dl>
-          <p className="text-[13px] text-muted">Concept site. DIN is fictional. Photos from Pexels.</p>
         </div>
       </Drawer>
 

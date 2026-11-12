@@ -60,7 +60,7 @@ export function StaySite() {
         <div className="absolute inset-0 bg-gradient-to-b from-black/30 via-transparent to-black/60" />
         <motion.div style={{ opacity: fade }} className="absolute inset-x-[var(--gutter)] bottom-[12vh] text-white">
           <SplitLines lines={["A day above", "the lake"]} delay={0.3} className="font-display text-[clamp(3.4rem,10vw,10rem)] italic leading-[0.9]" />
-          <p className="mt-6 max-w-[40ch] text-[16px] opacity-85">Twenty-four rooms in the hills of Chiang Rai. Scroll through one day here, from mist to lanterns.</p>
+          <p className="mt-6 max-w-[40ch] text-[16px] opacity-85">Twenty-four rooms in the hills above Mae Suai, Chiang Rai.</p>
         </motion.div>
       </section>
 
@@ -93,7 +93,7 @@ export function StaySite() {
 
       <footer className="flex flex-col justify-between gap-3 border-t border-current/15 px-[var(--gutter)] pb-24 pt-8 text-[13px] opacity-60 sm:flex-row sm:pb-8">
         <span>Ruen Doi, Mae Suai, Chiang Rai. stay@ruendoi.example</span>
-        <span>Concept site. The hotel is fictional. Photos from Pexels.</span>
+        <span>© 2026 Ruen Doi</span>
       </footer>
 
       <AnimatePresence>{book && <Booking onClose={() => setBook(false)} />}</AnimatePresence>

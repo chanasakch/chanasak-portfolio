@@ -1,6 +1,6 @@
 import Link from "next/link";
 
-/** Small pill that takes a reviewer back to the list of concepts. */
+/** Small pill back to the portfolio page. */
 export function BackToPortfolio({ tone = "light" }: { tone?: "light" | "dark" }) {
   const colors =
     tone === "dark"
@@ -12,7 +12,7 @@ export function BackToPortfolio({ tone = "light" }: { tone?: "light" | "dark" })
       className={`no-print fixed bottom-4 left-4 z-50 rounded-full px-4 py-2 text-[13px] shadow-[0_6px_24px_rgb(0_0_0/0.12)] backdrop-blur transition-colors ${colors}`}
       style={{ fontFamily: '"Jost Variable", "Jost", system-ui, sans-serif' }}
     >
-      All concepts
+      Portfolio
     </Link>
   );
 }

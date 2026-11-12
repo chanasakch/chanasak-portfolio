@@ -139,7 +139,7 @@ export function PhloiSite() {
           <canvas ref={canvas} className="absolute inset-0 h-full w-full lg:fixed lg:inset-auto lg:left-0 lg:top-0 lg:h-[100svh] lg:w-full" role="img" aria-label={`${stone.name} ring in ${metal.name.toLowerCase()}`} />
           <div className="pointer-events-none absolute bottom-6 left-[var(--gutter)] hidden lg:block">
             <SplitLines lines={["Thai stones,", "set by hand"]} delay={0.2} className="font-display text-[clamp(3rem,5.5vw,5.6rem)] leading-[0.95]" />
-            <p className="mt-4 text-[13px] text-muted">Drag the ring to turn it. Every choice changes it live.</p>
+            <p className="mt-4 text-[13px] text-muted">Drag to turn the ring.</p>
           </div>
         </div>
         <aside className="relative z-10 flex flex-col justify-center bg-bg/70 px-[var(--gutter)] py-12 backdrop-blur-sm lg:bg-transparent lg:py-20 lg:pr-[5vw] lg:backdrop-blur-none">
@@ -254,7 +254,7 @@ export function PhloiSite() {
       </section>
       <footer className="relative z-10 flex flex-col justify-between gap-3 bg-ink px-[var(--gutter)] pb-24 pt-6 text-[12px] text-bg/50 sm:flex-row sm:pb-8">
         <span>PHLOI, 9 Silom Road, Bang Rak</span>
-        <span>Concept site. The brand is fictional. Ring rendered live in WebGL.</span>
+        <span>© 2026 PHLOI</span>
       </footer>
 
       <Drawer open={drawer} onClose={() => { setDrawer(false); setSent(false); }} title="Book a private viewing">

@@ -71,7 +71,8 @@ export const photos = {
 
 export type PhotoKey = keyof typeof photos;
 
-const BASE = process.env.NEXT_PUBLIC_IMG_BASE ?? "/images/";
+export const IMG_BASE = process.env.NEXT_PUBLIC_IMG_BASE ?? "/images/";
+const BASE = IMG_BASE;
 
 export function photoUrl(photo: Photo, width: 800 | 1600 = 1600) {
   return `${BASE}${photo.slug}-${width}.webp`;

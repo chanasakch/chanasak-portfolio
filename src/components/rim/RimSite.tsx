@@ -52,7 +52,7 @@ export function RimSite() {
       <section id="residences" className="grid min-h-[100svh] gap-10 px-[var(--gutter)] pb-16 pt-28 lg:grid-cols-12 lg:gap-6">
         <div className="flex flex-col lg:col-span-5">
           <SplitLines lines={["Thirty-two floors", "on the Chao Phraya"]} delay={0.2} className="text-[clamp(2.4rem,4.3vw,4.8rem)] font-[600] leading-[0.92] tracking-[-0.05em]" />
-          <p className="mt-6 max-w-[42ch] text-[16px] leading-relaxed text-muted">128 residences on Charoen Krung, completing in 2028. Pick a floor on the tower to see what is left on it.</p>
+          <p className="mt-6 max-w-[42ch] text-[16px] leading-relaxed text-muted">128 residences on Charoen Krung, completing in 2028.</p>
           <dl className="mt-10 grid grid-cols-3 gap-4 border-t border-ink pt-5 text-[14px]">
             {[["Residences", "128"], ["From", "฿9.8 m"], ["Handover", "Q2 2028"]].map(([k, v]) => (
               <div key={k}>
@@ -157,7 +157,7 @@ export function RimSite() {
 
       <footer className="flex flex-col justify-between gap-3 border-t border-ink/10 px-[var(--gutter)] pb-24 pt-8 text-[13px] text-muted sm:flex-row sm:pb-8">
         <span>Sales gallery, 1610 Charoen Krung Road. Daily 10:00 to 19:00</span>
-        <span>Concept site. The project is fictional. Interior photos from Pexels.</span>
+        <span>© 2026 Rim Nam Residences</span>
       </footer>
 
       <Drawer open={!!unit} onClose={() => setUnit(null)} title={unit ? `Residence ${floor}${unit.id}` : ""} width="max-w-[620px]">

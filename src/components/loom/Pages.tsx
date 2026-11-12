@@ -1,7 +1,9 @@
 "use client";
 
 import Link from "next/link";
-import { useMemo, useState, type FormEvent, type ReactNode } from "react";
+import { useMemo, useRef, useState, type FormEvent, type ReactNode } from "react";
+import { motion, useScroll, useTransform } from "motion/react";
+import { ease, RevealImage, SplitLines } from "@/components/shared/motion";
 import { Photo } from "@/components/shared/Photo";
 import { photos } from "@/data/images";
 import { bySlug, categories, categoryPhoto, products, projects, thb, type Category, type Product } from "@/data/loom";
@@ -40,27 +42,45 @@ export function ProductCard({ product: p, sizes = "(min-width:1024px) 25vw, 50vw
 
 /* ---------------- Home ---------------- */
 
+function Hero() {
+  const ref = useRef<HTMLElement>(null);
+  const { scrollYProgress } = useScroll({ target: ref, offset: ["start start", "end start"] });
+  const y = useTransform(scrollYProgress, [0, 1], ["0%", "18%"]);
+  const fade = useTransform(scrollYProgress, [0, 0.6], [1, 0]);
+  const lift = useTransform(scrollYProgress, [0, 1], [0, -60]);
+  return (
+    <section ref={ref} className="relative h-[min(88svh,880px)] min-h-[540px] overflow-hidden">
+      <motion.div className="absolute inset-0" style={{ y }}>
+        <motion.div className="h-full w-full" initial={{ scale: 1.14 }} animate={{ scale: 1 }} transition={{ duration: 2.2, ease }}>
+          <Photo photo={photos.archedTerraceChairs} className="h-full w-full" priority position="62% 60%" />
+        </motion.div>
+      </motion.div>
+      <div className="absolute inset-0 bg-[linear-gradient(to_top,rgb(0_0_0/0.5),transparent_55%)]" />
+      <motion.div style={{ opacity: fade, y: lift }} className={`${wrap} relative flex h-full flex-col justify-end pb-20 text-white sm:pb-14`}>
+        <SplitLines
+          as="h1"
+          lines={["Rattan furniture and lighting,", "woven by hand in Ayutthaya"]}
+          delay={0.35}
+          className="text-[clamp(2.1rem,4.6vw,3.9rem)] font-medium leading-[1.06] tracking-[-0.025em]"
+        />
+        <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.9, delay: 0.9, ease }} className="mt-7 flex flex-wrap gap-3">
+          <Link href={`${base}/shop`} className={`${btn} bg-white text-[#1d1c1a]`}>
+            Shop the collection
+          </Link>
+          <Link href={`${base}/trade`} className={`${btn} border border-white/70 text-white backdrop-blur-sm`}>
+            For hotels and restaurants
+          </Link>
+        </motion.div>
+      </motion.div>
+    </section>
+  );
+}
+
 export function Home() {
   const fresh = ["krachao-pendant", "kanok-armchair", "khom-pendant", "talay-bistro-chair"].map((s) => bySlug(s)!);
   return (
     <>
-      <section className="relative h-[min(86svh,860px)] min-h-[520px]">
-        <Photo photo={photos.archedTerraceChairs} className="absolute inset-0" priority position="62% 60%" />
-        <div className="absolute inset-0 bg-[linear-gradient(to_top,rgb(0_0_0/0.45),transparent_55%)]" />
-        <div className={`${wrap} relative flex h-full flex-col justify-end pb-20 text-white sm:pb-12`}>
-          <h1 className="max-w-[18ch] text-[clamp(2.1rem,4.6vw,3.9rem)] font-medium leading-[1.04] tracking-[-0.025em] [text-wrap:balance]">
-            Rattan furniture and lighting, woven by hand in Ayutthaya
-          </h1>
-          <div className="mt-7 flex flex-wrap gap-3">
-            <Link href={`${base}/shop`} className={`${btn} bg-white text-[#1d1c1a]`}>
-              Shop the collection
-            </Link>
-            <Link href={`${base}/trade`} className={`${btn} border border-white/70 text-white`}>
-              For hotels and restaurants
-            </Link>
-          </div>
-        </div>
-      </section>
+      <Hero />
 
       <section className={`${wrap} pt-16`}>
         <div className="grid grid-cols-2 gap-x-4 gap-y-8 lg:grid-cols-4">
@@ -91,7 +111,7 @@ export function Home() {
       </section>
 
       <section className={`${wrap} grid items-center gap-10 pt-28 lg:grid-cols-2 lg:gap-20`}>
-        <Photo photo={photos.balconyRattanPods} className="aspect-[4/3]" sizes="(min-width:1024px) 50vw, 100vw" />
+        <RevealImage photo={photos.balconyRattanPods} className="aspect-[4/3]" sizes="(min-width:1024px) 50vw, 100vw" />
         <div className="max-w-[46ch]">
           <h2 className="text-[clamp(1.5rem,2.4vw,2rem)] font-medium leading-tight tracking-[-0.02em]">Twenty-two weavers, one workshop</h2>
           <p className="mt-5 text-[15.5px] leading-relaxed text-muted">
@@ -248,7 +268,7 @@ export function Projects() {
       <div className="mt-12 space-y-20">
         {projects.map((pr, i) => (
           <article key={pr.name} className={`grid items-center gap-8 lg:grid-cols-2 lg:gap-16 ${i % 2 ? "lg:[&>*:first-child]:order-2" : ""}`}>
-            <Photo photo={pr.photo} className="aspect-[4/3]" sizes="(min-width:1024px) 50vw, 100vw" />
+            <RevealImage photo={pr.photo} className="aspect-[4/3]" sizes="(min-width:1024px) 50vw, 100vw" />
             <div>
               <p className="text-[14px] text-muted">
                 {pr.place}, {pr.year}
@@ -300,7 +320,7 @@ export function About() {
         />
       </div>
       <div className={`${wrap} mt-10`}>
-        <Photo photo={photos.courtyardHouse} className="aspect-[16/9] max-h-[640px] w-full" sizes="100vw" position="50% 70%" />
+        <RevealImage photo={photos.courtyardHouse} className="aspect-[16/9] max-h-[640px] w-full" sizes="100vw" position="50% 70%" parallax={10} />
       </div>
       <section className={`${wrap} grid gap-10 pt-20 lg:grid-cols-[1fr_1.4fr] lg:gap-20`}>
         <h2 className="text-[clamp(1.5rem,2.4vw,2rem)] font-medium tracking-[-0.02em]">How a chair is made</h2>
@@ -329,8 +349,8 @@ export function About() {
         ))}
       </section>
       <section className={`${wrap} grid gap-4 pt-20 sm:grid-cols-2`}>
-        <Photo photo={photos.readingCorner} className="aspect-[4/5]" sizes="50vw" />
-        <Photo photo={photos.trioPendants} className="aspect-[4/5]" sizes="50vw" />
+        <RevealImage photo={photos.readingCorner} className="aspect-[4/5]" sizes="50vw" />
+        <RevealImage photo={photos.trioPendants} className="aspect-[4/5]" sizes="50vw" />
       </section>
     </>
   );

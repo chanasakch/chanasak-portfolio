@@ -1,6 +1,5 @@
 "use client";
 
-import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 import { AnimatePresence, motion } from "motion/react";
 import { Drawer } from "@/components/shared/ui";
@@ -429,10 +428,8 @@ export function HomSite() {
 
       <footer className="relative z-20 overflow-hidden px-[var(--gutter)] pt-16">
         <div className="flex flex-col justify-between gap-4 text-[13px] opacity-60 sm:flex-row">
-          <span>Concept site. HOM and its scents are fictional. Bottle rendered live in WebGL.</span>
-          <Link href="/" className="underline underline-offset-4">
-            All concepts
-          </Link>
+          <span>© 2026 HOM Parfums, Bangkok</span>
+          <span>Instagram @hom.parfums</span>
         </div>
         <p aria-hidden className="select-none pt-8 text-center font-display text-[clamp(8rem,40vw,42rem)] leading-[0.72] tracking-[0.08em] text-white/[0.07]">
           HOM

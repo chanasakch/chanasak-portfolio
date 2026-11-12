@@ -245,6 +245,7 @@ function ZoomViewer({ photos, index, onIndex, title }: { photos: PhotoType[]; in
   useEffect(() => {
     if (!open) return;
     document.body.style.overflow = "hidden";
+    window.__lenis?.stop();
     const onKey = (e: KeyboardEvent) => {
       if (e.key === "Escape") onIndex(null);
       if (e.key === "ArrowRight") onIndex((index! + 1) % photos.length);
@@ -253,6 +254,7 @@ function ZoomViewer({ photos, index, onIndex, title }: { photos: PhotoType[]; in
     window.addEventListener("keydown", onKey);
     return () => {
       document.body.style.overflow = "";
+      window.__lenis?.start();
       window.removeEventListener("keydown", onKey);
     };
   }, [open, index, photos.length, onIndex]);

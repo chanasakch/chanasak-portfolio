@@ -176,12 +176,26 @@ html.lenis body {
 
 /* Second set of concepts. Each wrapper sets the tokens its drawers and type use. */
 .b-loom,
+.b-me,
 .b-din,
 .b-stay,
 .b-phloi,
 .b-rim {
   font-family: var(--font-body);
   min-height: 100dvh;
+}
+.b-me {
+  --bg: #f3f3f0;
+  --ink: #141413;
+  --muted: #6b6a65;
+  --line: rgb(20 20 19 / 0.13);
+  --soft: #e8e7e2;
+  --font-display: "Hanken Grotesk Variable", "Anuphan", system-ui, sans-serif;
+  --font-body: "Hanken Grotesk Variable", "Anuphan", system-ui, sans-serif;
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--font-body);
+  -webkit-font-smoothing: antialiased;
 }
 .b-loom {
   --bg: #fbfbf9;

@@ -31,6 +31,8 @@ export function Header({ path }: { path: string }) {
 
   useEffect(() => {
     document.body.style.overflow = menu ? "hidden" : "";
+    if (menu) window.__lenis?.stop();
+    else window.__lenis?.start();
   }, [menu]);
 
   return (
@@ -85,6 +87,8 @@ export function Header({ path }: { path: string }) {
       <AnimatePresence>
         {menu && (
           <motion.div
+            role="dialog"
+            aria-label="Menu"
             className="fixed inset-0 z-[60] flex flex-col bg-bg lg:hidden"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
@@ -295,8 +299,8 @@ export function Footer() {
         </div>
       </div>
       <div className="mx-auto flex max-w-[1440px] flex-wrap justify-between gap-3 border-t border-line px-[var(--gutter)] py-5 pb-20 text-[12.5px] text-muted sm:pb-5">
-        <span>© 2026 Loom &amp; Tide Co., Ltd. A design concept by Chanasak Choonuch.</span>
-        <span>Photography from Pexels</span>
+        <span>© 2026 Loom &amp; Tide Co., Ltd.</span>
+        <span>Instagram @loomandtide</span>
       </div>
     </footer>
   );
