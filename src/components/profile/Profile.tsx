@@ -16,11 +16,11 @@ const work = [
 ];
 
 const jobs = [
-  { co: "Garena Online (Thailand)", role: "Full Stack Engineer", when: "Oct 2025 to now", note: "Lead product delivery end to end, from PRD and system design to release, UAT and user training. Go, React, MySQL, Redis, RabbitMQ, Grafana." },
-  { co: "Real Smart", role: "Developer", when: "Aug 2024 to Sep 2025", note: "LLM chatbot and text tools, and a course and accommodation booking site with live availability. Vue, Nuxt, Node.js, Laravel." },
-  { co: "Bookdose", role: "Full Stack Web Developer", when: "Mar 2023 to Jul 2024", note: "E-library, e-commerce and e-learning systems for partners such as the Golden Jubilee Museum of Agriculture, plus APIs for the mobile apps." },
-  { co: "Assumption College Thonburi", role: "Web Developer, internship", when: "Feb to May 2022", note: "Built the library system alone, from interviews with staff to deployment on the school server." },
-  { co: "VP Advance", role: "Front-end Developer, internship", when: "Mar to Jun 2021", note: "Front-end for the Eastern Economic Corridor (EEC) information system." },
+  { logo: "garena.webp", co: "Garena Online (Thailand)", role: "Full Stack Engineer", when: "Oct 2025 to now", note: "Lead product delivery end to end, from PRD and system design to release, UAT and user training. Go, React, MySQL, Redis, RabbitMQ, Grafana." },
+  { logo: "realsmart.svg", co: "Real Smart", role: "Developer", when: "Aug 2024 to Sep 2025", note: "LLM chatbot and text tools, and a course and accommodation booking site with live availability. Vue, Nuxt, Node.js, Laravel." },
+  { logo: "bookdose.webp", co: "Bookdose", role: "Full Stack Web Developer", when: "Mar 2023 to Jul 2024", note: "E-library, e-commerce and e-learning systems for partners such as the Golden Jubilee Museum of Agriculture, plus APIs for the mobile apps." },
+  { logo: "act.webp", co: "Assumption College Thonburi", role: "Web Developer, internship", when: "Feb to May 2022", note: "Built the library system alone, from interviews with staff to deployment on the school server." },
+  { logo: "vpadvance.webp", co: "VP Advance", role: "Front-end Developer, internship", when: "Mar to Jun 2021", note: "Front-end for the Eastern Economic Corridor (EEC) information system." },
 ];
 
 const skills = [
@@ -30,6 +30,34 @@ const skills = [
   ["Test", "Playwright, Cypress, manual test plans, UAT"],
   ["Plan", "PRDs, user flows, acceptance criteria, ERD, C4, sequence diagrams"],
 ];
+
+const certs = [
+  { title: "Supervised Machine Learning: Regression and Classification", by: "DeepLearning.AI and Stanford", logo: "stanford.svg" },
+  { title: "Introduction to Front-End Development", by: "Meta", logo: "meta.svg" },
+  { title: "Introduction to Databases for Back-End Development", by: "Meta", logo: "meta.svg" },
+  { title: "Programming with JavaScript", by: "Meta", logo: "meta.svg" },
+  { title: "Introduction to Agile Development and Scrum", by: "IBM", logo: "ibm.svg" },
+  { title: "AWS Cloud Technical Essentials", by: "Amazon Web Services", logo: "aws.svg" },
+];
+
+const awards = [
+  { title: "Hackathon Teaching Academy Award", when: "2020" },
+  { title: "CRU Robot Games: Nuclear Fusion Mechanical Innovation Power Plant for Humanity", when: "2019" },
+  { title: "Software Innovation Teaching Academy Award, 1st runner-up", when: "2019" },
+];
+
+const stack = ["go", "fiber", "react", "nodejs", "typescript", "vue", "nuxt", "laravel", "mysql", "mongodb", "redis", "rabbitmq", "docker", "nginx", "gitlab", "githubactions", "grafana", "playwright", "cypress"];
+
+const logo = (f: string) => `${IMG_BASE}logos/${f}`;
+
+function Logo({ src, size = 40, className = "" }: { src: string; size?: number; className?: string }) {
+  return (
+    <span className={`flex shrink-0 items-center justify-center overflow-hidden rounded-lg bg-white p-1.5 ring-1 ring-black/5 ${className}`} style={{ width: size, height: size }}>
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img src={logo(src)} alt="" className="max-h-full max-w-full object-contain" loading="lazy" />
+    </span>
+  );
+}
 
 const shot = (s: string, w: 700 | 1400) => `${IMG_BASE}work/${s}-${w}.webp`;
 
@@ -152,30 +180,51 @@ export function Profile() {
     <div className="b-me">
       <SmoothScroll />
       <Nav />
-      <section className="px-[var(--gutter)] pt-32 sm:pt-40">
+      <section className="px-[var(--gutter)] pt-28 sm:pt-36">
+        <div className="flex items-end justify-between gap-6">
         <SplitLines
           as="h1"
           lines={["Chanasak", "Choonuch"]}
           delay={0.15}
-          className="text-[clamp(3.4rem,16vw,13rem)] font-semibold leading-[0.86] tracking-[-0.055em]"
+          className="text-[clamp(3.4rem,14vw,12rem)] font-semibold leading-[0.86] tracking-[-0.055em]"
         />
+          <motion.div
+            initial={{ opacity: 0, scale: 0.92, y: 30 }}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
+            transition={{ duration: 1.2, delay: 0.4, ease }}
+            className="hidden w-[clamp(140px,17vw,260px)] shrink-0 overflow-hidden rounded-2xl shadow-[0_30px_60px_-25px_rgb(0_0_0/0.4)] sm:block"
+          >
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src={`${IMG_BASE}me/me-610.webp`} srcSet={`${IMG_BASE}me/me-320.webp 320w, ${IMG_BASE}me/me-610.webp 610w`} sizes="260px" alt="Chanasak Choonuch" className="aspect-[4/5] w-full object-cover" />
+          </motion.div>
+        </div>
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 1, delay: 0.7, ease }}
           className="mt-10 grid gap-8 border-t border-line pt-6 sm:grid-cols-[1.3fr_1fr_1fr] sm:gap-10"
         >
+          <div className="flex items-start gap-4">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src={`${IMG_BASE}me/me-320.webp`} alt="" className="aspect-square w-16 shrink-0 rounded-full object-cover object-top sm:hidden" />
           <p className="max-w-[38ch] text-[clamp(1.05rem,1.5vw,1.3rem)] leading-snug">
             Full stack engineer in Bangkok. I take web products from the first requirement to the production release.
           </p>
-          <p className="text-[14px] text-muted">
-            <span className="block text-ink">Garena Online (Thailand)</span>
-            Full Stack Engineer
-          </p>
-          <p className="text-[14px] text-muted">
-            <span className="block text-ink">Chulalongkorn University</span>
-            M.Sc. Software Engineering
-          </p>
+          </div>
+          <div className="flex items-center gap-3 text-[14px] text-muted">
+            <Logo src="garena.webp" />
+            <p>
+              <span className="block text-ink">Garena Online (Thailand)</span>
+              Full Stack Engineer
+            </p>
+          </div>
+          <div className="flex items-center gap-3 text-[14px] text-muted">
+            <Logo src="chula.svg" />
+            <p>
+              <span className="block text-ink">Chulalongkorn University</span>
+              M.Sc. Software Engineering
+            </p>
+          </div>
         </motion.div>
       </section>
 
@@ -189,10 +238,13 @@ export function Profile() {
         <h2 className="text-[clamp(2rem,4vw,3.4rem)] font-semibold tracking-[-0.035em]">Experience</h2>
         <ol className="mt-10 border-t border-line">
           {jobs.map((j) => (
-            <li key={j.co} className="grid gap-2 border-b border-line py-6 sm:grid-cols-[1.2fr_1fr_2fr] sm:gap-8">
-              <div>
-                <p className="text-[17px] font-medium tracking-[-0.01em]">{j.co}</p>
-                <p className="text-[14px] text-muted">{j.when}</p>
+            <li key={j.co} className="grid gap-3 border-b border-line py-6 sm:grid-cols-[1.3fr_1fr_2fr] sm:gap-8">
+              <div className="flex items-start gap-4">
+                <Logo src={j.logo} size={44} />
+                <div>
+                  <p className="text-[17px] font-medium tracking-[-0.01em]">{j.co}</p>
+                  <p className="text-[14px] text-muted">{j.when}</p>
+                </div>
               </div>
               <p className="text-[15px]">{j.role}</p>
               <p className="max-w-[60ch] text-[15px] leading-relaxed text-muted">{j.note}</p>
@@ -204,6 +256,13 @@ export function Profile() {
       <section className="grid gap-16 px-[var(--gutter)] pt-28 lg:grid-cols-2">
         <div>
           <h2 className="text-[clamp(1.6rem,2.6vw,2.2rem)] font-semibold tracking-[-0.03em]">Tools</h2>
+          <ul className="mt-8 flex flex-wrap gap-2">
+            {stack.map((t) => (
+              <li key={t} title={t}>
+                <Logo src={`${t}.svg`} size={44} className="transition-transform duration-300 hover:-translate-y-1" />
+              </li>
+            ))}
+          </ul>
           <dl className="mt-8 border-t border-line">
             {skills.map(([k, v]) => (
               <div key={k} className="grid grid-cols-[5rem_1fr] gap-4 border-b border-line py-4 text-[15px]">
@@ -216,15 +275,42 @@ export function Profile() {
         <div>
           <h2 className="text-[clamp(1.6rem,2.6vw,2.2rem)] font-semibold tracking-[-0.03em]">Education</h2>
           <dl className="mt-8 border-t border-line text-[15px]">
-            <div className="border-b border-line py-4">
-              <dt className="font-medium">Chulalongkorn University</dt>
-              <dd className="text-muted">M.Sc. Software Engineering, 2023 to now</dd>
+            <div className="flex items-center gap-4 border-b border-line py-4">
+              <Logo src="chula.svg" size={44} />
+              <div>
+                <dt className="font-medium">Chulalongkorn University</dt>
+                <dd className="text-muted">M.Sc. Software Engineering, 2023 to now</dd>
+              </div>
             </div>
-            <div className="border-b border-line py-4">
-              <dt className="font-medium">Rajamangala University of Technology Phra Nakhon</dt>
-              <dd className="text-muted">B.S.Tech.Ed. Computer Engineering, 2018 to 2023, GPAX 3.47</dd>
+            <div className="flex items-center gap-4 border-b border-line py-4">
+              <Logo src="rmutp.webp" size={44} />
+              <div>
+                <dt className="font-medium">Rajamangala University of Technology Phra Nakhon</dt>
+                <dd className="text-muted">B.S.Tech.Ed. Computer Engineering, 2018 to 2023, GPAX 3.47</dd>
+              </div>
             </div>
           </dl>
+          <h2 className="mt-16 text-[clamp(1.6rem,2.6vw,2.2rem)] font-semibold tracking-[-0.03em]">Certificates</h2>
+          <ul className="mt-8 border-t border-line text-[15px]">
+            {certs.map((c) => (
+              <li key={c.title} className="flex items-center gap-4 border-b border-line py-3.5">
+                <Logo src={c.logo} size={36} />
+                <div className="min-w-0">
+                  <p className="leading-snug">{c.title}</p>
+                  <p className="text-[13px] text-muted">{c.by}, Coursera, 2022</p>
+                </div>
+              </li>
+            ))}
+          </ul>
+          <h2 className="mt-16 text-[clamp(1.6rem,2.6vw,2.2rem)] font-semibold tracking-[-0.03em]">Awards</h2>
+          <ul className="mt-8 border-t border-line text-[15px]">
+            {awards.map((a) => (
+              <li key={a.title} className="flex justify-between gap-6 border-b border-line py-3.5">
+                <span>{a.title}</span>
+                <span className="shrink-0 text-muted">{a.when}</span>
+              </li>
+            ))}
+          </ul>
         </div>
       </section>
 
