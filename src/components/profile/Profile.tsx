@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useRef } from "react";
 import { motion, useScroll, useTransform, type MotionValue } from "motion/react";
-import { ease, SmoothScroll, SplitLines } from "@/components/shared/motion";
+import { ease, SmoothScroll, SplitLines, useFinePointer } from "@/components/shared/motion";
 import { IMG_BASE } from "@/data/images";
 
 const work = [
@@ -80,8 +80,35 @@ function Nav() {
   );
 }
 
+const wallRows = [
+  ["furniture", "parfum", "jewelry", "ceramics", "hotel", "residence"],
+  ["hotel", "residence", "ceramics", "furniture", "jewelry", "parfum"],
+];
+
+/** Phones: the same tilted wall drifting on its own, so it runs on the GPU and never fights the finger. */
+function WallTouch() {
+  return (
+    <div className="relative overflow-hidden py-4 [perspective:1100px]" aria-hidden>
+      <div className="space-y-3 [transform:rotateX(16deg)_scale(0.94)] [transform-origin:50%_0]">
+        {wallRows.map((items, r) => (
+          <div key={r} className={`flex w-max gap-3 pr-3 will-change-transform ${r ? "animate-[wall_46s_linear_infinite_reverse]" : "animate-[wall_40s_linear_infinite]"}`}>
+            {[...items, ...items].map((s, i) => (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img key={i} src={shot(s, 700)} alt="" decoding="async" className="aspect-[16/10] w-[64vw] shrink-0 rounded-md object-cover shadow-[0_10px_24px_-14px_rgb(0_0_0/0.45)]" />
+            ))}
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
 /** Tilted wall of the six sites that straightens as you scroll. */
 function Wall() {
+  return useFinePointer() ? <WallScroll /> : <WallTouch />;
+}
+
+function WallScroll() {
   const ref = useRef<HTMLDivElement>(null);
   const { scrollYProgress } = useScroll({ target: ref, offset: ["start end", "end start"] });
   const rotateX = useTransform(scrollYProgress, [0, 0.5], [32, 0]);
@@ -116,10 +143,11 @@ function Wall() {
 function WorkCard({ w, i, progress }: { w: (typeof work)[number]; i: number; progress: MotionValue<number> }) {
   const n = work.length;
   const scale = useTransform(progress, [i / n, 1], [1, 1 - (n - 1 - i) * 0.035]);
+  const fine = useFinePointer();
   return (
     <div className="lg:sticky lg:top-0 lg:flex lg:h-svh lg:items-center">
       <motion.article
-        style={{ scale, background: w.bg, color: w.ink, top: `${i * 14}px` }}
+        style={{ scale: fine ? scale : 1, background: w.bg, color: w.ink, top: fine ? `${i * 14}px` : 0 }}
         className="relative grid origin-top items-center gap-8 overflow-hidden rounded-2xl p-6 sm:p-10 lg:grid-cols-[minmax(0,0.9fr)_minmax(0,1.3fr)] lg:gap-14 lg:p-14"
       >
         <div className="min-w-0">

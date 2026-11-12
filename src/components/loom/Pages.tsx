@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useMemo, useRef, useState, type FormEvent, type ReactNode } from "react";
 import { motion, useScroll, useTransform } from "motion/react";
-import { ease, RevealImage, SplitLines } from "@/components/shared/motion";
+import { ease, RevealImage, SplitLines, useFinePointer } from "@/components/shared/motion";
 import { Photo } from "@/components/shared/Photo";
 import { photos } from "@/data/images";
 import { bySlug, categories, categoryPhoto, products, projects, thb, type Category, type Product } from "@/data/loom";
@@ -48,15 +48,16 @@ function Hero() {
   const y = useTransform(scrollYProgress, [0, 1], ["0%", "18%"]);
   const fade = useTransform(scrollYProgress, [0, 0.6], [1, 0]);
   const lift = useTransform(scrollYProgress, [0, 1], [0, -60]);
+  const fine = useFinePointer();
   return (
     <section ref={ref} className="relative h-[min(88svh,880px)] min-h-[540px] overflow-hidden">
-      <motion.div className="absolute inset-0" style={{ y }}>
+      <motion.div className="absolute inset-0 will-change-transform" style={fine ? { y } : undefined}>
         <motion.div className="h-full w-full" initial={{ scale: 1.14 }} animate={{ scale: 1 }} transition={{ duration: 2.2, ease }}>
           <Photo photo={photos.archedTerraceChairs} className="h-full w-full" priority position="62% 60%" />
         </motion.div>
       </motion.div>
       <div className="absolute inset-0 bg-[linear-gradient(to_top,rgb(0_0_0/0.5),transparent_55%)]" />
-      <motion.div style={{ opacity: fade, y: lift }} className={`${wrap} relative flex h-full flex-col justify-end pb-20 text-white sm:pb-14`}>
+      <motion.div style={fine ? { opacity: fade, y: lift } : undefined} className={`${wrap} relative flex h-full flex-col justify-end pb-24 text-white sm:pb-14`}>
         <SplitLines
           as="h1"
           lines={["Rattan furniture and lighting,", "woven by hand in Ayutthaya"]}

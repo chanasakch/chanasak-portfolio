@@ -1,7 +1,7 @@
 "use client";
 
 import Lenis from "lenis";
-import { useEffect, useLayoutEffect, useRef, useState, type ReactNode } from "react";
+import { useEffect, useLayoutEffect, useRef, useState, type ReactNode, useSyncExternalStore } from "react";
 import { AnimatePresence, motion, useMotionValue, useReducedMotion, useScroll, useSpring, useTransform, type MotionValue } from "motion/react";
 import { Photo } from "./Photo";
 import type { Photo as PhotoType } from "@/data/images";
@@ -16,6 +16,20 @@ declare global {
 }
 
 const useIso = typeof window === "undefined" ? useEffect : useLayoutEffect;
+
+const FINE = "(hover: hover) and (pointer: fine)";
+/** True on mouse/trackpad devices. Scroll-linked motion only runs there; phones keep native scrolling. */
+export function useFinePointer() {
+  return useSyncExternalStore(
+    (cb) => {
+      const m = window.matchMedia(FINE);
+      m.addEventListener("change", cb);
+      return () => m.removeEventListener("change", cb);
+    },
+    () => window.matchMedia(FINE).matches,
+    () => true,
+  );
+}
 
 /** Inertia scrolling for the whole page. Dialogs keep native scrolling. */
 export function SmoothScroll() {
@@ -215,6 +229,7 @@ export function RevealImage({
 }) {
   const ref = useRef<HTMLDivElement>(null);
   const { scrollYProgress } = useScroll({ target: ref, offset: ["start end", "end start"] });
+  const fine = useFinePointer();
   const y = useTransform(scrollYProgress, [0, 1], [`-${parallax}%`, `${parallax}%`]);
   return (
     <motion.div
@@ -225,7 +240,7 @@ export function RevealImage({
       viewport={{ once: true, margin: "-8% 0px" }}
       transition={{ duration: 1.3, ease: easeInOut }}
     >
-      <motion.div className="absolute inset-x-0" style={{ y, top: `-${parallax}%`, bottom: `-${parallax}%` }}>
+      <motion.div className="absolute inset-x-0 will-change-transform" style={fine ? { y, top: `-${parallax}%`, bottom: `-${parallax}%` } : { top: 0, bottom: 0 }}>
         <Photo photo={photo} position={position} sizes={sizes} priority={priority} className="h-full w-full" />
       </motion.div>
     </motion.div>

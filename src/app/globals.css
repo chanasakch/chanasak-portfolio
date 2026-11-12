@@ -255,3 +255,14 @@ html.lenis body {
   background: var(--bg);
   color: var(--ink);
 }
+
+@keyframes wall {
+  to {
+    transform: translate3d(-50%, 0, 0);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  [class*="animate-[wall"] {
+    animation: none !important;
+  }
+}

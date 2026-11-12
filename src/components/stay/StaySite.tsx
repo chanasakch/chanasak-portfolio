@@ -4,7 +4,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { AnimatePresence, motion, useScroll, useTransform } from "motion/react";
 import { Photo } from "@/components/shared/Photo";
 import { CloseButton } from "@/components/shared/ui";
-import { RevealImage, SplitLines } from "@/components/shared/motion";
+import { RevealImage, SplitLines, useFinePointer } from "@/components/shared/motion";
 import { photos } from "@/data/images";
 
 const hours = [
@@ -31,6 +31,7 @@ export function StaySite() {
   const { scrollYProgress } = useScroll({ target: hero, offset: ["start start", "end start"] });
   const scale = useTransform(scrollYProgress, [0, 1], [1, 1.18]);
   const fade = useTransform(scrollYProgress, [0, 0.6], [1, 0]);
+  const fine = useFinePointer();
 
   useEffect(() => {
     const io = new IntersectionObserver((es) => es.forEach((e) => e.isIntersecting && setActive(Number((e.target as HTMLElement).dataset.i))), { rootMargin: "-45% 0px -45% 0px" });
@@ -54,11 +55,11 @@ export function StaySite() {
       <Clock index={active} time={h.time} />
 
       <section ref={hero} className="relative h-[100svh] overflow-hidden">
-        <motion.div className="absolute inset-0" style={{ scale }}>
+        <motion.div className="absolute inset-0 will-change-transform" style={fine ? { scale } : undefined}>
           <Photo photo={photos.balconyRattanPods} priority position="50% 55%" className="h-full w-full" sizes="100vw" />
         </motion.div>
         <div className="absolute inset-0 bg-gradient-to-b from-black/30 via-transparent to-black/60" />
-        <motion.div style={{ opacity: fade }} className="absolute inset-x-[var(--gutter)] bottom-[12vh] text-white">
+        <motion.div style={fine ? { opacity: fade } : undefined} className="absolute inset-x-[var(--gutter)] bottom-[12vh] text-white">
           <SplitLines lines={["A day above", "the lake"]} delay={0.3} className="font-display text-[clamp(3.4rem,10vw,10rem)] italic leading-[0.9]" />
           <p className="mt-6 max-w-[40ch] text-[16px] opacity-85">Twenty-four rooms in the hills above Mae Suai, Chiang Rai.</p>
         </motion.div>
