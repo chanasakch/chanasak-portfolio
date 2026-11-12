@@ -336,8 +336,9 @@ function Radar({ profile, color }: { profile: number[]; color: string }) {
   );
 }
 
-function Brew() {
-  const [m, setM] = useState(methods[0]);
+type Method = (typeof methods)[number];
+
+function Brew({ m, setM }: { m: Method; setM: (m: Method) => void }) {
   const [cups, setCups] = useState(2);
   const [t, setT] = useState<number | null>(null);
   const timer = useRef<number | null>(null);
@@ -580,8 +581,110 @@ function Hero() {
   );
 }
 
+/** Three questions, then the closest coffee by taste profile. */
+function Finder({
+  open,
+  onClose,
+  onPick,
+}: {
+  open: boolean;
+  onClose: () => void;
+  onPick: (c: Coffee, m: Method) => void;
+}) {
+  const [milk, setMilk] = useState<boolean | null>(null);
+  const [taste, setTaste] = useState<"fruit" | "choc" | "both" | null>(null);
+  const [brew, setBrew] = useState<Method | null>(null);
+  const done = milk !== null && taste !== null && brew !== null;
+  const target = [
+    taste === "fruit" ? 4.5 : taste === "choc" ? 1.5 : 3,
+    4,
+    milk ? 4.5 : 3,
+    taste === "fruit" ? 4.5 : taste === "choc" ? 1.5 : 3,
+    taste === "fruit" ? 4 : 1.5,
+    taste === "choc" ? 5 : milk ? 4 : 2.5,
+  ];
+  const best = [...coffees].sort(
+    (a, b) =>
+      a.profile.reduce((n, v, i) => n + (v - target[i]) ** 2, 0) -
+      b.profile.reduce((n, v, i) => n + (v - target[i]) ** 2, 0),
+  )[0];
+  const q = (label: string, opts: [string, () => void, boolean][]) => (
+    <fieldset className="border-b border-line pb-6">
+      <legend className="mb-3 font-display text-[22px]">{label}</legend>
+      <div className="flex flex-wrap gap-2">
+        {opts.map(([t, on, sel]) => (
+          <button
+            key={t}
+            type="button"
+            onClick={on}
+            aria-pressed={sel}
+            className={`rounded-full border px-4 py-2 text-[14px] transition-colors ${sel ? "border-accent bg-accent text-[#15100d]" : "border-line hover:border-ink/40"}`}
+          >
+            {t}
+          </button>
+        ))}
+      </div>
+    </fieldset>
+  );
+  return (
+    <Drawer open={open} onClose={onClose} title="Find your coffee">
+      <div className="grid gap-6">
+        {q("How do you take it?", [
+          ["Black", () => setMilk(false), milk === false],
+          ["With milk", () => setMilk(true), milk === true],
+        ])}
+        {q("Which sounds better?", [
+          ["Fruit and flowers", () => setTaste("fruit"), taste === "fruit"],
+          ["Chocolate and nuts", () => setTaste("choc"), taste === "choc"],
+          ["A bit of both", () => setTaste("both"), taste === "both"],
+        ])}
+        {q(
+          "How do you brew?",
+          methods.map(
+            (m) =>
+              [m.name, () => setBrew(m), brew?.id === m.id] as [
+                string,
+                () => void,
+                boolean,
+              ],
+          ),
+        )}
+        <AnimatePresence>
+          {done && (
+            <motion.div
+              initial={{ opacity: 0, y: 12 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0 }}
+              className="bg-soft p-5"
+            >
+              <p className="text-[13px] text-muted">Try</p>
+              <p className="font-display text-[30px] leading-tight">
+                {best.name}
+              </p>
+              <p className="mt-1 text-[15px]">{best.notes}</p>
+              <p className="mt-1 text-[14px] text-muted">
+                {best.process}, {fmt.format(best.alt)} m. Brew it 1 :{" "}
+                {brew!.ratio} as a {brew!.name.toLowerCase()}.
+              </p>
+              <button
+                type="button"
+                onClick={() => onPick(best, brew!)}
+                className="mt-5 w-full rounded-full bg-accent py-3 text-[14px] text-[#15100d]"
+              >
+                Show me {best.name}
+              </button>
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </div>
+    </Drawer>
+  );
+}
+
 export function CoffeeSite() {
   const [coffee, setCoffee] = useState(coffees[0]);
+  const [method, setMethod] = useState(methods[0]);
+  const [finder, setFinder] = useState(false);
   const [cart, setCart] = useState<
     { id: string; qty: number; grind: string }[]
   >([]);
@@ -691,9 +794,18 @@ export function CoffeeSite() {
         id="coffees"
         className="border-t border-line px-[var(--gutter)] py-20"
       >
-        <h2 className="font-display text-[clamp(2.2rem,4.4vw,4rem)] font-light tracking-[-0.02em]">
-          This harvest
-        </h2>
+        <div className="flex flex-wrap items-end justify-between gap-4">
+          <h2 className="font-display text-[clamp(2.2rem,4.4vw,4rem)] font-light tracking-[-0.02em]">
+            This harvest
+          </h2>
+          <button
+            type="button"
+            onClick={() => setFinder(true)}
+            className="rounded-full border border-accent/60 px-5 py-2.5 text-[14px] text-accent transition-colors hover:bg-accent hover:text-[#15100d]"
+          >
+            Not sure? Find your coffee
+          </button>
+        </div>
         <div className="mt-10 grid gap-10 lg:grid-cols-[1.1fr_1fr] lg:gap-16">
           <ul className="divide-y divide-line border-y border-line">
             {coffees.map((c) => (
@@ -762,7 +874,7 @@ export function CoffeeSite() {
         <h2 className="mb-10 font-display text-[clamp(2.2rem,4.4vw,4rem)] font-light tracking-[-0.02em]">
           Brew guide
         </h2>
-        <Brew />
+        <Brew key={method.id} m={method} setM={setMethod} />
       </section>
 
       <section
@@ -839,6 +951,23 @@ export function CoffeeSite() {
         </span>
         <span>© 2026 Sung Coffee</span>
       </footer>
+
+      <Finder
+        open={finder}
+        onClose={() => setFinder(false)}
+        onPick={(c, m) => {
+          setCoffee(c);
+          setMethod(m);
+          setFinder(false);
+          // wait for the drawer to release the page before gliding to the coffee
+          window.setTimeout(() => {
+            const el = document.getElementById("coffees");
+            if (!el) return;
+            if (window.__lenis) window.__lenis.scrollTo(el, { offset: -64 });
+            else el.scrollIntoView({ behavior: "smooth" });
+          }, 450);
+        }}
+      />
 
       <Drawer
         open={open}

@@ -152,6 +152,47 @@ const months = [
   "Nov",
   "Dec",
 ];
+const monthsLong = [
+  "January",
+  "February",
+  "March",
+  "April",
+  "May",
+  "June",
+  "July",
+  "August",
+  "September",
+  "October",
+  "November",
+  "December",
+];
+// typical Andaman sea state off Phuket: wave height (m) and rainy days per month
+const sea = [0.5, 0.5, 0.5, 0.7, 1.4, 1.8, 2, 2, 1.9, 1.6, 1, 0.6].map(
+  (wave, i) => ({ wave, rain: [3, 2, 4, 9, 17, 16, 17, 17, 20, 19, 12, 5][i] }),
+);
+const extras = [
+  {
+    id: "photo",
+    name: "Photographer on board",
+    note: "Edited photos the same evening",
+    price: 12000,
+    per: false,
+  },
+  {
+    id: "sunset",
+    name: "Sunset at Koh Naka",
+    note: "Champagne and canapés on the bow before heading in",
+    price: 6500,
+    per: false,
+  },
+  {
+    id: "massage",
+    name: "Thai massage on deck",
+    note: "Thirty minutes each, therapist from Ao Po",
+    price: 900,
+    per: true,
+  },
+];
 const NM = 0.42; // nautical miles per map unit
 const fmt = new Intl.NumberFormat("en-US");
 
@@ -454,6 +495,7 @@ export function NavaSite() {
   const [boat, setBoat] = useState(boats[0]);
   const [guests, setGuests] = useState(6);
   const [month, setMonth] = useState(0);
+  const [addons, setAddons] = useState<Set<string>>(new Set());
   const [open, setOpen] = useState(false);
   const [sent, setSent] = useState(false);
 
@@ -496,7 +538,13 @@ export function NavaSite() {
   const exposed = order.some((s) => s.id === "phiphi" || s.id === "racha");
   const fees = order.reduce((a, s) => a + s.fee, 0) * guests;
   const fuel = Math.round(nm * boat.fuelPerNm);
-  const total = boat.day + fuel + fees;
+  const extraCost = extras
+    .filter((x) => addons.has(x.id))
+    .reduce(
+      (n, x) => n + (x.per ? x.price * Math.min(guests, boat.guests) : x.price),
+      0,
+    );
+  const total = boat.day + fuel + fees + extraCost;
   const g = Math.min(guests, boat.guests);
 
   return (
@@ -688,33 +736,91 @@ export function NavaSite() {
             </div>
           </fieldset>
 
-          <div className="mt-6 grid gap-6 sm:grid-cols-2">
-            <label className="text-[13px] text-muted">
-              Guests <span className="text-ink">{g}</span>
-              <input
-                type="range"
-                min={1}
-                max={boat.guests}
-                value={g}
-                onChange={(e) => setGuests(Number(e.target.value))}
-                className="mt-3 block w-full accent-[var(--accent)]"
-              />
-            </label>
-            <label className="text-[13px] text-muted">
-              Month
-              <select
-                value={month}
-                onChange={(e) => setMonth(Number(e.target.value))}
-                className="mt-2 block w-full rounded-md border border-line bg-bg px-3 py-2 text-[15px] text-ink"
-              >
-                {months.map((m, i) => (
-                  <option key={m} value={i}>
-                    {m}
-                  </option>
-                ))}
-              </select>
-            </label>
-          </div>
+          <label className="mt-6 block text-[13px] text-muted">
+            Guests <span className="text-ink">{g}</span>
+            <input
+              type="range"
+              min={1}
+              max={boat.guests}
+              value={g}
+              onChange={(e) => setGuests(Number(e.target.value))}
+              className="mt-3 block w-full accent-[var(--accent)]"
+            />
+          </label>
+
+          <fieldset className="mt-7">
+            <legend className="text-[13px] text-muted">
+              Month <span className="text-ink">{monthsLong[month]}</span>, waves
+              around {sea[month].wave} m, {sea[month].rain} rainy days
+            </legend>
+            <div
+              className="mt-3 grid grid-cols-12 items-end gap-1"
+              role="radiogroup"
+              aria-label="Month"
+            >
+              {months.map((m, i) => (
+                <button
+                  key={m}
+                  type="button"
+                  role="radio"
+                  aria-checked={month === i}
+                  aria-label={monthsLong[i]}
+                  onClick={() => setMonth(i)}
+                  className="group flex flex-col items-center gap-1.5"
+                >
+                  <span className="flex h-14 w-full items-end">
+                    <motion.span
+                      className={`w-full rounded-t-sm ${month === i ? "bg-accent" : i >= 4 && i <= 9 ? "bg-ink/25 group-hover:bg-ink/40" : "bg-ink/50 group-hover:bg-ink/70"}`}
+                      initial={false}
+                      animate={{ height: `${(sea[i].wave / 2.1) * 100}%` }}
+                    />
+                  </span>
+                  <span
+                    className={`text-[11px] ${month === i ? "text-ink" : "text-muted"}`}
+                  >
+                    {m[0]}
+                  </span>
+                </button>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="mt-7">
+            <legend className="text-[13px] text-muted">Add to the day</legend>
+            <div className="mt-3 grid gap-2">
+              {extras.map((x) => (
+                <label
+                  key={x.id}
+                  className={`flex cursor-pointer items-center justify-between gap-4 rounded-lg border px-4 py-3 text-[14px] transition-colors ${addons.has(x.id) ? "border-accent" : "border-line hover:border-ink/40"}`}
+                >
+                  <span className="flex items-center gap-3">
+                    <input
+                      type="checkbox"
+                      checked={addons.has(x.id)}
+                      onChange={() =>
+                        setAddons((a) => {
+                          const n = new Set(a);
+                          if (n.has(x.id)) n.delete(x.id);
+                          else n.add(x.id);
+                          return n;
+                        })
+                      }
+                      className="size-4 accent-[var(--accent)]"
+                    />
+                    <span>
+                      {x.name}
+                      <span className="block text-[12.5px] text-muted">
+                        {x.note}
+                      </span>
+                    </span>
+                  </span>
+                  <span className="tabular shrink-0">
+                    ฿{fmt.format(x.per ? x.price * g : x.price)}
+                  </span>
+                </label>
+              ))}
+            </div>
+          </fieldset>
           <p
             className={`mt-3 text-[14px] ${monsoon && exposed ? "text-accent" : "text-muted"}`}
           >
@@ -734,6 +840,12 @@ export function NavaSite() {
               <div className="flex justify-between">
                 <dt className="text-muted">Fuel, {nm.toFixed(0)} nm</dt>
                 <dd className="tabular">฿{fmt.format(fuel)}</dd>
+              </div>
+            )}
+            {extraCost > 0 && (
+              <div className="flex justify-between">
+                <dt className="text-muted">Extras</dt>
+                <dd className="tabular">฿{fmt.format(extraCost)}</dd>
               </div>
             )}
             {fees > 0 && (

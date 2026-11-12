@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { motion } from "motion/react";
+import { AnimatePresence, motion } from "motion/react";
 import { Drawer, useScrolled } from "@/components/shared/ui";
 import { ease, FadeUp, SplitLines } from "@/components/shared/motion";
 import { SilkCloth } from "./SilkCloth";
@@ -235,7 +235,32 @@ export function SilkSite() {
   const scrolled = useScrolled(window_h());
 
   const length = piece.id === "metre" ? metres * 100 : piece.cm;
-  const price = piece.id === "metre" ? piece.price * metres : piece.price;
+  const [saved, setSaved] = useState<
+    {
+      key: string;
+      motif: Motif;
+      colors: [Dye, Dye, Dye];
+      scale: number;
+      url: string;
+    }[]
+  >([]);
+  const [gift, setGift] = useState(false);
+  const [wovenFor, setWovenFor] = useState("");
+  const designKey = `${motif.id}-${colors.map((c) => c.id).join("-")}-${scale}`;
+  const isSaved = saved.some((d) => d.key === designKey);
+  const save = () => {
+    // only save once the loom has finished this exact design
+    if (!woven || isSaved || wovenFor !== designKey) return;
+    setSaved((list) =>
+      [{ key: designKey, motif, colors, scale, url: woven }, ...list].slice(
+        0,
+        6,
+      ),
+    );
+  };
+  const price =
+    (piece.id === "metre" ? piece.price * metres : piece.price) +
+    (gift ? 350 : 0);
   // a weaver makes about 30 cm of mudmee a day; tying and dyeing take ten days before that
   const weeks = Math.ceil((10 + length / 30) / 6);
   const setColor = (slot: number, d: Dye) =>
@@ -325,7 +350,10 @@ export function SilkSite() {
                 motif={motif}
                 colors={colors}
                 scale={scale}
-                onDone={setWoven}
+                onDone={(u) => {
+                  setWoven(u);
+                  setWovenFor(designKey);
+                }}
                 className="h-full w-full"
               />
             </motion.div>
@@ -346,10 +374,15 @@ export function SilkSite() {
               )}
             </motion.div>
           </div>
-          <div className="mt-3 flex items-center justify-between text-[13px] text-muted">
-            <span>
-              {motif.name}, {motif.thai}
-            </span>
+          <div className="mt-3 flex items-center justify-between gap-3 text-[13px] text-muted">
+            <button
+              type="button"
+              onClick={save}
+              disabled={!woven || isSaved || wovenFor !== designKey}
+              className="rounded-full border border-line px-3.5 py-1.5 transition-colors hover:border-accent hover:text-ink disabled:opacity-50 disabled:hover:border-line"
+            >
+              {isSaved ? "Saved" : "Save to compare"}
+            </button>
             <div className="flex rounded-full border border-line p-0.5">
               {(["flat", "draped"] as const).map((v) => (
                 <button
@@ -364,6 +397,56 @@ export function SilkSite() {
               ))}
             </div>
           </div>
+          <AnimatePresence initial={false}>
+            {saved.length > 0 && (
+              <motion.div
+                initial={{ opacity: 0, height: 0 }}
+                animate={{ opacity: 1, height: "auto" }}
+                exit={{ opacity: 0, height: 0 }}
+                className="overflow-hidden"
+              >
+                <p className="mt-6 text-[13px] text-muted">
+                  Your designs. Tap one to bring it back.
+                </p>
+                <ul className="mt-3 grid grid-cols-3 gap-2 p-1.5 sm:grid-cols-6">
+                  <AnimatePresence initial={false}>
+                    {saved.map((d) => (
+                      <motion.li
+                        key={d.key}
+                        layout
+                        initial={{ opacity: 0, scale: 0.8 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        exit={{ opacity: 0, scale: 0.8 }}
+                        className="group relative"
+                      >
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setMotif(d.motif);
+                            setColors(d.colors);
+                            setScale(d.scale);
+                          }}
+                          aria-label={`${d.motif.name} in ${d.colors.map((c) => c.name).join(", ")}`}
+                          className={`block aspect-square w-full bg-cover bg-center ring-1 transition ${d.key === designKey ? "ring-2 ring-accent" : "ring-line hover:ring-ink/50"}`}
+                          style={{ backgroundImage: `url(${d.url})` }}
+                        />
+                        <button
+                          type="button"
+                          onClick={() =>
+                            setSaved((l) => l.filter((x) => x.key !== d.key))
+                          }
+                          aria-label="Remove"
+                          className="absolute -right-1.5 -top-1.5 flex size-5 items-center justify-center rounded-full bg-bg text-[12px] text-ink ring-1 ring-line sm:opacity-0 sm:group-hover:opacity-100"
+                        >
+                          ×
+                        </button>
+                      </motion.li>
+                    ))}
+                  </AnimatePresence>
+                </ul>
+              </motion.div>
+            )}
+          </AnimatePresence>
         </div>
 
         <div className="min-w-0">
@@ -656,6 +739,23 @@ export function SilkSite() {
                 <p className="tabular mt-1">฿{fmt.format(price)}</p>
               </div>
             </div>
+            <label className="flex items-center gap-3 text-[14px]">
+              <input
+                type="checkbox"
+                checked={gift}
+                onChange={(e) => setGift(e.target.checked)}
+                className="size-4 accent-[var(--accent)]"
+              />
+              Gift box in woven pandan with a handwritten card, ฿350
+            </label>
+            {gift && (
+              <textarea
+                rows={2}
+                maxLength={160}
+                placeholder="Message for the card"
+                className="border-b border-line bg-transparent py-2 text-[15px] text-ink outline-none placeholder:text-muted focus:border-ink"
+              />
+            )}
             {[
               ["Name", "text"],
               ["Phone", "tel"],
