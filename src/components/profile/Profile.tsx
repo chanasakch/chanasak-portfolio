@@ -512,9 +512,19 @@ const steps = [
     out: "A short brief and a site map",
   },
   {
+    t: "Gather",
+    d: "Logo, photos, colours, type and product details go onto one board, so we agree on the look before any page is drawn.",
+    out: "A brand board",
+  },
+  {
     t: "Shape",
     d: "I design the key pages in your brand, with real products and copy, and share a link you can open on your phone.",
-    out: "Clickable designs to comment on",
+    out: "Clickable designs",
+  },
+  {
+    t: "Review",
+    d: "You comment right on the designs. I change them and mark each note done, so nothing gets lost in a chat thread.",
+    out: "Signed-off designs",
   },
   {
     t: "Build",
@@ -522,9 +532,19 @@ const steps = [
     out: "A working site to test",
   },
   {
+    t: "Test",
+    d: "Every page is checked on real phones, tablets and computers, along with forms, emails and loading speed.",
+    out: "A tested site",
+  },
+  {
     t: "Launch",
-    d: "I connect the domain, check every page on real phones, and show your team how to update products and photos.",
-    out: "A live site your team can run",
+    d: "I connect the domain, move the site live and watch it closely for the first days.",
+    out: "Your site, live",
+  },
+  {
+    t: "Hand over",
+    d: "Your team learns to change products, prices and photos themselves, and I stay on hand for questions.",
+    out: "A site your team can run",
   },
 ];
 
@@ -722,9 +742,272 @@ function LaunchVisual({ on }: { on: boolean }) {
   );
 }
 
-const visuals = [MapVisual, DesignVisual, BuildVisual, LaunchVisual];
+/** Step 2: brand material pinned to one board. */
+function GatherVisual({ on }: { on: boolean }) {
+  const pics = [
+    "rattan-armchair-studio",
+    "balcony-rattan-pods",
+    "bell-pendants-kitchen",
+  ];
+  const sw = ["#fbfbf9", "#d8b98a", "#2b2f2a", "#1d1c1a"];
+  const pop = (i: number) => ({
+    initial: false as const,
+    animate: { opacity: on ? 1 : 0, y: on ? 0 : 14, scale: on ? 1 : 0.96 },
+    transition: { duration: 0.6, delay: on ? 0.1 + i * 0.12 : 0, ease },
+  });
+  return (
+    <div
+      className={`${frame} grid aspect-[4/3] grid-cols-[1.2fr_1fr] gap-3 bg-[#fbfbf9] p-[5%]`}
+    >
+      <motion.div
+        {...pop(0)}
+        className="row-span-2 overflow-hidden rounded-lg bg-cover bg-center"
+        style={{ backgroundImage: `url(${IMG_BASE}${pics[0]}-800.webp)` }}
+      />
+      <motion.div
+        {...pop(1)}
+        className="overflow-hidden rounded-lg bg-cover bg-center"
+        style={{ backgroundImage: `url(${IMG_BASE}${pics[1]}-800.webp)` }}
+      />
+      <div className="grid grid-rows-[1fr_auto] gap-3">
+        <motion.div
+          {...pop(2)}
+          className="overflow-hidden rounded-lg bg-cover bg-center"
+          style={{ backgroundImage: `url(${IMG_BASE}${pics[2]}-800.webp)` }}
+        />
+        <motion.div
+          {...pop(3)}
+          className="flex items-center justify-between rounded-lg bg-white p-2.5 ring-1 ring-black/5"
+        >
+          <div className="flex -space-x-1.5">
+            {sw.map((c) => (
+              <span
+                key={c}
+                className="size-6 rounded-full ring-2 ring-white"
+                style={{
+                  background: c,
+                  boxShadow: "inset 0 0 0 1px rgb(0 0 0 / 0.08)",
+                }}
+              />
+            ))}
+          </div>
+          <span className="text-[20px] font-semibold leading-none tracking-[-0.03em] text-[#141413]">
+            Aa
+          </span>
+        </motion.div>
+      </div>
+    </div>
+  );
+}
 
-/** Four steps. On large screens a picture of each step stays in view and changes as you read. */
+/** Step 4: comments land on the design and get resolved. */
+function ReviewVisual({ on }: { on: boolean }) {
+  const notes = [
+    { x: "62%", y: "30%", t: "Can the headline be one line?" },
+    { x: "22%", y: "58%", t: "Use the teak chair here" },
+    { x: "70%", y: "72%", t: "Price a little larger" },
+  ];
+  return (
+    <div className={`${frame} relative aspect-[4/3]`}>
+      <BrowserBar url="figma.com/loom-and-tide/comments" />
+      <div className="relative h-full">
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img
+          src={shot("furniture", 1400)}
+          alt=""
+          className="h-full w-full object-cover object-left-top opacity-90"
+        />
+        {notes.map((n, i) => (
+          <motion.div
+            key={n.t}
+            className="absolute flex items-start gap-2"
+            style={{ left: n.x, top: n.y }}
+            initial={false}
+            animate={{ opacity: on ? 1 : 0, y: on ? 0 : 8 }}
+            transition={{ duration: 0.5, delay: on ? 0.3 + i * 0.45 : 0, ease }}
+          >
+            <span className="flex size-6 shrink-0 items-center justify-center rounded-full rounded-bl-none bg-[#141413] text-[11px] text-white shadow-lg">
+              {i + 1}
+            </span>
+            <span className="whitespace-nowrap rounded-lg bg-white px-2.5 py-1.5 text-[11.5px] text-[#141413] shadow-xl ring-1 ring-black/5">
+              {n.t}
+              <motion.span
+                className="ml-2 inline-block text-[#3fa66b]"
+                initial={false}
+                animate={{ opacity: on ? 1 : 0 }}
+                transition={{ delay: on ? 2 + i * 0.3 : 0 }}
+              >
+                Done
+              </motion.span>
+            </span>
+          </motion.div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+/** Step 6: checked on the screens people really use. */
+function TestVisual({ on }: { on: boolean }) {
+  const checks = [
+    "iPhone, Safari",
+    "Android, Chrome",
+    "iPad",
+    "Mac and Windows",
+    "Forms and emails",
+  ];
+  return (
+    <div
+      className={`${frame} grid aspect-[4/3] grid-cols-[1.4fr_1fr] items-center gap-6 bg-[#fbfbf9] p-[6%]`}
+    >
+      <div className="relative h-[78%]">
+        <div
+          className="absolute inset-y-0 left-0 right-[22%] overflow-hidden rounded-md border-[5px] border-[#141413] bg-cover bg-top"
+          style={{ backgroundImage: `url(${shot("furniture", 700)})` }}
+        />
+        <motion.div
+          initial={false}
+          animate={{ y: on ? 0 : 20, opacity: on ? 1 : 0 }}
+          transition={{ duration: 0.7, delay: on ? 0.2 : 0, ease }}
+          className="absolute bottom-[-6%] right-[4%] h-[72%] overflow-hidden rounded-[14px] border-[4px] border-[#141413] bg-cover bg-top shadow-xl"
+          style={{
+            aspectRatio: "9 / 19",
+            backgroundImage: `url(${IMG_BASE}work/furniture-mobile.webp)`,
+          }}
+        />
+      </div>
+      <ul className="space-y-2.5 text-[12.5px] text-[#141413]">
+        {checks.map((c, i) => (
+          <li key={c} className="flex items-center gap-2">
+            <span className="relative flex size-5 items-center justify-center rounded-full border border-black/15">
+              <motion.span
+                className="absolute inset-0 rounded-full bg-[#3fa66b]"
+                initial={false}
+                animate={{ scale: on ? 1 : 0 }}
+                transition={{ duration: 0.35, delay: on ? 0.5 + i * 0.25 : 0 }}
+              />
+              <svg viewBox="0 0 12 12" className="relative size-3" aria-hidden>
+                <motion.path
+                  d="M2.5 6.2 5 8.5 9.5 3.5"
+                  fill="none"
+                  stroke="#fff"
+                  strokeWidth="1.6"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  initial={false}
+                  animate={{ pathLength: on ? 1 : 0 }}
+                  transition={{
+                    duration: 0.3,
+                    delay: on ? 0.65 + i * 0.25 : 0,
+                  }}
+                />
+              </svg>
+            </span>
+            {c}
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
+}
+
+/** Step 8: your team changes a price and it goes live. */
+function HandoverVisual({ on }: { on: boolean }) {
+  const [price, setPrice] = useState("18,500");
+  const [saved, setSaved] = useState(false);
+  useEffect(() => {
+    if (!on) return;
+    const seq = [
+      "18,50",
+      "18,5",
+      "18,",
+      "18",
+      "1",
+      "17",
+      "17,",
+      "17,9",
+      "17,90",
+      "17,900",
+    ];
+    const ids = seq.map((v, i) =>
+      window.setTimeout(() => setPrice(v), 700 + i * 110),
+    );
+    ids.push(window.setTimeout(() => setSaved(true), 2200));
+    return () => {
+      ids.forEach(clearTimeout);
+      setPrice("18,500");
+      setSaved(false);
+    };
+  }, [on]);
+  return (
+    <div className={`${frame} relative grid aspect-[4/3] grid-cols-[30%_1fr]`}>
+      <div className="space-y-2 border-r border-black/5 bg-[#f6f6f3] p-4 text-[12px] text-black/50">
+        <p className="mb-4 font-semibold text-[#141413]">Loom &amp; Tide</p>
+        {["Products", "Projects", "Pages", "Orders"].map((x, i) => (
+          <p
+            key={x}
+            className={
+              i === 0
+                ? "rounded-md bg-white px-2 py-1 text-[#141413] ring-1 ring-black/5"
+                : "px-2 py-1"
+            }
+          >
+            {x}
+          </p>
+        ))}
+      </div>
+      <div className="space-y-3 p-5 text-[12px] text-[#141413]">
+        <div className="flex items-center gap-3">
+          <span
+            className="size-12 rounded-md bg-cover bg-center"
+            style={{
+              backgroundImage: `url(${IMG_BASE}rattan-armchair-studio-800.webp)`,
+            }}
+          />
+          <div>
+            <p className="font-semibold">Kanok armchair</p>
+            <p className="text-black/45">3 finishes</p>
+          </div>
+        </div>
+        <label className="block">
+          <span className="text-black/45">Price</span>
+          <span className="mt-1 flex items-center rounded-md px-2.5 py-2 ring-1 ring-[#141413]">
+            ฿<span className="tabular">{price}</span>
+            {on && !saved && (
+              <span className="ml-px h-3.5 w-px animate-pulse bg-[#141413]" />
+            )}
+          </span>
+        </label>
+        <span
+          className={`inline-flex rounded-md px-3 py-1.5 transition-colors duration-300 ${saved ? "bg-[#3fa66b] text-white" : "bg-[#141413] text-white"}`}
+        >
+          {saved ? "Published" : "Publish"}
+        </span>
+      </div>
+      <motion.p
+        initial={false}
+        animate={{ opacity: saved ? 1 : 0, y: saved ? 0 : 10 }}
+        transition={{ duration: 0.4 }}
+        className="absolute bottom-4 right-4 rounded-full bg-[#141413] px-3.5 py-2 text-[11.5px] text-white shadow-lg"
+      >
+        Live on the site
+      </motion.p>
+    </div>
+  );
+}
+
+const visuals = [
+  MapVisual,
+  GatherVisual,
+  DesignVisual,
+  ReviewVisual,
+  BuildVisual,
+  TestVisual,
+  LaunchVisual,
+  HandoverVisual,
+];
+
+/** The steps of a project. On large screens a picture of each step stays in view and changes as you read. */
 function Process() {
   const ref = useRef<HTMLDivElement>(null);
   const items = useRef<(HTMLLIElement | null)[]>([]);
@@ -757,8 +1040,8 @@ function Process() {
           How a project runs
         </h2>
         <p className="max-w-[44ch] text-[16px] leading-relaxed text-muted lg:justify-self-end">
-          The same four steps whether it is a shop, a booking site or a brand
-          page. You see progress every week.
+          The same steps whether it is a shop, a booking site or a brand page.
+          You can see where things stand at any point.
         </p>
       </div>
 
@@ -806,7 +1089,7 @@ function Process() {
             className="absolute left-[11px] top-2 w-px origin-top bg-ink sm:left-[15px]"
             style={{ height: fine ? fill : "calc(100% - 16px)" }}
           />
-          <ol className="space-y-16 lg:space-y-[28vh] lg:py-[12vh]">
+          <ol className="space-y-16 lg:space-y-[22vh] lg:py-[14vh]">
             {steps.map((s, i) => {
               const V = visuals[i];
               return (
@@ -874,30 +1157,61 @@ const included = [
   ],
 ];
 
+/** A plain checklist: what every project includes. Each tick draws as it comes into view. */
 function Included() {
   return (
     <section className="px-[var(--gutter)] pt-32">
-      <h2 className="text-[clamp(2rem,4vw,3.4rem)] font-semibold leading-[1.02] tracking-[-0.035em]">
-        What you get
-      </h2>
-      <ul className="mt-10 grid border-t border-line sm:grid-cols-2 lg:grid-cols-3">
-        {included.map(([t, d], i) => (
-          <motion.li
-            key={t}
-            initial={{ opacity: 0 }}
-            whileInView={{ opacity: 1 }}
-            viewport={{ once: true, margin: "-10% 0px" }}
-            transition={{ duration: 0.7, delay: (i % 3) * 0.08 }}
-            className="group relative border-b border-line py-7 sm:pr-8 lg:[&:nth-child(3n)]:pl-8 lg:[&:nth-child(3n+2)]:px-8"
-          >
-            <span className="absolute left-0 top-0 h-px w-0 bg-ink transition-[width] duration-500 ease-out group-hover:w-full" />
-            <p className="text-[18px] font-semibold tracking-[-0.015em]">{t}</p>
-            <p className="mt-2 max-w-[36ch] text-[15px] leading-relaxed text-muted">
-              {d}
-            </p>
-          </motion.li>
-        ))}
-      </ul>
+      <div className="grid gap-10 rounded-3xl bg-ink px-6 py-14 text-bg sm:px-12 lg:grid-cols-[1fr_1.5fr] lg:gap-20 lg:px-16 lg:py-20">
+        <div>
+          <h2 className="text-[clamp(2rem,4vw,3.4rem)] font-semibold leading-[1.02] tracking-[-0.035em]">
+            What you get
+          </h2>
+          <p className="mt-4 max-w-[34ch] text-[16px] leading-relaxed text-bg/60">
+            Part of every project, whatever its size.
+          </p>
+        </div>
+        <ul className="divide-y divide-bg/10 border-y border-bg/10">
+          {included.map(([t, d], i) => (
+            <motion.li
+              key={t}
+              initial="off"
+              whileInView="on"
+              viewport={{ once: true, margin: "-12% 0px" }}
+              className="grid grid-cols-[2rem_1fr] items-baseline gap-x-4 py-5 sm:grid-cols-[2rem_minmax(0,0.9fr)_minmax(0,1.3fr)] sm:gap-x-6"
+            >
+              <span className="relative top-1 flex size-6 items-center justify-center rounded-full border border-bg/25">
+                <svg viewBox="0 0 12 12" className="size-3" aria-hidden>
+                  <motion.path
+                    d="M2.5 6.2 5 8.5 9.5 3.5"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="1.5"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    variants={{
+                      off: { pathLength: 0 },
+                      on: {
+                        pathLength: 1,
+                        transition: {
+                          duration: 0.5,
+                          delay: 0.15 + i * 0.06,
+                          ease,
+                        },
+                      },
+                    }}
+                  />
+                </svg>
+              </span>
+              <p className="text-[17px] font-semibold tracking-[-0.015em]">
+                {t}
+              </p>
+              <p className="col-start-2 mt-1 text-[15px] leading-relaxed text-bg/60 sm:col-start-3 sm:mt-0">
+                {d}
+              </p>
+            </motion.li>
+          ))}
+        </ul>
+      </div>
     </section>
   );
 }
