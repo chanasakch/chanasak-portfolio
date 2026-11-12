@@ -1365,6 +1365,7 @@ function Reel() {
             )
           }
         >
+          <source src="/video/showreel-hd.mp4" type="video/mp4" media="(min-width: 900px)" />
           <source src="/video/showreel.mp4" type="video/mp4" />
         </video>
         <button
