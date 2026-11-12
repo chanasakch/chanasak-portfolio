@@ -1402,11 +1402,10 @@ function Work() {
     <section id="work" className="px-[var(--gutter)] pt-28">
       <div className="grid gap-4 lg:grid-cols-2 lg:items-end">
         <h2 className="text-[clamp(2rem,4vw,3.4rem)] font-semibold leading-[1.02] tracking-[-0.035em]">
-          Nine sites for Thai brands
+          Selected work
         </h2>
         <p className="max-w-[46ch] text-[16px] leading-relaxed text-muted lg:justify-self-end">
-          Designed and built in Next.js, each around what the brand sells. Open
-          any of them and use it on your phone or laptop.
+          Shops, booking, configurators and planners for nine kinds of business, designed and built in Next.js. Open any of them and use it on your phone or laptop.
         </p>
       </div>
       <div ref={ref} className="mt-12 space-y-6 lg:mt-4 lg:space-y-0">
