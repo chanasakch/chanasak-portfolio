@@ -426,14 +426,15 @@ export function HomSite() {
         </div>
       </section>
 
-      <footer className="relative z-20 overflow-hidden px-[var(--gutter)] pt-16">
-        <div className="flex flex-col justify-between gap-4 text-[13px] opacity-60 sm:flex-row">
-          <span>© 2026 HOM Parfums, Bangkok</span>
-          <span>Instagram @hom.parfums</span>
+      <footer className="relative z-20 mt-24 border-t border-white/10 px-[var(--gutter)] pb-24 pt-10 text-[13px] sm:pb-10">
+        <div className="flex flex-col justify-between gap-6 sm:flex-row sm:items-end">
+          <p className="font-display text-[28px] tracking-[0.3em]">HOM</p>
+          <div className="flex flex-wrap gap-x-8 gap-y-2 opacity-60">
+            <span>Free delivery in Bangkok</span>
+            <span>Instagram @hom.parfums</span>
+            <span>© 2026 HOM Parfums</span>
+          </div>
         </div>
-        <p aria-hidden className="select-none pt-8 text-center font-display text-[clamp(8rem,40vw,42rem)] leading-[0.72] tracking-[0.08em] text-white/[0.07]">
-          HOM
-        </p>
       </footer>
 
       <Drawer

@@ -337,17 +337,12 @@ export function About() {
           ))}
         </ol>
       </section>
-      <section className={`${wrap} grid gap-6 pt-20 sm:grid-cols-3`}>
-        {[
-          ["22", "weavers and joiners on staff"],
-          ["2 days", "to weave one dining chair"],
-          ["10 years", "frame guarantee on indoor pieces"],
-        ].map(([n, l]) => (
-          <div key={l} className="border-t border-ink pt-4">
-            <p className="text-[clamp(1.8rem,3vw,2.4rem)] font-medium tracking-[-0.02em]">{n}</p>
-            <p className="text-[14px] text-muted">{l}</p>
-          </div>
-        ))}
+      <section className={`${wrap} grid gap-10 pt-20 lg:grid-cols-[1fr_1.4fr] lg:gap-20`}>
+        <h2 className="text-[clamp(1.5rem,2.4vw,2rem)] font-medium tracking-[-0.02em]">Repairs and guarantee</h2>
+        <div className="max-w-[60ch] space-y-4 text-[15.5px] leading-relaxed text-muted">
+          <p>Indoor frames carry a ten-year guarantee. If a joint loosens, we collect the piece in Bangkok and fix it at the workshop.</p>
+          <p>Cane seats wear over time. We reweave any Loom &amp; Tide seat or back for the cost of the cane, however old the chair is.</p>
+        </div>
       </section>
       <section className={`${wrap} grid gap-4 pt-20 sm:grid-cols-2`}>
         <RevealImage photo={photos.readingCorner} className="aspect-[4/5]" sizes="50vw" />
