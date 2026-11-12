@@ -14,6 +14,7 @@ import {
 import {
   Cursor,
   ease,
+  easeInOut,
   SmoothScroll,
   SplitLines,
   useFinePointer,
@@ -527,60 +528,320 @@ const steps = [
   },
 ];
 
-/** Four steps with a line that fills as you read down them. */
+const frame =
+  "overflow-hidden rounded-xl bg-white shadow-[0_40px_80px_-40px_rgb(20_20_19/0.45)] ring-1 ring-black/5";
+
+function BrowserBar({ url }: { url: string }) {
+  return (
+    <div className="flex items-center gap-1.5 border-b border-black/5 bg-[#f6f6f3] px-3 py-2">
+      {[0, 1, 2].map((i) => (
+        <span key={i} className="size-2 rounded-full bg-black/10" />
+      ))}
+      <span className="ml-3 truncate rounded-md bg-white px-2.5 py-0.5 text-[11px] text-black/45 ring-1 ring-black/5">
+        {url}
+      </span>
+    </div>
+  );
+}
+
+/** Step 1: the site map draws itself. */
+function MapVisual({ on }: { on: boolean }) {
+  const nodes = [
+    { x: 50, y: 16, l: "Home" },
+    { x: 14, y: 52, l: "Shop" },
+    { x: 38, y: 52, l: "Projects" },
+    { x: 62, y: 52, l: "About" },
+    { x: 86, y: 52, l: "Contact" },
+    { x: 8, y: 84, l: "Category" },
+    { x: 26, y: 84, l: "Product" },
+  ];
+  const links: [number, number][] = [
+    [0, 1],
+    [0, 2],
+    [0, 3],
+    [0, 4],
+    [1, 5],
+    [1, 6],
+  ];
+  return (
+    <div className={`${frame} aspect-[4/3] bg-[#fbfbf9] p-[6%]`}>
+      <svg viewBox="0 0 100 100" className="h-full w-full" aria-hidden>
+        {links.map(([a, b], i) => (
+          <motion.path
+            key={i}
+            d={`M${nodes[a].x} ${nodes[a].y + 5} C ${nodes[a].x} ${(nodes[a].y + nodes[b].y) / 2}, ${nodes[b].x} ${(nodes[a].y + nodes[b].y) / 2}, ${nodes[b].x} ${nodes[b].y - 5}`}
+            fill="none"
+            stroke="#141413"
+            strokeOpacity="0.3"
+            strokeWidth="0.35"
+            initial={false}
+            animate={{ pathLength: on ? 1 : 0 }}
+            transition={{
+              duration: 0.9,
+              delay: on ? 0.15 + i * 0.12 : 0,
+              ease,
+            }}
+          />
+        ))}
+        {nodes.map((n, i) => (
+          <motion.g
+            key={n.l}
+            initial={false}
+            animate={{
+              opacity: on || i === 0 ? 1 : 0.15,
+              y: on || i === 0 ? 0 : 3,
+            }}
+            transition={{ duration: 0.6, delay: on ? i * 0.1 : 0, ease }}
+          >
+            <rect
+              x={n.x - 9}
+              y={n.y - 4.6}
+              width="18"
+              height="9.2"
+              rx="2"
+              fill={i === 0 ? "#141413" : "#fff"}
+              stroke="#141413"
+              strokeOpacity="0.2"
+              strokeWidth="0.3"
+            />
+            <text
+              x={n.x}
+              y={n.y + 1.3}
+              fontSize="3.4"
+              textAnchor="middle"
+              fill={i === 0 ? "#f3f3f0" : "#141413"}
+            >
+              {n.l}
+            </text>
+          </motion.g>
+        ))}
+      </svg>
+    </div>
+  );
+}
+
+/** Step 2: grey wireframe, then the finished design wipes across it. */
+function DesignVisual({ on }: { on: boolean }) {
+  return (
+    <div className={`${frame} aspect-[4/3]`}>
+      <BrowserBar url="figma.com/loom-and-tide" />
+      <div className="relative h-full">
+        <div className="absolute inset-0 space-y-3 p-5" aria-hidden>
+          <div className="h-[46%] rounded bg-black/[0.06]" />
+          <div className="h-3 w-1/2 rounded bg-black/[0.08]" />
+          <div className="grid grid-cols-4 gap-2">
+            {[0, 1, 2, 3].map((i) => (
+              <div key={i} className="aspect-[3/4] rounded bg-black/[0.05]" />
+            ))}
+          </div>
+        </div>
+        <motion.div
+          className="absolute inset-0"
+          initial={false}
+          animate={{ clipPath: on ? "inset(0 0% 0 0)" : "inset(0 100% 0 0)" }}
+          transition={{ duration: 1.4, delay: on ? 0.3 : 0, ease: easeInOut }}
+        >
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src={shot("furniture", 1400)}
+            alt=""
+            className="h-full w-full object-cover object-left-top"
+          />
+        </motion.div>
+        <motion.span
+          className="absolute inset-y-0 w-px bg-[#141413]"
+          initial={false}
+          animate={{ left: on ? "100%" : "0%", opacity: on ? [1, 1, 0] : 0 }}
+          transition={{ duration: 1.4, delay: on ? 0.3 : 0, ease: easeInOut }}
+        />
+      </div>
+    </div>
+  );
+}
+
+/** Step 3: a preview link that keeps filling in as pages are built. */
+function BuildVisual({ on }: { on: boolean }) {
+  return (
+    <div className={`${frame} relative aspect-[4/3]`}>
+      <BrowserBar url="preview.loom-and-tide.vercel.app" />
+      <motion.div
+        className="absolute left-0 top-[33px] h-0.5 bg-[#3fa66b]"
+        initial={false}
+        animate={{ width: on ? "100%" : "0%" }}
+        transition={{ duration: 2.4, ease: "easeInOut" }}
+      />
+      <div
+        className="h-full w-full bg-[length:100%_auto] transition-[background-position] duration-[6000ms] ease-in-out"
+        style={{
+          backgroundImage: `url(${IMG_BASE}work/furniture-long.webp)`,
+          backgroundPosition: on ? "50% 70%" : "50% 0%",
+        }}
+      />
+      <motion.span
+        initial={false}
+        animate={{ opacity: on ? 1 : 0, y: on ? 0 : 8 }}
+        transition={{ delay: on ? 1.2 : 0, duration: 0.5 }}
+        className="absolute bottom-4 left-4 rounded-full bg-[#141413] px-3 py-1.5 text-[11.5px] text-[#f3f3f0] shadow-lg"
+      >
+        Updated 2 minutes ago
+      </motion.span>
+    </div>
+  );
+}
+
+/** Step 4: live on a phone, with its own address. */
+function LaunchVisual({ on }: { on: boolean }) {
+  return (
+    <div className="relative flex aspect-[4/3] items-center justify-center rounded-xl bg-[#e8e7e2]">
+      <motion.div
+        initial={false}
+        animate={{ y: on ? 0 : 24, rotate: on ? -4 : 0 }}
+        transition={{ duration: 1, ease }}
+        className="relative h-[86%] w-auto overflow-hidden rounded-[26px] border-[6px] border-[#141413] bg-white shadow-[0_40px_80px_-30px_rgb(20_20_19/0.6)]"
+        style={{ aspectRatio: "9 / 19" }}
+      >
+        <div className="absolute inset-x-0 top-0 z-10 mx-auto mt-1.5 h-3.5 w-14 rounded-full bg-[#141413]" />
+        <div
+          className="h-full w-full bg-cover"
+          style={{
+            backgroundImage: `url(${IMG_BASE}work/furniture-mobile.webp)`,
+            backgroundPosition: "50% 0",
+          }}
+        />
+      </motion.div>
+      <motion.div
+        initial={false}
+        animate={{ opacity: on ? 1 : 0, x: on ? 0 : -12 }}
+        transition={{ delay: on ? 0.6 : 0, duration: 0.6, ease }}
+        className="absolute right-[8%] top-[18%] rounded-full bg-white px-3.5 py-2 text-[12px] shadow-xl ring-1 ring-black/5"
+      >
+        <span className="mr-2 inline-block size-2 rounded-full bg-[#3fa66b]" />
+        loomandtide.co is live
+      </motion.div>
+    </div>
+  );
+}
+
+const visuals = [MapVisual, DesignVisual, BuildVisual, LaunchVisual];
+
+/** Four steps. On large screens a picture of each step stays in view and changes as you read. */
 function Process() {
   const ref = useRef<HTMLDivElement>(null);
+  const items = useRef<(HTMLLIElement | null)[]>([]);
   const fine = useFinePointer();
+  const [active, setActive] = useState(0);
   const { scrollYProgress } = useScroll({
     target: ref,
-    offset: ["start 75%", "end 55%"],
+    offset: ["start 70%", "end 50%"],
   });
   const fill = useTransform(scrollYProgress, [0, 1], ["0%", "100%"]);
+
+  useEffect(() => {
+    const io = new IntersectionObserver(
+      (es) =>
+        es.forEach(
+          (e) =>
+            e.isIntersecting &&
+            setActive(Number((e.target as HTMLElement).dataset.i)),
+        ),
+      { rootMargin: "-45% 0px -45% 0px" },
+    );
+    items.current.forEach((el) => el && io.observe(el));
+    return () => io.disconnect();
+  }, []);
+
   return (
-    <section
-      id="process"
-      className="grid gap-12 px-[var(--gutter)] pt-32 lg:grid-cols-[1fr_1.3fr] lg:gap-20"
-    >
-      <div className="lg:sticky lg:top-28 lg:self-start">
+    <section id="process" className="px-[var(--gutter)] pt-32">
+      <div className="grid gap-4 lg:grid-cols-2 lg:items-end">
         <h2 className="text-[clamp(2rem,4vw,3.4rem)] font-semibold leading-[1.02] tracking-[-0.035em]">
           How a project runs
         </h2>
-        <p className="mt-4 max-w-[40ch] text-[16px] leading-relaxed text-muted">
+        <p className="max-w-[44ch] text-[16px] leading-relaxed text-muted lg:justify-self-end">
           The same four steps whether it is a shop, a booking site or a brand
           page. You see progress every week.
         </p>
       </div>
-      <div ref={ref} className="relative pl-10 sm:pl-14">
-        <span className="absolute bottom-2 left-[11px] top-2 w-px bg-line sm:left-[15px]" />
-        <motion.span
-          className="absolute left-[11px] top-2 w-px origin-top bg-ink sm:left-[15px]"
-          style={{ height: fine ? fill : "calc(100% - 16px)" }}
-        />
-        <ol className="space-y-14">
-          {steps.map((s, i) => (
-            <motion.li
-              key={s.t}
-              className="relative"
-              initial={{ opacity: 0, y: 24 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, margin: "-15% 0px" }}
-              transition={{ duration: 0.8, ease }}
-            >
-              <span className="tabular absolute -left-10 top-0 flex size-6 items-center justify-center rounded-full border border-ink bg-bg text-[12px] sm:-left-14 sm:size-8 sm:text-[13px]">
-                {i + 1}
-              </span>
-              <h3 className="text-[clamp(1.5rem,2.6vw,2.2rem)] font-semibold tracking-[-0.03em]">
-                {s.t}
-              </h3>
-              <p className="mt-2 max-w-[52ch] text-[16px] leading-relaxed text-muted">
-                {s.d}
-              </p>
-              <p className="mt-4 inline-flex rounded-full bg-soft px-3.5 py-1.5 text-[13px]">
-                {s.out}
-              </p>
-            </motion.li>
-          ))}
-        </ol>
+
+      <div className="mt-14 grid gap-12 lg:grid-cols-[1.1fr_1fr] lg:gap-20">
+        <div className="relative hidden lg:block">
+          <div className="sticky top-[18vh]">
+            <div className="relative">
+              {visuals.map((V, i) => (
+                <motion.div
+                  key={i}
+                  className={i ? "absolute inset-0" : "relative"}
+                  initial={false}
+                  animate={{
+                    opacity: active === i ? 1 : 0,
+                    scale: active === i ? 1 : 0.97,
+                  }}
+                  transition={{ duration: 0.6, ease }}
+                  style={{ pointerEvents: active === i ? "auto" : "none" }}
+                >
+                  <V on={active === i} />
+                </motion.div>
+              ))}
+            </div>
+            <div className="mt-5 flex gap-1.5">
+              {steps.map((s, i) => (
+                <span
+                  key={s.t}
+                  className="h-0.5 flex-1 overflow-hidden rounded-full bg-line"
+                >
+                  <motion.span
+                    className="block h-full bg-ink"
+                    initial={false}
+                    animate={{ width: i <= active ? "100%" : "0%" }}
+                    transition={{ duration: 0.6, ease }}
+                  />
+                </span>
+              ))}
+            </div>
+          </div>
+        </div>
+
+        <div ref={ref} className="relative pl-10 sm:pl-14">
+          <span className="absolute bottom-2 left-[11px] top-2 w-px bg-line sm:left-[15px]" />
+          <motion.span
+            className="absolute left-[11px] top-2 w-px origin-top bg-ink sm:left-[15px]"
+            style={{ height: fine ? fill : "calc(100% - 16px)" }}
+          />
+          <ol className="space-y-16 lg:space-y-[28vh] lg:py-[12vh]">
+            {steps.map((s, i) => {
+              const V = visuals[i];
+              return (
+                <li
+                  key={s.t}
+                  ref={(el) => {
+                    items.current[i] = el;
+                  }}
+                  data-i={i}
+                  className="relative"
+                >
+                  <span
+                    className={`tabular absolute -left-10 top-0 flex size-6 items-center justify-center rounded-full border text-[12px] transition-colors duration-500 sm:-left-14 sm:size-8 sm:text-[13px] ${active >= i ? "border-ink bg-ink text-bg" : "border-line bg-bg text-muted"}`}
+                  >
+                    {i + 1}
+                  </span>
+                  <h3
+                    className={`text-[clamp(1.5rem,2.6vw,2.2rem)] font-semibold tracking-[-0.03em] transition-colors duration-500 ${active === i ? "text-ink" : "lg:text-ink/40"}`}
+                  >
+                    {s.t}
+                  </h3>
+                  <p className="mt-2 max-w-[48ch] text-[16px] leading-relaxed text-muted">
+                    {s.d}
+                  </p>
+                  <p className="mt-4 inline-flex rounded-full bg-soft px-3.5 py-1.5 text-[13px]">
+                    {s.out}
+                  </p>
+                  <div className="mt-6 lg:hidden">
+                    <V on={active === i} />
+                  </div>
+                </li>
+              );
+            })}
+          </ol>
+        </div>
       </div>
     </section>
   );
