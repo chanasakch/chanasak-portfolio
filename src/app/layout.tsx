@@ -26,6 +26,8 @@ import "@fontsource-variable/albert-sans";
 import "@fontsource-variable/familjen-grotesk";
 import "@fontsource-variable/bricolage-grotesque";
 import "@fontsource-variable/manrope";
+import "@fontsource/gilda-display/400.css";
+import "@fontsource/libre-caslon-display/400.css";
 import "./globals.css";
 
 export const metadata: Metadata = {

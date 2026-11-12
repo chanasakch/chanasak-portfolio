@@ -9,7 +9,7 @@ export const metadata: Metadata = {
 
 export default function Layout({ children }: { children: React.ReactNode }) {
   return (
-    <div className="b-silk [--cursor-ink:#d9d3e5] [--cursor:#221a33]">
+    <div className="b-silk [--cursor-ink:#170f15] [--cursor:#f1e6d4]">
       <SmoothScroll />
       <Cursor />
       {children}

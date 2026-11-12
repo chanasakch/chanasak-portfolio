@@ -3,7 +3,14 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { AnimatePresence, motion } from "motion/react";
 import { Drawer } from "@/components/shared/ui";
-import { ease, FadeUp, SplitLines } from "@/components/shared/motion";
+import {
+  ease,
+  FadeUp,
+  RevealImage,
+  SplitLines,
+} from "@/components/shared/motion";
+import { Photo } from "@/components/shared/Photo";
+import { photos } from "@/data/images";
 
 type Stop = {
   id: string;
@@ -486,10 +493,8 @@ export function NavaSite() {
 
   return (
     <div>
-      <header className="fixed inset-x-0 top-0 z-30 flex h-16 items-center justify-between bg-bg/85 px-[var(--gutter)] text-[14px] backdrop-blur">
-        <span className="font-display text-[22px] font-bold tracking-[-0.04em]">
-          nava
-        </span>
+      <header className="fixed inset-x-0 top-0 z-30 flex h-16 items-center justify-between bg-gradient-to-b from-bg/80 to-transparent px-[var(--gutter)] text-[14px]">
+        <span className="font-display text-[22px] tracking-[0.32em]">NAVA</span>
         <nav className="hidden gap-7 md:flex">
           <a href="#plan" className="text-muted hover:text-ink">
             Plan a day
@@ -504,32 +509,74 @@ export function NavaSite() {
         <button
           type="button"
           onClick={() => setOpen(true)}
-          className="rounded-full bg-ink px-4 py-2 text-bg"
+          className="rounded-full border border-ink/40 px-4 py-2 backdrop-blur transition-colors hover:bg-ink hover:text-bg"
         >
           Enquire
         </button>
       </header>
 
-      <section className="px-[var(--gutter)] pb-10 pt-28">
-        <SplitLines
-          lines={["A day on", "Phang Nga Bay"]}
-          delay={0.2}
-          className="font-display text-[clamp(3rem,8vw,7.4rem)] font-bold leading-[0.88] tracking-[-0.05em]"
-        />
-        <motion.p
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.8, duration: 0.8 }}
-          className="mt-6 max-w-[48ch] text-[16px] leading-relaxed text-muted"
+      <section className="relative h-[100svh] min-h-[620px] overflow-hidden">
+        <motion.div
+          className="absolute inset-0"
+          initial={{ scale: 1.12 }}
+          animate={{ scale: 1 }}
+          transition={{ duration: 3.2, ease }}
         >
-          Private boats with a captain, two crew and a cook, out of Ao Po on
-          Phuket. Tap the islands you want and we work out the day.
-        </motion.p>
+          <Photo
+            photo={photos.sunbedsSand}
+            className="h-full w-full"
+            priority
+            position="50% 60%"
+          />
+        </motion.div>
+        <div className="absolute inset-0 bg-[linear-gradient(to_top,#0b1d27_4%,rgb(11_29_39/0.45)_50%,rgb(11_29_39/0.25))]" />
+        <div className="absolute inset-x-0 bottom-0 px-[var(--gutter)] pb-24 sm:pb-14">
+          <motion.p
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.5, duration: 1 }}
+            className="text-[13px] tracking-[0.06em] text-accent"
+          >
+            Private charters from Ao Po, Phuket
+          </motion.p>
+          <SplitLines
+            lines={["A day on", "Phang Nga Bay"]}
+            delay={0.35}
+            className="mt-4 font-display text-[clamp(3rem,8.4vw,8.4rem)] leading-[0.9]"
+          />
+          <motion.div
+            initial={{ opacity: 0, y: 16 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.9, delay: 1.1, ease }}
+            className="mt-10 grid max-w-[760px] grid-cols-2 overflow-hidden rounded-2xl border border-ink/15 bg-bg/40 text-[14px] backdrop-blur-md sm:grid-cols-4"
+          >
+            {[
+              ["Boat", boat.name],
+              ["Guests", String(g)],
+              ["Stops", order.length ? String(order.length) : "None yet"],
+            ].map(([k, v]) => (
+              <a
+                key={k}
+                href="#plan"
+                className="border-b border-r border-ink/10 px-5 py-4 sm:border-b-0"
+              >
+                <span className="block text-[12px] text-muted">{k}</span>
+                {v}
+              </a>
+            ))}
+            <a
+              href="#plan"
+              className="flex items-center justify-center bg-accent px-5 py-4 font-semibold text-[#0b1d27]"
+            >
+              Plan the day
+            </a>
+          </motion.div>
+        </div>
       </section>
 
       <section
         id="plan"
-        className="grid gap-8 px-[var(--gutter)] pb-20 lg:grid-cols-[1.35fr_1fr] lg:gap-12"
+        className="grid gap-8 px-[var(--gutter)] pb-20 pt-20 lg:grid-cols-[1.35fr_1fr] lg:gap-12"
       >
         <div className="min-w-0 lg:sticky lg:top-20 lg:self-start">
           <div className="overflow-hidden rounded-xl shadow-[0_30px_60px_-40px_rgb(11_53_64/0.6)]">
@@ -601,9 +648,7 @@ export function NavaSite() {
                   aria-pressed={boat.id === b.id}
                   className={`grid grid-cols-[1fr_auto] gap-x-4 rounded-lg border px-4 py-3 text-left transition-colors ${boat.id === b.id ? "border-ink bg-ink text-bg" : "border-line hover:border-ink/40"}`}
                 >
-                  <span className="font-display text-[18px] font-bold tracking-[-0.02em]">
-                    {b.name}
-                  </span>
+                  <span className="font-display text-[20px]">{b.name}</span>
                   <span className="tabular text-[14px]">
                     ฿{fmt.format(b.day)} a day
                   </span>
@@ -680,7 +725,7 @@ export function NavaSite() {
             type="button"
             onClick={() => setOpen(true)}
             disabled={!order.length}
-            className="mt-6 w-full rounded-full bg-accent py-4 text-[15px] font-semibold text-white transition-opacity hover:opacity-90 disabled:opacity-40"
+            className="mt-6 w-full rounded-full bg-accent py-4 text-[15px] font-semibold text-[#0b1d27] transition-opacity hover:opacity-90 disabled:opacity-40"
           >
             Ask for this day
           </button>
@@ -689,19 +734,17 @@ export function NavaSite() {
 
       <section
         id="boats"
-        className="bg-[#0b3540] px-[var(--gutter)] py-20 text-[#eaf1f2]"
+        className="border-y border-line bg-soft px-[var(--gutter)] py-20"
       >
-        <div className="[--accent:#ff7a4d] [--ink:#eaf1f2]">
-          <h2 className="font-display text-[clamp(2.2rem,5vw,4.4rem)] font-bold leading-[0.95] tracking-[-0.045em]">
+        <div>
+          <h2 className="font-display text-[clamp(2.4rem,5vw,4.6rem)] leading-[0.95]">
             Three boats, one crew
           </h2>
           <div className="mt-12 grid gap-10 md:grid-cols-3">
             {boats.map((b, i) => (
               <FadeUp key={b.id} delay={i * 0.08}>
                 <BoatSide id={b.id} />
-                <p className="mt-5 font-display text-[26px] font-bold tracking-[-0.03em]">
-                  {b.name}
-                </p>
+                <p className="mt-5 font-display text-[30px]">{b.name}</p>
                 <p className="text-[14px] opacity-70">{b.type}</p>
                 <p className="mt-3 text-[15px] leading-relaxed opacity-85">
                   {b.desc}
@@ -730,10 +773,17 @@ export function NavaSite() {
         id="aboard"
         className="grid gap-10 px-[var(--gutter)] py-20 lg:grid-cols-[1fr_1.4fr]"
       >
-        <h2 className="font-display text-[clamp(2rem,4vw,3.4rem)] font-bold leading-[0.95] tracking-[-0.045em]">
-          Included on every day
-        </h2>
-        <ul className="grid gap-x-10 border-t border-line sm:grid-cols-2">
+        <div>
+          <h2 className="font-display text-[clamp(2.2rem,4.4vw,4rem)] leading-[0.95]">
+            Included on every day
+          </h2>
+          <RevealImage
+            photo={photos.resortPool}
+            className="mt-10 hidden aspect-[4/5] max-w-[420px] lg:block"
+            sizes="30vw"
+          />
+        </div>
+        <ul className="grid gap-x-10 self-start border-t border-line sm:grid-cols-2">
           {[
             [
               "Captain, deckhand and cook",
@@ -776,7 +826,7 @@ export function NavaSite() {
         title="Ask for this day"
       >
         {sent ? (
-          <p className="py-8 font-display text-[1.8rem] font-bold leading-tight tracking-[-0.03em]">
+          <p className="py-8 font-display text-[1.9rem] leading-tight">
             Sent. The captain checks the tide and weather for your date and
             replies within a few hours.
           </p>
@@ -789,7 +839,7 @@ export function NavaSite() {
             }}
           >
             <div className="rounded-lg bg-soft p-4 text-[14px]">
-              <p className="font-display text-[1.3rem] font-bold tracking-[-0.02em]">
+              <p className="font-display text-[1.4rem]">
                 {boat.name}, {g} guests
               </p>
               <p className="text-muted">
@@ -814,7 +864,7 @@ export function NavaSite() {
                 />
               </label>
             ))}
-            <button className="mt-2 rounded-full bg-accent py-4 text-[15px] font-semibold text-white">
+            <button className="mt-2 rounded-full bg-accent py-4 text-[15px] font-semibold text-[#0b1d27]">
               Send
             </button>
           </form>
