@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 import {
+  AnimatePresence,
   motion,
   useMotionValue,
   useScroll,
@@ -293,6 +294,9 @@ function Nav() {
         </Link>
         <nav className="flex gap-5 sm:gap-7">
           <a href="#work">Work</a>
+          <a href="#process" className="hidden sm:inline">
+            Process
+          </a>
           <a href="#experience" className="hidden sm:inline">
             Experience
           </a>
@@ -500,6 +504,227 @@ function CopyEmail({ email }: { email: string }) {
   );
 }
 
+const steps = [
+  {
+    t: "Listen",
+    d: "We talk through the business, the customers and what the site has to do. I look at what you have now and the sites you like.",
+    out: "A short brief and a site map",
+  },
+  {
+    t: "Shape",
+    d: "I design the key pages in your brand, with real products and copy, and share a link you can open on your phone.",
+    out: "Clickable designs to comment on",
+  },
+  {
+    t: "Build",
+    d: "The site is built page by page on a preview link that updates as I go, so nothing arrives as a surprise at the end.",
+    out: "A working site to test",
+  },
+  {
+    t: "Launch",
+    d: "I connect the domain, check every page on real phones, and show your team how to update products and photos.",
+    out: "A live site your team can run",
+  },
+];
+
+/** Four steps with a line that fills as you read down them. */
+function Process() {
+  const ref = useRef<HTMLDivElement>(null);
+  const fine = useFinePointer();
+  const { scrollYProgress } = useScroll({
+    target: ref,
+    offset: ["start 75%", "end 55%"],
+  });
+  const fill = useTransform(scrollYProgress, [0, 1], ["0%", "100%"]);
+  return (
+    <section
+      id="process"
+      className="grid gap-12 px-[var(--gutter)] pt-32 lg:grid-cols-[1fr_1.3fr] lg:gap-20"
+    >
+      <div className="lg:sticky lg:top-28 lg:self-start">
+        <h2 className="text-[clamp(2rem,4vw,3.4rem)] font-semibold leading-[1.02] tracking-[-0.035em]">
+          How a project runs
+        </h2>
+        <p className="mt-4 max-w-[40ch] text-[16px] leading-relaxed text-muted">
+          The same four steps whether it is a shop, a booking site or a brand
+          page. You see progress every week.
+        </p>
+      </div>
+      <div ref={ref} className="relative pl-10 sm:pl-14">
+        <span className="absolute bottom-2 left-[11px] top-2 w-px bg-line sm:left-[15px]" />
+        <motion.span
+          className="absolute left-[11px] top-2 w-px origin-top bg-ink sm:left-[15px]"
+          style={{ height: fine ? fill : "calc(100% - 16px)" }}
+        />
+        <ol className="space-y-14">
+          {steps.map((s, i) => (
+            <motion.li
+              key={s.t}
+              className="relative"
+              initial={{ opacity: 0, y: 24 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: "-15% 0px" }}
+              transition={{ duration: 0.8, ease }}
+            >
+              <span className="tabular absolute -left-10 top-0 flex size-6 items-center justify-center rounded-full border border-ink bg-bg text-[12px] sm:-left-14 sm:size-8 sm:text-[13px]">
+                {i + 1}
+              </span>
+              <h3 className="text-[clamp(1.5rem,2.6vw,2.2rem)] font-semibold tracking-[-0.03em]">
+                {s.t}
+              </h3>
+              <p className="mt-2 max-w-[52ch] text-[16px] leading-relaxed text-muted">
+                {s.d}
+              </p>
+              <p className="mt-4 inline-flex rounded-full bg-soft px-3.5 py-1.5 text-[13px]">
+                {s.out}
+              </p>
+            </motion.li>
+          ))}
+        </ol>
+      </div>
+    </section>
+  );
+}
+
+const included = [
+  [
+    "Designed for your brand",
+    "Your colours, type and photos, not a theme with your logo on it.",
+  ],
+  [
+    "Works on every screen",
+    "Laid out for phones first, then tablets and large screens.",
+  ],
+  [
+    "Content you can edit",
+    "Products, prices, photos and pages updated by your team without code.",
+  ],
+  [
+    "Fast and easy to find",
+    "Quick to load, with page titles, descriptions and sharing previews set up.",
+  ],
+  [
+    "Launch handled",
+    "Domain, hosting, forms and analytics connected and tested.",
+  ],
+  [
+    "Help after launch",
+    "A direct line to me for fixes and questions once the site is live.",
+  ],
+];
+
+function Included() {
+  return (
+    <section className="px-[var(--gutter)] pt-32">
+      <h2 className="text-[clamp(2rem,4vw,3.4rem)] font-semibold leading-[1.02] tracking-[-0.035em]">
+        What you get
+      </h2>
+      <ul className="mt-10 grid border-t border-line sm:grid-cols-2 lg:grid-cols-3">
+        {included.map(([t, d], i) => (
+          <motion.li
+            key={t}
+            initial={{ opacity: 0 }}
+            whileInView={{ opacity: 1 }}
+            viewport={{ once: true, margin: "-10% 0px" }}
+            transition={{ duration: 0.7, delay: (i % 3) * 0.08 }}
+            className="group relative border-b border-line py-7 sm:pr-8 lg:[&:nth-child(3n)]:pl-8 lg:[&:nth-child(3n+2)]:px-8"
+          >
+            <span className="absolute left-0 top-0 h-px w-0 bg-ink transition-[width] duration-500 ease-out group-hover:w-full" />
+            <p className="text-[18px] font-semibold tracking-[-0.015em]">{t}</p>
+            <p className="mt-2 max-w-[36ch] text-[15px] leading-relaxed text-muted">
+              {d}
+            </p>
+          </motion.li>
+        ))}
+      </ul>
+    </section>
+  );
+}
+
+const faqs = [
+  [
+    "What do you need from me to start?",
+    "Your logo, any brand guide you have, product or service details, and good photos if you have them. A list of two or three sites you like helps a lot. If photos are missing, I can suggest a photographer or work with what you have.",
+  ],
+  [
+    "Can my team update the site ourselves?",
+    "Yes. Products, prices, photos and most pages are edited in a simple admin, and I walk your team through it before launch.",
+  ],
+  [
+    "What does it cost to keep running?",
+    "Usually a domain renewal each year, plus hosting that is often free or low cost for small and medium sites. It depends on traffic and features, and I explain the options before we choose.",
+  ],
+  [
+    "Can you work from our current website?",
+    "Yes. I can move your existing products, pages and images across, and set up redirects so old links and search rankings are kept.",
+  ],
+  [
+    "How do we stay in touch during the project?",
+    "A short check-in each week, a preview link you can open any time, and LINE or email for quick questions.",
+  ],
+];
+
+function Faq() {
+  const [open, setOpen] = useState<number | null>(0);
+  return (
+    <section
+      id="faq"
+      className="grid gap-10 px-[var(--gutter)] pt-32 lg:grid-cols-[1fr_1.6fr] lg:gap-20"
+    >
+      <h2 className="text-[clamp(2rem,4vw,3.4rem)] font-semibold leading-[1.02] tracking-[-0.035em]">
+        Questions clients ask
+      </h2>
+      <ul className="border-t border-line">
+        {faqs.map(([q, a], i) => {
+          const on = open === i;
+          return (
+            <li key={q} className="border-b border-line">
+              <button
+                type="button"
+                onClick={() => setOpen(on ? null : i)}
+                aria-expanded={on}
+                className="group flex w-full items-center justify-between gap-6 py-6 text-left"
+              >
+                <span
+                  className={`text-[clamp(1.05rem,1.6vw,1.3rem)] tracking-[-0.01em] transition-colors ${on ? "text-ink" : "text-ink/75 group-hover:text-ink"}`}
+                >
+                  {q}
+                </span>
+                <span
+                  className={`relative flex size-9 shrink-0 items-center justify-center rounded-full border transition-colors duration-300 ${on ? "border-ink bg-ink text-bg" : "border-line group-hover:border-ink"}`}
+                  aria-hidden
+                >
+                  <span className="absolute h-px w-3.5 bg-current" />
+                  <motion.span
+                    className="absolute h-3.5 w-px bg-current"
+                    animate={{ scaleY: on ? 0 : 1 }}
+                    transition={{ duration: 0.3 }}
+                  />
+                </span>
+              </button>
+              <AnimatePresence initial={false}>
+                {on && (
+                  <motion.div
+                    initial={{ height: 0, opacity: 0 }}
+                    animate={{ height: "auto", opacity: 1 }}
+                    exit={{ height: 0, opacity: 0 }}
+                    transition={{ duration: 0.4, ease }}
+                    className="overflow-hidden"
+                  >
+                    <p className="max-w-[62ch] pb-7 pr-12 text-[16px] leading-relaxed text-muted">
+                      {a}
+                    </p>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </li>
+          );
+        })}
+      </ul>
+    </section>
+  );
+}
+
 function WorkCard({
   w,
   i,
@@ -674,6 +899,8 @@ export function Profile() {
       </div>
 
       <Work />
+      <Process />
+      <Included />
 
       <section id="experience" className="px-[var(--gutter)] pt-32">
         <h2 className="text-[clamp(2rem,4vw,3.4rem)] font-semibold tracking-[-0.035em]">
@@ -792,6 +1019,8 @@ export function Profile() {
           </ul>
         </div>
       </section>
+
+      <Faq />
 
       <section
         id="contact"
