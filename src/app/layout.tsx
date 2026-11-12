@@ -20,6 +20,7 @@ import "@fontsource/instrument-serif/400.css";
 import "@fontsource/instrument-serif/400-italic.css";
 import "@fontsource-variable/bodoni-moda/wght-italic.css";
 import "@fontsource-variable/work-sans";
+import "@fontsource-variable/hanken-grotesk";
 import "./globals.css";
 
 export const metadata: Metadata = {

@@ -175,7 +175,7 @@ html.lenis body {
 }
 
 /* Second set of concepts. Each wrapper sets the tokens its drawers and type use. */
-.b-lamp,
+.b-loom,
 .b-din,
 .b-stay,
 .b-phloi,
@@ -183,14 +183,18 @@ html.lenis body {
   font-family: var(--font-body);
   min-height: 100dvh;
 }
-.b-lamp {
-  --bg: #ece6db;
-  --ink: #1c1a17;
-  --muted: #6d665c;
-  --line: rgb(28 26 23 / 0.14);
-  --soft: #ddd6ca;
-  --font-display: "Instrument Serif", Georgia, serif;
-  --font-body: "Instrument Sans Variable", "Instrument Sans", "Anuphan", system-ui, sans-serif;
+.b-loom {
+  --bg: #fbfbf9;
+  --ink: #1d1c1a;
+  --muted: #6f6c66;
+  --line: rgb(29 28 26 / 0.12);
+  --soft: #f0efeb;
+  --deep: #2b2f2a;
+  --font-display: "Hanken Grotesk Variable", "Hanken Grotesk", "Anuphan", system-ui, sans-serif;
+  --font-body: "Hanken Grotesk Variable", "Hanken Grotesk", "Anuphan", system-ui, sans-serif;
+  background: var(--bg);
+  color: var(--ink);
+  -webkit-font-smoothing: antialiased;
 }
 .b-din {
   --bg: #f2f2ef;

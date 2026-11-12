@@ -6,7 +6,7 @@ Three working front-end concepts for Thai craft and hospitality brands. All bran
 | --- | --- | --- |
 | `/` | Index | Links to the six concepts |
 | `/parfum` | HOM, fragrance house | Live 3D bottle toured on scroll, 360 turn, zoom, scent and size switching, initials printed on the label |
-| `/furniture` | Loom & Tide, rattan lighting | 3D pendant configurator, lights on and off with the weave shadow thrown on the wall |
+| `/furniture` | Loom & Tide | Full rattan furniture shop: home, collection with filters, product pages with photo zoom, quote list, projects, trade programme, contact |
 | `/jewelry` | PHLOI, fine jewellery | 3D solitaire ring with stone, metal, cut, carat and an engraving preview |
 | `/ceramics` | DIN, stoneware studio | Endless drag-through wall of pieces, magnifier, filters, order drawer |
 | `/hotel` | Ruen Doi, boutique hotel | One day told hour by hour as the page moves from morning to night, rate calendar and room hold |
