@@ -36,6 +36,19 @@ const work = [
     tags: ["8 pages", "Photo zoom", "Quote list"],
   },
   {
+    href: "/sala",
+    shot: "sala",
+    name: "SALA",
+    font: '"Familjen Grotesk Variable", sans-serif',
+    weight: 600,
+    track: "0.32em",
+    bg: "#ecebe7",
+    ink: "#191918",
+    job: "Furniture showroom",
+    what: "Walk a white showroom where the collection stands in one row. Pick a sofa and the room clears around it, turn it in 3D, switch the fabric and order.",
+    tags: ["Three.js", "Fabric swap", "Order and visit booking"],
+  },
+  {
     href: "/parfum",
     shot: "parfum",
     name: "HOM",
@@ -60,6 +73,19 @@ const work = [
     job: "Fine jewellery",
     what: "Build a solitaire ring in 3D under studio light. Stone, metal, cut and carat change the ring and the price, and your engraving appears inside the band.",
     tags: ["Three.js", "Configurator", "Booking"],
+  },
+  {
+    href: "/kao",
+    shot: "kao",
+    name: "KAO",
+    font: '"Archivo Variable", sans-serif',
+    weight: 800,
+    track: "-0.03em",
+    bg: "#efefec",
+    ink: "#161616",
+    job: "Running shoe drop",
+    what: "Six colours of one shoe float in a line. Scroll and the next one comes forward, open it to turn it, look at the sole, pick a size and check out.",
+    tags: ["Three.js", "Colourways", "Size and checkout"],
   },
   {
     href: "/ceramics",
@@ -1519,7 +1545,7 @@ function Work() {
           Selected work
         </h2>
         <p className="max-w-[46ch] text-[16px] leading-relaxed text-muted lg:justify-self-end">
-          Shops, booking, configurators and planners for nine kinds of business,
+          Shops, booking, configurators and planners for eleven kinds of business,
           designed and built in Next.js. Open any of them and use it on your
           phone or laptop.
         </p>

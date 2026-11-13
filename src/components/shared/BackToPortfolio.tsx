@@ -24,7 +24,7 @@ export function BackToPortfolio({ tone = "light" }: { tone?: "light" | "dark" })
   return (
     <Link
       href="/"
-      className={`no-print fixed bottom-4 right-4 z-50 rounded-full px-4 py-2 text-[13px] shadow-[0_6px_24px_rgb(0_0_0/0.18)] transition-[transform,opacity,background-color] duration-300 sm:left-4 sm:right-auto ${colors} ${hidden ? "pointer-events-none translate-y-16 opacity-0" : ""}`}
+      className={`back-pill no-print fixed bottom-4 right-4 z-50 rounded-full px-4 py-2 text-[13px] shadow-[0_6px_24px_rgb(0_0_0/0.18)] transition-[transform,opacity,background-color] duration-300 sm:left-4 sm:right-auto ${colors} ${hidden ? "pointer-events-none translate-y-16 opacity-0" : ""}`}
       style={{ fontFamily: '"Jost Variable", "Jost", system-ui, sans-serif' }}
     >
       Portfolio

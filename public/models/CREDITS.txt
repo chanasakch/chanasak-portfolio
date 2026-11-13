@@ -1,0 +1,10 @@
+3D models from the Khronos glTF Sample Assets (github.com/KhronosGroup/glTF-Sample-Assets), compressed for the web.
+
+kao/runner.glb   MaterialsVariantsShoe, Shopify, CC BY 4.0
+sala/sofa.glb    GlamVelvetSofa, Eric Chadwick, CC BY 4.0
+sala/chair.glb   SheenChair, Eric Chadwick, CC0 1.0
+sala/pouf.glb    SpecularSilkPouf, Eric Chadwick, CC BY 4.0
+sala/lamp.glb    IridescenceLamp, Eric Chadwick, CC BY 4.0
+sala/plant.glb   DiffuseTransmissionPlant, Eric Chadwick (CC BY 4.0) and Rico Cilliers (CC0 1.0)
+sala/vases.glb   GlassVaseFlowers, Eric Chadwick and Rico Cilliers, CC0 1.0
+sala/cup.glb     DiffuseTransmissionTeacup, Poly Haven and Eric Chadwick, CC0 1.0

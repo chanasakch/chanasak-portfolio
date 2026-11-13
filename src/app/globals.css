@@ -183,6 +183,8 @@ html.lenis body {
 .b-silk,
 .b-sung,
 .b-nava,
+.b-sala,
+.b-kao,
 .b-rim {
   font-family: var(--font-body);
   min-height: 100dvh;
@@ -314,4 +316,44 @@ html.lenis body {
   background: var(--bg);
   color: var(--ink);
   color-scheme: dark;
+}
+
+.b-sala {
+  --bg: #ecebe7;
+  --ink: #191918;
+  --muted: #74726c;
+  --line: rgb(25 25 24 / 0.14);
+  --soft: #e2e1dc;
+  --accent: #191918;
+  --font-display: "Familjen Grotesk Variable", system-ui, sans-serif;
+  --font-body: "Instrument Sans Variable", system-ui, sans-serif;
+  background: var(--bg);
+  color: var(--ink);
+}
+
+/* app-like sites: the portfolio pill steps aside while a bottom sheet is open on phones */
+@media (max-width: 767px) {
+  body:has([data-sheet]) .back-pill {
+    opacity: 0;
+    pointer-events: none;
+  }
+}
+
+.b-kao {
+  --bg: #efefec;
+  --ink: #161616;
+  --muted: #73736e;
+  --line: rgb(22 22 22 / 0.14);
+  --soft: #e4e4e0;
+  --accent: #161616;
+  --font-display: "Archivo Variable", system-ui, sans-serif;
+  --font-body: "Instrument Sans Variable", system-ui, sans-serif;
+  background: var(--bg);
+  color: var(--ink);
+}
+
+/* the portfolio pill never sits on top of an open dialog */
+body:has([role="dialog"]) .back-pill {
+  opacity: 0;
+  pointer-events: none;
 }

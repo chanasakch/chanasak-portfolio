@@ -16,6 +16,8 @@ import "@fontsource/ibm-plex-sans-thai/500.css";
 import "@fontsource/ibm-plex-sans-thai/600.css";
 import "@fontsource-variable/bodoni-moda";
 import "@fontsource-variable/inter-tight";
+import "@fontsource-variable/familjen-grotesk";
+import "@fontsource-variable/archivo/wdth.css";
 import "@fontsource/instrument-serif/400.css";
 import "@fontsource/instrument-serif/400-italic.css";
 import "@fontsource-variable/bodoni-moda/wght-italic.css";
