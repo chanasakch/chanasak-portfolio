@@ -5,6 +5,7 @@ import { AnimatePresence, motion } from "motion/react";
 import { Photo } from "@/components/shared/Photo";
 import { CloseButton, Drawer } from "@/components/shared/ui";
 import { photos, photoUrl, type Photo as PhotoT } from "@/data/images";
+import { QuickCheckout } from "@/components/kit/QuickCheckout";
 
 type Cat = "vases" | "tableware" | "studio";
 type Item = { name: string; photo: PhotoT; cat: Cat; price?: number; glaze: string; text: string };
@@ -41,6 +42,7 @@ export function DinWall() {
   const [about, setAbout] = useState(false);
   const [bag, setBag] = useState<{ name: string; price: number; qty: number }[]>([]);
   const [bagOpen, setBagOpen] = useState(false);
+  const [request, setRequest] = useState(false);
 
   useEffect(() => {
     const size = () => {
@@ -216,6 +218,19 @@ export function DinWall() {
         </div>
       </Drawer>
 
+      <QuickCheckout
+        open={request}
+        onClose={() => setRequest(false)}
+        prefix="DIN"
+        request="Send order request"
+        lines={bag.map((l) => ({ name: l.name, qty: l.qty, price: l.price }))}
+        ship={[
+          { id: "post", label: "Courier, packed in a wooden crate", detail: "Three to five days after payment", price: 0, address: true },
+          { id: "studio", label: "Collect from the studio", detail: "Saturday mornings in Ratchaburi", price: 0, address: false },
+        ]}
+        done={(ref, email) => `Request ${ref} is with the studio. Within a day we email photos of the exact pieces to ${email}, with a payment link to confirm.`}
+        onDone={() => setBag([])}
+      />
       <Drawer
         open={bagOpen}
         onClose={() => setBagOpen(false)}
@@ -225,7 +240,7 @@ export function DinWall() {
             <div className="grid gap-3">
               <div className="flex justify-between text-[15px]"><span>Subtotal</span><span className="tabular">฿{fmt.format(bag.reduce((n, l) => n + l.qty * l.price, 0))}</span></div>
               <p className="text-[13px] text-muted">Every piece varies a little. We email photos of the exact ones before taking payment.</p>
-              <button type="button" className="rounded-full bg-ink py-3.5 text-[15px] text-bg">Send order request</button>
+              <button type="button" onClick={() => { setBagOpen(false); setRequest(true); }} className="rounded-full bg-ink py-3.5 text-[15px] text-bg">Send order request</button>
             </div>
           ) : undefined
         }

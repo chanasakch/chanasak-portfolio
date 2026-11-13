@@ -36,19 +36,6 @@ const work = [
     tags: ["8 pages", "Photo zoom", "Quote list"],
   },
   {
-    href: "/brasserie",
-    shot: "brasserie",
-    name: "Vermeil",
-    font: '"Gloock", Georgia, serif',
-    weight: 400,
-    track: "-0.01em",
-    bg: "#1c0b0d",
-    ink: "#f2e8d8",
-    job: "Restaurant",
-    what: "Scroll and you walk in: through the curtained door, down the red hall, into the dining room. Then the menu changes its plate as you read, each room opens up to look around, and a table books in a few taps.",
-    tags: ["Scroll story", "Rooms to explore", "Table booking"],
-  },
-  {
     href: "/sala",
     shot: "sala",
     name: "SALA",
@@ -99,6 +86,45 @@ const work = [
     job: "Running shoe drop",
     what: "Six colours of one shoe float in a line. Open one to turn it and tap through the details, stitch your initials on the heel in 3D, find your size from your foot length and check out.",
     tags: ["Three.js", "Initials in 3D", "Size finder"],
+  },
+  {
+    href: "/orra",
+    shot: "orra",
+    name: "ORRA",
+    font: '"Albert Sans Variable", sans-serif',
+    weight: 300,
+    track: "0.28em",
+    bg: "#161513",
+    ink: "#ede7dd",
+    job: "Furniture store, dark showroom",
+    what: "A full shop: browse by room, choose fabric and size, save to a wishlist, check out with white glove delivery on a chosen day, track or cancel the order, and book an hour in the showroom.",
+    tags: ["Checkout", "Accounts", "Showroom booking"],
+  },
+  {
+    href: "/soniq",
+    shot: "soniq",
+    name: "SONIQ",
+    font: '"Manrope Variable", sans-serif',
+    weight: 800,
+    track: "-0.04em",
+    bg: "#ecebe8",
+    ink: "#121212",
+    job: "Audio and smart tech store",
+    what: "Shoppable hero with product hotspots, filters, care plans, a delivery promise that counts down to the express cutoff, card, PromptPay or cash on delivery, and repair booking.",
+    tags: ["E-commerce", "Same day cutoff", "Repairs"],
+  },
+  {
+    href: "/tera",
+    shot: "tera",
+    name: "Tera",
+    font: '"Archivo Variable", sans-serif',
+    weight: 800,
+    track: "-0.02em",
+    bg: "#f4f1ec",
+    ink: "#15140f",
+    job: "Small group travel",
+    what: "Each place name sits behind its landmark. Search by month and group size, pick a departure with live places left, book with a deposit, then pay the balance or cancel with the refund worked out.",
+    tags: ["Booking engine", "Deposits", "Layered hero"],
   },
   {
     href: "/ceramics",
@@ -348,8 +374,8 @@ function Nav() {
 }
 
 const wallRows = [
-  ["furniture", "brasserie", "parfum", "silk", "jewelry", "sala", "ceramics", "charter", "hotel", "coffee", "kao", "residence"],
-  ["hotel", "kao", "coffee", "residence", "brasserie", "charter", "ceramics", "sala", "furniture", "jewelry", "silk", "parfum"],
+  ["furniture", "tera", "parfum", "silk", "orra", "jewelry", "sala", "ceramics", "soniq", "charter", "hotel", "coffee", "kao", "residence"],
+  ["soniq", "hotel", "kao", "coffee", "tera", "residence", "charter", "ceramics", "orra", "sala", "furniture", "jewelry", "silk", "parfum"],
 ];
 
 /** Phones: the same tilted wall drifting on its own, so it runs on the GPU and never fights the finger. */
@@ -1561,7 +1587,7 @@ function Work() {
           Selected work
         </h2>
         <p className="max-w-[46ch] text-[16px] leading-relaxed text-muted lg:justify-self-end">
-          Shops, booking, configurators and planners for twelve kinds of business,
+          Shops, booking, configurators and planners for fourteen kinds of business,
           designed and built in Next.js. Open any of them and use it on your
           phone or laptop.
         </p>

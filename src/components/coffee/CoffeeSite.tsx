@@ -10,6 +10,7 @@ import {
   useFinePointer,
 } from "@/components/shared/motion";
 import { Photo } from "@/components/shared/Photo";
+import { QuickCheckout } from "@/components/kit/QuickCheckout";
 import { photos } from "@/data/images";
 
 type Coffee = {
@@ -692,6 +693,7 @@ export function CoffeeSite() {
   const [open, setOpen] = useState(false);
   const [sub, setSub] = useState({ size: 1, weeks: 2 });
   const [done, setDone] = useState(false);
+  const [pay, setPay] = useState<null | "cart" | "sub">(null);
   const count = cart.reduce((n, l) => n + l.qty, 0);
   const total = cart.reduce(
     (n, l) => n + l.qty * coffees.find((c) => c.id === l.id)!.price,
@@ -933,7 +935,7 @@ export function CoffeeSite() {
             </p>
             <button
               type="button"
-              onClick={() => setDone(true)}
+              onClick={() => !done && setPay("sub")}
               className="rounded-full bg-[#15100d] px-6 py-3.5 text-[14px] text-[#efe4d2]"
             >
               {done
@@ -951,6 +953,32 @@ export function CoffeeSite() {
         </span>
         <span>© 2026 Sung Coffee</span>
       </footer>
+
+      <QuickCheckout
+        open={pay !== null}
+        onClose={() => setPay(null)}
+        prefix="SUNG"
+        lines={
+          pay === "sub"
+            ? [{ name: `${coffee.name} subscription`, detail: `${["250 g", "500 g", "1 kg"][sub.size - 1]} every ${sub.weeks} weeks, ${grind.toLowerCase()}`, qty: 1, price: subPrice }]
+            : cart.map((l) => {
+                const c = coffees.find((x) => x.id === l.id)!;
+                return { name: c.name, detail: l.grind, qty: l.qty, price: c.price };
+              })
+        }
+        ship={
+          pay === "sub"
+            ? [{ id: "post", label: "Thailand Post EMS", detail: "Roasted Monday, posted Wednesday", price: 0, address: true }]
+            : [
+                { id: "ems", label: "Thailand Post EMS", detail: "Two to three days anywhere in Thailand", price: total >= 1000 ? 0 : 60, address: true },
+                { id: "pick", label: "Collect at the roastery", detail: "41 Phahonyothin Road, Chiang Rai, daily 8:00 to 17:00", price: 0, address: false },
+              ]
+        }
+        done={(ref, email) =>
+          pay === "sub" ? `Subscribed. Reference ${ref}. Your first roast ships next Wednesday, and you can pause or skip from the link in ${email}.` : `Thank you. Order ${ref} is confirmed and roasts on the next roast day. Tracking goes to ${email}.`
+        }
+        onDone={() => (pay === "sub" ? setDone(true) : setCart([]))}
+      />
 
       <Finder
         open={finder}
@@ -987,6 +1015,10 @@ export function CoffeeSite() {
               </p>
               <button
                 type="button"
+                onClick={() => {
+                  setOpen(false);
+                  setPay("cart");
+                }}
                 className="w-full rounded-full bg-accent py-3.5 text-[15px] text-[#15100d]"
               >
                 Check out

@@ -121,7 +121,7 @@ export function Header({ path }: { path: string }) {
 function Stepper({ value, onChange }: { value: number; onChange: (n: number) => void }) {
   return (
     <div className="flex h-9 items-center rounded-full border border-line text-[14px]">
-      <button type="button" className="h-full w-9" aria-label="One fewer" onClick={() => onChange(value - 1)}>
+      <button type="button" className="h-full w-9 disabled:opacity-30" aria-label="One fewer" disabled={value <= 1} onClick={() => onChange(value - 1)}>
         −
       </button>
       <span className="tabular w-6 text-center">{value}</span>

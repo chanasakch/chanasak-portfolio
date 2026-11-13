@@ -1,6 +1,9 @@
 import Link from "next/link";
 import type { Metadata } from "next";
 import { pexelsPage, photos } from "@/data/images";
+import { orra } from "@/data/orra";
+import { soniq } from "@/data/soniq";
+import { dests } from "@/data/tera";
 
 export const metadata: Metadata = { title: "Credits" };
 
@@ -43,14 +46,24 @@ export default function Credits() {
           </li>
         ))}
       </ul>
-      <h2 className="mt-14 text-[1.5rem] font-[450] tracking-[-0.01em]">Vermeil</h2>
+      <h2 className="mt-14 text-[1.5rem] font-[450] tracking-[-0.01em]">ORRA, SONIQ and Tera</h2>
       <p className="mt-3 text-[15px] leading-relaxed text-muted">
-        The restaurant photos on the Vermeil site are from Pexels, free to use under the{" "}
-        <a href="https://www.pexels.com/license/" className="underline underline-offset-4" target="_blank" rel="noreferrer">
-          Pexels license
-        </a>
-        . Vermeil and its story are made up for this portfolio.
+        These photographs are also from Pexels under the Pexels license, taken from the pexels_hq_diverse_40k collection on Hugging Face, which does not
+        keep the photographers&apos; names. The products, buildings and landscapes shown belong to their makers and owners, not to these fictional brands.
+        Destination photos are cut along the skyline in the browser so the place name can sit behind the landmark.
       </p>
+      <ul className="mt-6 divide-y divide-line border-y border-line">
+        {[
+          ...orra.map((p) => ["ORRA", p.alt]),
+          ...soniq.map((p) => ["SONIQ", p.alt]),
+          ...dests.map((d) => ["Tera", `${d.place}, ${d.name}`]),
+        ].map(([brand, alt]) => (
+          <li key={brand + alt} className="grid grid-cols-[1fr_auto] items-baseline gap-4 py-3 text-[14px]">
+            <span>{alt}</span>
+            <span className="shrink-0 text-muted">{brand}</span>
+          </li>
+        ))}
+      </ul>
       <h2 className="mt-14 text-[1.5rem] font-[450] tracking-[-0.01em]">3D models</h2>
       <p className="mt-3 text-[15px] leading-relaxed text-muted">
         From the Khronos glTF Sample Assets library, compressed for the web. Extra shoe colours are tinted in the browser.

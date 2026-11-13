@@ -5,6 +5,7 @@ import { AnimatePresence, motion } from "motion/react";
 import { Drawer } from "@/components/shared/ui";
 import { useSmartHeader } from "@/components/shared/motion";
 import { BottleScene, type Pose } from "./BottleScene";
+import { QuickCheckout } from "@/components/kit/QuickCheckout";
 
 type Scent = { id: string; name: string; thai: string; line: string; liquid: string; bg: string; notes: [string, string][]; wear: string };
 
@@ -104,6 +105,7 @@ export function HomSite() {
   const [step, setStep] = useState(0);
   const [bag, setBag] = useState<Line[]>([]);
   const [bagOpen, setBagOpen] = useState(false);
+  const [checkout, setCheckout] = useState(false);
   const [ready, setReady] = useState(false);
   const { hidden, top } = useSmartHeader();
 
@@ -437,6 +439,18 @@ export function HomSite() {
         </div>
       </footer>
 
+      <QuickCheckout
+        open={checkout}
+        onClose={() => setCheckout(false)}
+        prefix="HOM"
+        lines={bag.map((l) => ({ name: l.scent, detail: [l.size, l.initials && `engraved ${l.initials}`].filter(Boolean).join(", "), qty: l.qty, price: l.price }))}
+        ship={[
+          { id: "bkk", label: "Bangkok delivery", detail: "Within a day, gift wrapped", price: 0, address: true },
+          { id: "th", label: "Rest of Thailand", detail: "Two to three days by EMS", price: 0, address: true },
+          { id: "atelier", label: "Collect from the atelier", detail: "Engraving done while you wait", price: 0, address: false },
+        ]}
+        onDone={() => setBag([])}
+      />
       <Drawer
         open={bagOpen}
         onClose={() => setBagOpen(false)}
@@ -449,7 +463,14 @@ export function HomSite() {
                 <span className="tabular">฿{fmt.format(total)}</span>
               </div>
               <p className="text-[13px] text-muted">Free delivery in Bangkok within a day. Gift wrapping is on us.</p>
-              <button type="button" className="rounded-full bg-ink py-3.5 text-[15px] text-bg">
+              <button
+                type="button"
+                onClick={() => {
+                  setBagOpen(false);
+                  setCheckout(true);
+                }}
+                className="rounded-full bg-ink py-3.5 text-[15px] text-bg"
+              >
                 Continue to checkout
               </button>
             </div>

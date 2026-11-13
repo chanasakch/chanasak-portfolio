@@ -6,6 +6,7 @@ import { Photo } from "@/components/shared/Photo";
 import { CloseButton } from "@/components/shared/ui";
 import { RevealImage, SplitLines, useFinePointer } from "@/components/shared/motion";
 import { photos } from "@/data/images";
+import { QuickCheckout } from "@/components/kit/QuickCheckout";
 
 const hours = [
   { time: "06:10", title: "Mist on the water", text: "The lake is hidden until the sun clears the ridge. Tea is already on the terrace, and nobody talks much.", photo: photos.mistyTerrace, bg: "#dcdbd5", ink: "#1e2a25" },
@@ -125,6 +126,7 @@ function Booking({ onClose }: { onClose: () => void }) {
   const [range, setRange] = useState<[number | null, number | null]>([15, 18]);
   const [room, setRoom] = useState(rooms[0]);
   const [sent, setSent] = useState(false);
+  const [guest, setGuest] = useState(false);
   const days = useMemo(() => Array.from({ length: 31 }, (_, i) => i + 1), []);
   const startPad = 4; // 1 January 2027 is a Friday; weeks start Monday
   const rate = (d: number) => {
@@ -220,7 +222,7 @@ function Booking({ onClose }: { onClose: () => void }) {
               <p className="text-[15px] opacity-75">{nights > 0 ? `${a} to ${b} January, ${nights} ${nights === 1 ? "night" : "nights"}` : "Choose a leaving date"}</p>
               <div className="mt-3 flex flex-wrap items-center gap-5">
                 <p className="tabular font-display text-[2.4rem] leading-none">฿{fmt.format(total)}</p>
-                <button type="button" disabled={nights < 1} onClick={() => setSent(true)} className="flex-1 rounded-full bg-[#1e2a25] px-6 py-4 text-[15px] font-medium text-[#f1efe9] disabled:opacity-40">
+                <button type="button" disabled={nights < 1} onClick={() => setGuest(true)} className="flex-1 rounded-full bg-[#1e2a25] px-6 py-4 text-[15px] font-medium text-[#f1efe9] disabled:opacity-40">
                   Hold this room
                 </button>
               </div>
@@ -228,6 +230,15 @@ function Booking({ onClose }: { onClose: () => void }) {
           </div>
         </div>
       )}
+      <QuickCheckout
+        open={guest}
+        onClose={() => setGuest(false)}
+        prefix="RHN"
+        request="Hold this room"
+        lines={[{ name: room.name, detail: `${a} to ${b} January 2027, ${nights} ${nights === 1 ? "night" : "nights"}`, qty: 1, price: total }]}
+        done={(ref, email) => `Your room is on hold under ${ref}. We confirm by email to ${email} within a few hours. Nothing is charged until then.`}
+        onDone={() => setSent(true)}
+      />
     </motion.div>
   );
 }

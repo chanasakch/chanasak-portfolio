@@ -185,7 +185,6 @@ html.lenis body {
 .b-silk,
 .b-sung,
 .b-nava,
-.b-vermeil,
 .b-sala,
 .b-kao,
 .b-rim {
@@ -361,18 +360,70 @@ body:has([role="dialog"]) .back-pill {
   pointer-events: none;
 }
 
-.b-vermeil {
-  --bg: #1c0b0d;
-  --ink: #f2e8d8;
-  --muted: #b8a393;
-  --line: rgb(242 232 216 / 0.14);
-  --soft: #2a1114;
-  --accent: #c9a35c;
-  --paper: #f3ebdd;
-  --paper-ink: #2a1012;
-  --font-display: "Gloock", Georgia, serif;
-  --font-body: "Hanken Grotesk Variable", system-ui, sans-serif;
+
+/* ORRA: warm charcoal like a concrete wall at dusk, sand accent from boucle */
+.b-orra {
+  --bg: #161513;
+  --ink: #ede7dd;
+  --muted: #a29b90;
+  --line: rgb(237 231 221 / 0.14);
+  --soft: #22201d;
+  --accent: #cdb892;
+  --accent-ink: #161513;
+  --bad: #e6876f;
+  --r-sm: 12px;
+  --r-lg: 22px;
+  --font-display: "Albert Sans Variable", system-ui, sans-serif;
+  --font-body: "Albert Sans Variable", system-ui, sans-serif;
+  font-family: var(--font-body);
   background: var(--bg);
   color: var(--ink);
+  min-height: 100dvh;
   color-scheme: dark;
 }
+.b-orra .font-display { font-weight: 300; letter-spacing: -0.01em; }
+@keyframes orra-fill { from { transform: scaleX(0); } to { transform: scaleX(1); } }
+
+/* SONIQ: gallery grey with a signal orange taken from the products */
+.b-soniq {
+  --bg: #ecebe8;
+  --ink: #121212;
+  --muted: #6d6c68;
+  --line: rgb(18 18 18 / 0.12);
+  --soft: #e1e0dc;
+  --accent: #ff5b1f;
+  --accent-ink: #ffffff;
+  --bad: #c9361b;
+  --r-sm: 14px;
+  --r-lg: 28px;
+  --page-top: 2.5rem;
+  --page-top-lg: 3.5rem;
+  --font-display: "Manrope Variable", system-ui, sans-serif;
+  --font-body: "Manrope Variable", system-ui, sans-serif;
+  font-family: var(--font-body);
+  background: var(--bg);
+  color: var(--ink);
+  min-height: 100dvh;
+}
+.b-soniq .font-display { font-weight: 700; letter-spacing: -0.03em; }
+
+/* Tera: desert night ink with a sandstone accent */
+.b-tera {
+  --bg: #f4f1ec;
+  --ink: #15140f;
+  --muted: #6f6a60;
+  --line: rgb(21 20 15 / 0.13);
+  --soft: #ebe6dd;
+  --accent: #d9a35b;
+  --accent-ink: #15140f;
+  --bad: #c0412a;
+  --r-sm: 14px;
+  --r-lg: 26px;
+  --font-display: "Archivo Variable", system-ui, sans-serif;
+  --font-body: "Work Sans Variable", system-ui, sans-serif;
+  font-family: var(--font-body);
+  background: var(--bg);
+  color: var(--ink);
+  min-height: 100dvh;
+}
+.b-tera .font-display { font-weight: 700; font-stretch: 112%; letter-spacing: -0.02em; }
