@@ -43,6 +43,14 @@ export default function Credits() {
           </li>
         ))}
       </ul>
+      <h2 className="mt-14 text-[1.5rem] font-[450] tracking-[-0.01em]">Vermeil</h2>
+      <p className="mt-3 text-[15px] leading-relaxed text-muted">
+        The restaurant photos on the Vermeil site are from Pexels, free to use under the{" "}
+        <a href="https://www.pexels.com/license/" className="underline underline-offset-4" target="_blank" rel="noreferrer">
+          Pexels license
+        </a>
+        . Vermeil and its story are made up for this portfolio.
+      </p>
       <h2 className="mt-14 text-[1.5rem] font-[450] tracking-[-0.01em]">3D models</h2>
       <p className="mt-3 text-[15px] leading-relaxed text-muted">
         From the Khronos glTF Sample Assets library, compressed for the web. Extra shoe colours are tinted in the browser.

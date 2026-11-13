@@ -26,6 +26,8 @@
   --color-soft: var(--soft);
   --color-accent: var(--accent);
   --color-accent-ink: var(--accent-ink);
+  --color-paper: var(--paper);
+  --color-paper-ink: var(--paper-ink);
   --font-display: var(--font-display);
   --font-body: var(--font-body);
 }
@@ -183,6 +185,7 @@ html.lenis body {
 .b-silk,
 .b-sung,
 .b-nava,
+.b-vermeil,
 .b-sala,
 .b-kao,
 .b-rim {
@@ -356,4 +359,20 @@ html.lenis body {
 body:has([role="dialog"]) .back-pill {
   opacity: 0;
   pointer-events: none;
+}
+
+.b-vermeil {
+  --bg: #1c0b0d;
+  --ink: #f2e8d8;
+  --muted: #b8a393;
+  --line: rgb(242 232 216 / 0.14);
+  --soft: #2a1114;
+  --accent: #c9a35c;
+  --paper: #f3ebdd;
+  --paper-ink: #2a1012;
+  --font-display: "Gloock", Georgia, serif;
+  --font-body: "Hanken Grotesk Variable", system-ui, sans-serif;
+  background: var(--bg);
+  color: var(--ink);
+  color-scheme: dark;
 }

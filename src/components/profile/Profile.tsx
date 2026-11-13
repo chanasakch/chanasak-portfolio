@@ -36,6 +36,19 @@ const work = [
     tags: ["8 pages", "Photo zoom", "Quote list"],
   },
   {
+    href: "/brasserie",
+    shot: "brasserie",
+    name: "Vermeil",
+    font: '"Gloock", Georgia, serif',
+    weight: 400,
+    track: "-0.01em",
+    bg: "#1c0b0d",
+    ink: "#f2e8d8",
+    job: "Restaurant",
+    what: "Scroll and you walk in: through the curtained door, down the red hall, into the dining room. Then the menu changes its plate as you read, each room opens up to look around, and a table books in a few taps.",
+    tags: ["Scroll story", "Rooms to explore", "Table booking"],
+  },
+  {
     href: "/sala",
     shot: "sala",
     name: "SALA",
@@ -335,28 +348,8 @@ function Nav() {
 }
 
 const wallRows = [
-  [
-    "furniture",
-    "parfum",
-    "silk",
-    "jewelry",
-    "ceramics",
-    "charter",
-    "hotel",
-    "coffee",
-    "residence",
-  ],
-  [
-    "hotel",
-    "coffee",
-    "residence",
-    "charter",
-    "ceramics",
-    "furniture",
-    "jewelry",
-    "silk",
-    "parfum",
-  ],
+  ["furniture", "brasserie", "parfum", "silk", "jewelry", "sala", "ceramics", "charter", "hotel", "coffee", "kao", "residence"],
+  ["hotel", "kao", "coffee", "residence", "brasserie", "charter", "ceramics", "sala", "furniture", "jewelry", "silk", "parfum"],
 ];
 
 /** Phones: the same tilted wall drifting on its own, so it runs on the GPU and never fights the finger. */
@@ -1568,7 +1561,7 @@ function Work() {
           Selected work
         </h2>
         <p className="max-w-[46ch] text-[16px] leading-relaxed text-muted lg:justify-self-end">
-          Shops, booking, configurators and planners for eleven kinds of business,
+          Shops, booking, configurators and planners for twelve kinds of business,
           designed and built in Next.js. Open any of them and use it on your
           phone or laptop.
         </p>
