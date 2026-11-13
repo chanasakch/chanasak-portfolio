@@ -1,6 +1,6 @@
 "use client";
 
-import { AnimatePresence, motion, useMotionValue, useMotionValueEvent, useScroll, useTransform, type MotionValue } from "motion/react";
+import { AnimatePresence, motion, useMotionValueEvent, useScroll, useTransform, type MotionValue } from "motion/react";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { ease, scrollToId } from "@/components/shared/motion";
 import { Drawer } from "@/components/shared/ui";
@@ -71,33 +71,127 @@ export function VermeilSite() {
 /* The walk in: a doorway that grows into the room as you scroll       */
 /* ------------------------------------------------------------------ */
 
+/** each room of the walk, and where its doorway into the next room sits in the photo */
+const scenes = [
+  { slug: "facade", aspect: 1664 / 2304, door: [0.255, 0.105, 0.6, 0.68], alt: "The entrance to Vermeil, red velvet curtains behind a café table" },
+  { slug: "door", aspect: 1792 / 2304, door: [0.475, 0.4, 0.615, 0.57], alt: "Doors open onto a red-carpeted hall" },
+  { slug: "hall", aspect: 1664 / 2304, door: null, alt: "The dining hall with painted ceilings, mirrors and red banquettes" },
+] as const;
+
+type Pose = { x: number; y: number; s: number; clip: [number, number, number, number]; r: number; o: number };
+
+/**
+ * One camera move from the street into the dining room. Each room sits inside the doorway
+ * of the one before, at the right size and place, so pushing into a doorway carries you into
+ * the next room while its frame opens out around you. Only transforms, clips and opacity
+ * change, all written straight to the elements once per scroll frame.
+ */
 function WalkIn({ onBook }: { onBook: () => void }) {
   const ref = useRef<HTMLDivElement>(null);
+  const els = useRef<(HTMLDivElement | null)[]>([]);
   const { scrollYProgress: p } = useScroll({ target: ref, offset: ["start start", "end end"] });
-  // how small the doorway starts, worked out from the screen so it always reads as an arch
-  const start = useMotionValue(0.3);
+  const view = useRef({ w: 1440, h: 900, boxes: scenes.map(() => ({ w: 1, h: 1 })) });
+
+  const apply = useCallback((v: number) => {
+    const { w: vw, h: vh, boxes } = view.current;
+    const cx = vw / 2;
+    const cy = vh / 2;
+    const poses: Pose[] = boxes.map((b) => ({ x: cx - b.w / 2, y: cy - b.h / 2, s: 1, clip: [0, 0, 0, 0], r: 0, o: 0 }));
+
+    // the street: a doorway-shaped window that grows to fill the screen
+    const g = easeIO(span(v, 0.02, 0.22));
+    const s0 = Math.min((vh * (vw < 768 ? 0.42 : 0.6)) / boxes[0].h, (vw * 0.62) / boxes[0].w);
+    const sA = s0 + (1 - s0) * g;
+    poses[0] = { x: cx - (boxes[0].w * sA) / 2, y: cy - (boxes[0].h * sA) / 2, s: sA, clip: [0, 0, 0, 0], r: (1 - g) * boxes[0].w * 0.5, o: 1 };
+
+    // then through each doorway in turn
+    const stages: [number, number][] = [
+      [0.24, 0.5],
+      [0.52, 0.78],
+    ];
+    stages.forEach(([a, b], i) => {
+      const t = span(v, a, b);
+      if (t <= 0) return;
+      const f = easeIO(t);
+      const outer = boxes[i];
+      const inner = boxes[i + 1];
+      const [u0, v0, u1, v1] = scenes[i].door!;
+      const du = (u0 + u1) / 2;
+      const dv = (v0 + v1) / 2;
+      // the room beyond, sized to fill the doorway at the start
+      const sIn0 = Math.max(((u1 - u0) * outer.w) / inner.w, ((v1 - v0) * outer.h) / inner.h);
+      const sIn = sIn0 + (1 - sIn0) * f;
+      const z = sIn / sIn0;
+      // the doorway slides to the middle of the screen as the camera closes in
+      const x0 = cx - outer.w / 2 + du * outer.w;
+      const y0 = cy - outer.h / 2 + dv * outer.h;
+      const px = x0 + (cx - x0) * f;
+      const py = y0 + (cy - y0) * f;
+      const ox = px - z * du * outer.w;
+      const oy = py - z * dv * outer.h;
+      poses[i] = { ...poses[i], x: ox, y: oy, s: z, o: 1 - span(f, 0.55, 0.95) };
+      const ix = px - (sIn * inner.w) / 2;
+      const iy = py - (sIn * inner.h) / 2;
+      // the doorway's outline in the inner room's own pixels, opening out to the whole room
+      const open = Math.pow(f, 1.6);
+      const l = (ox + z * u0 * outer.w - ix) / sIn;
+      const tp = (oy + z * v0 * outer.h - iy) / sIn;
+      const rgt = inner.w - (ox + z * u1 * outer.w - ix) / sIn;
+      const btm = inner.h - (oy + z * v1 * outer.h - iy) / sIn;
+      const clip: [number, number, number, number] = [tp, rgt, btm, l].map((q) => Math.max(0, q) * (1 - open)) as [number, number, number, number];
+      poses[i + 1] = { x: ix, y: iy, s: sIn, clip, r: ((inner.w - l - rgt) / 2) * (1 - open), o: Math.min(1, t * 6) };
+      // rooms already walked through are left behind
+      for (let k = 0; k < i; k++) poses[k].o = 0;
+    });
+
+    // a last slow step into the dining room
+    const last = boxes.length - 1;
+    const e = easeOut(span(v, 0.78, 1));
+    if (e > 0) {
+      const s = 1 + 0.08 * e;
+      poses[last] = { ...poses[last], x: cx - (boxes[last].w * s) / 2, y: cy - (boxes[last].h * s) / 2, s };
+    }
+
+    poses.forEach((q, i) => {
+      const el = els.current[i];
+      if (!el) return;
+      el.style.visibility = q.o > 0.001 ? "visible" : "hidden";
+      el.style.opacity = String(q.o);
+      el.style.transform = `translate3d(${q.x}px, ${q.y}px, 0) scale(${q.s})`;
+      const [t, r, b, l] = q.clip;
+      el.style.clipPath = q.r > 0.5 || t + r + b + l > 0.5 ? `inset(${t}px ${r}px ${b}px ${l}px round ${q.r}px ${q.r}px 0 0)` : "none";
+    });
+  }, []);
+
   useEffect(() => {
     const fit = () => {
       const w = window.innerWidth;
       const h = window.innerHeight;
-      const boxW = Math.max(w, h * 0.72);
-      const boxH = boxW / 0.72;
-      start.set(Math.min((h * (w < 768 ? 0.42 : 0.6)) / boxH, (w * 0.62) / boxW));
+      // every room is laid out big enough to cover the screen on its own, so it is only ever scaled down
+      view.current = {
+        w,
+        h,
+        boxes: scenes.map((sc) => {
+          const bw = Math.max(w, h * sc.aspect);
+          return { w: bw, h: bw / sc.aspect };
+        }),
+      };
+      view.current.boxes.forEach((b, i) => {
+        const el = els.current[i];
+        if (el) {
+          el.style.width = `${b.w}px`;
+          el.style.height = `${b.h}px`;
+        }
+      });
+      apply(p.get());
     };
     fit();
     window.addEventListener("resize", fit);
     return () => window.removeEventListener("resize", fit);
-  }, [start]);
+  }, [apply, p]);
+  useMotionValueEvent(p, "change", apply);
 
-  const portal = useTransform(() => start.get() + (1 - start.get()) * easeIO(span(p.get(), 0.02, 0.24)));
-  const radius = useTransform(p, (v) => `${(1 - easeIO(span(v, 0.1, 0.24))) * 50}% ${(1 - easeIO(span(v, 0.1, 0.24))) * 50}% 0 0 / ${(1 - easeIO(span(v, 0.1, 0.24))) * 36}% ${(1 - easeIO(span(v, 0.1, 0.24))) * 36}% 0 0`);
-  const facadeS = useTransform(p, (v) => 1.12 - 0.12 * span(v, 0, 0.24) + 0.62 * easeIO(span(v, 0.26, 0.46)));
-  const facadeO = useTransform(p, (v) => 1 - span(v, 0.38, 0.46));
-  const doorO = useTransform(p, (v) => span(v, 0.38, 0.46) * (1 - span(v, 0.6, 0.68)));
-  const doorS = useTransform(p, (v) => 1.05 + 0.5 * easeIO(span(v, 0.4, 0.68)));
-  const hallO = useTransform(p, (v) => span(v, 0.6, 0.68));
-  const hallS = useTransform(p, (v) => 1.28 - 0.28 * easeOut(span(v, 0.6, 0.9)));
-  const dim = useTransform(p, (v) => 0.12 + 0.5 * span(v, 0.84, 0.96));
+  const dim = useTransform(p, (v) => 0.5 * span(v, 0.86, 0.96));
   const shade = useTransform(p, (v) => span(v, 0.24, 0.32));
   const wordX = useTransform(p, (v) => `${easeIO(span(v, 0.02, 0.2)) * 40}vw`);
   const wordXn = useTransform(p, (v) => `${-easeIO(span(v, 0.02, 0.2)) * 40}vw`);
@@ -105,22 +199,24 @@ function WalkIn({ onBook }: { onBook: () => void }) {
   const hintO = useTransform(p, (v) => 1 - span(v, 0, 0.05));
 
   return (
-    <section ref={ref} className="relative h-[480svh] md:h-[560svh]" aria-label="Walk into Vermeil">
+    <section ref={ref} className="relative h-[520svh] md:h-[600svh]" aria-label="Walk into Vermeil">
       <div className="sticky top-0 h-svh overflow-hidden">
-        {/* the doorway, laid out at full size and scaled down so it stays sharp */}
-        <div className="absolute inset-0 flex items-center justify-center max-md:translate-y-[5svh]">
-          <motion.div
-            className="relative aspect-[0.72] w-[max(100vw,72svh)] shrink-0 overflow-hidden will-change-transform"
-            style={{ scale: portal, borderRadius: radius }}
+        {scenes.map((sc, i) => (
+          <div
+            key={sc.slug}
+            ref={(el) => {
+              els.current[i] = el;
+            }}
+            className="absolute left-0 top-0 origin-top-left overflow-hidden will-change-transform"
+            style={{ visibility: i ? "hidden" : "visible" }}
           >
-            <Layer slug="facade" o={facadeO} s={facadeS} origin="44% 50%" alt="The entrance to Vermeil, red velvet curtains behind a café table" eager />
-            <Layer slug="door" o={doorO} s={doorS} origin="50% 60%" alt="Doors open onto a red-carpeted hall" />
-            <Layer slug="hall" o={hallO} s={hallS} origin="50% 55%" alt="The dining hall with painted ceilings, mirrors and red banquettes" />
-            <motion.div className="absolute inset-0 bg-[#140607]" style={{ opacity: dim }} />
-            {/* a low shade under the words so they read over any part of the room */}
-            <motion.div className="absolute inset-0 bg-gradient-to-t from-[#140607]/85 via-[#140607]/20 to-transparent" style={{ opacity: shade }} />
-          </motion.div>
-        </div>
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src={pic(sc.slug, 2000)} srcSet={srcSet(sc.slug)} sizes="100vw" alt={sc.alt} fetchPriority={i ? "auto" : "high"} decoding="async" draggable={false} className="size-full object-cover" />
+          </div>
+        ))}
+        <motion.div className="pointer-events-none absolute inset-0 bg-[#140607]" style={{ opacity: dim }} />
+        {/* a low shade under the words so they read over any part of the room */}
+        <motion.div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-[#140607]/80 via-[#140607]/15 to-transparent" style={{ opacity: shade }} />
 
         {/* the name either side of the door, parting as you step in */}
         <motion.p style={{ opacity: wordO }} className="pointer-events-none absolute inset-x-0 top-[17svh] text-center font-display text-[clamp(56px,17vw,96px)] leading-none md:hidden" aria-hidden>
@@ -141,35 +237,18 @@ function WalkIn({ onBook }: { onBook: () => void }) {
           Scroll to step inside
         </motion.p>
 
-        <Caption p={p} range={[0.3, 0.36, 0.42, 0.47]} className="bottom-[16svh]">
+        <Caption p={p} range={[0.27, 0.32, 0.44, 0.5]} className="bottom-[16svh]">
           Through the velvet curtain
         </Caption>
-        <Caption p={p} range={[0.5, 0.56, 0.62, 0.67]} className="bottom-[16svh]">
+        <Caption p={p} range={[0.55, 0.6, 0.72, 0.78]} className="bottom-[16svh]">
           down the red hall
         </Caption>
-        <Caption p={p} range={[0.7, 0.76, 0.86, 0.9]} className="bottom-[14svh]" big>
+        <Caption p={p} range={[0.8, 0.84, 0.88, 0.91]} className="bottom-[14svh]" big>
           Dinner since 1964, in an old trading house on Charoen Krung.
         </Caption>
         <EndCard p={p} onBook={onBook} />
       </div>
     </section>
-  );
-}
-
-function Layer({ slug, o, s, origin, alt, eager }: { slug: string; o: MotionValue<number>; s: MotionValue<number>; origin: string; alt: string; eager?: boolean }) {
-  return (
-    <motion.img
-      src={pic(slug, 2000)}
-      srcSet={srcSet(slug)}
-      sizes="(max-width: 767px) 100vw, 100vw"
-      alt={alt}
-      loading={eager ? "eager" : "lazy"}
-      fetchPriority={eager ? "high" : "auto"}
-      decoding="async"
-      draggable={false}
-      className="absolute inset-0 size-full object-cover will-change-transform"
-      style={{ opacity: o, scale: s, transformOrigin: origin }}
-    />
   );
 }
 
