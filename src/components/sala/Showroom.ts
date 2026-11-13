@@ -26,6 +26,8 @@ type Item = {
   spin: number;
   spinVel: number;
   delay: number;
+  /** bounds relative to the piece's spot on the floor, for cheap hover tests */
+  box: THREE.Box3;
 };
 
 const damp = (a: number, b: number, k: number, dt: number) => a + (b - a) * (1 - Math.exp(-k * dt));
@@ -76,13 +78,19 @@ export class Showroom {
   private coarse = window.matchMedia("(pointer: coarse)").matches;
   private quality: Quality;
   private settle = 0;
+  private grabbed = false;
+  /** easing back out from a close-up to the row */
+  private leaving = false;
   private panFrom = 0;
   private lastIndex = -1;
   private w = 1;
   private h = 1;
   private dirty = 2;
   private started = 0;
+  private floorMat = new THREE.ShadowMaterial({ opacity: 0.09 });
   private mood = 0;
+  private keyX = NaN;
+  private keyMood = -1;
   private moodTarget = 0;
   private bgColor = new THREE.Color();
   // measuring
@@ -101,6 +109,8 @@ export class Showroom {
     r.toneMappingExposure = 1.05;
     // phones get soft blob shadows only; the shadow map is the most expensive pass here
     r.shadowMap.enabled = !this.coarse;
+    // shadows are redrawn only when something casting them moves
+    r.shadowMap.autoUpdate = false;
     r.shadowMap.type = THREE.PCFShadowMap;
     this.scene.background = this.bgColor.copy(moods.bg[0]);
     const pm = new THREE.PMREMGenerator(r);
@@ -108,10 +118,6 @@ export class Showroom {
     pm.dispose();
     this.scene.environmentIntensity = 0.85;
 
-    const floor = new THREE.Mesh(new THREE.PlaneGeometry(200, 40), new THREE.ShadowMaterial({ opacity: 0.09 }));
-    floor.rotation.x = -Math.PI / 2;
-    floor.receiveShadow = true;
-    this.scene.add(floor);
 
     const key = (this.key = new THREE.DirectionalLight("#fff8ee", 1.6));
     key.position.set(-2.5, 5, 3.5);
@@ -187,8 +193,8 @@ export class Showroom {
       variants.apply(0);
       for (const m of all) {
         const p = m as THREE.MeshPhysicalMaterial;
-        if (this.coarse && p.transmission > 0) {
-          // phones draw glass as plain see-through instead of a second refraction pass
+        if (p.transmission > 0) {
+          // glass is drawn plain see-through instead of with a second refraction pass of the whole room
           p.transmission = 0;
           p.transparent = true;
           p.depthWrite = false;
@@ -225,6 +231,15 @@ export class Showroom {
         root.add(box);
         turn.position.y = p;
       }
+      // each piece catches its own cast shadow on a patch of floor around it, so empty
+      // floor costs nothing to draw
+      if (!this.coarse) {
+        const catcher = new THREE.Mesh(new THREE.PlaneGeometry(foot + 3.2, Math.max(size.z, foot) + 2.4), this.floorMat);
+        catcher.rotation.x = -Math.PI / 2;
+        catcher.position.set(0.9, 0.001, -0.6);
+        catcher.receiveShadow = true;
+        root.add(catcher);
+      }
       const shadow = contactShadow(size.x * 1.08 + (p ? 0.25 : 0), size.z * 1.2 + (p ? 0.25 : 0), p ? 0.22 : this.coarse ? 0.34 : 0.24);
       all.add(shadow.material as THREE.Material);
       root.add(shadow);
@@ -257,6 +272,7 @@ export class Showroom {
         spin: 0,
         spinVel: 0,
         delay: 0,
+        box: new THREE.Box3().setFromObject(root),
       });
     }
     this.layout(true);
@@ -343,9 +359,36 @@ export class Showroom {
     if (this.focus >= 0) return;
     const s = this.shownItems();
     if (!s.length) return;
-    if (this.settle <= 0) this.panFrom = s[this.current()].xTarget;
+    if (this.settle <= 0 && !this.grabbed) this.panFrom = s[this.current()].xTarget;
     this.camXTarget = Math.max(s[0].xTarget - 0.6, Math.min(s[s.length - 1].xTarget + 0.6, this.camXTarget + dx));
-    this.settle = 0.28;
+    // a wheel or trackpad settles on a piece shortly after it stops; a finger waits until it lets go
+    this.settle = this.grabbed ? 0 : 0.2;
+    this.dirty = 2;
+  }
+
+  /** finger or mouse down on the room: the camera now follows it one to one */
+  grab() {
+    if (this.focus >= 0) return;
+    this.grabbed = true;
+    const s = this.shownItems();
+    if (s.length) this.panFrom = s[this.current()].xTarget;
+  }
+
+  /** let go with a speed in metres per second; carry on a little, then settle on a piece */
+  fling(v: number) {
+    if (!this.grabbed) return;
+    this.grabbed = false;
+    const s = this.shownItems();
+    if (!s.length) return;
+    const ahead = this.camXTarget + Math.max(-3, Math.min(3, v * 0.22));
+    let i = 0;
+    s.forEach((it, j) => {
+      if (Math.abs(it.xTarget - ahead) < Math.abs(s[i].xTarget - ahead)) i = j;
+    });
+    // a quick flick always moves at least one piece along
+    if (s[i].xTarget === this.panFrom && Math.abs(v) > 0.6) i = Math.max(0, Math.min(s.length - 1, i + Math.sign(v)));
+    this.camXTarget = s[i].xTarget;
+    this.settle = 0;
     this.dirty = 2;
   }
 
@@ -381,6 +424,7 @@ export class Showroom {
 
   close() {
     this.focus = -1;
+    this.leaving = true;
     this.settle = 0;
     this.setMeasure(false);
     this.dirty = 2;
@@ -466,14 +510,28 @@ export class Showroom {
   /** the piece under the pointer, if any */
   pick(x: number, y: number) {
     this.ray.setFromCamera(new THREE.Vector2((x / this.w) * 2 - 1, -(y / this.h) * 2 + 1), this.camera);
-    const hits = this.ray.intersectObjects(
-      this.items.filter((i) => i.shown && i.fade > 0.5).map((i) => i.root),
-      true,
-    );
-    if (!hits.length) return null;
-    let o: THREE.Object3D | null = hits[0].object;
-    while (o && !this.items.some((i) => i.root === o)) o = o.parent;
-    return this.items.find((i) => i.root === o)?.spec.id ?? null;
+    const i = this.hit(0.5);
+    return i >= 0 ? this.items[i].spec.id : null;
+  }
+
+  /** nearest piece the current ray passes through, tested against its bounds, not its triangles */
+  private hit(minFade: number) {
+    let best = -1;
+    let bestD = Infinity;
+    const b = new THREE.Box3();
+    const p = new THREE.Vector3();
+    this.items.forEach((it, i) => {
+      if (!it.shown || it.fade < minFade) return;
+      b.copy(it.box).translate(it.root.position);
+      if (this.ray.ray.intersectBox(b, p)) {
+        const d = p.distanceToSquared(this.ray.ray.origin);
+        if (d < bestD) {
+          bestD = d;
+          best = i;
+        }
+      }
+    });
+    return best;
   }
 
   /** where a piece's foot sits on screen, in css pixels */
@@ -534,7 +592,8 @@ export class Showroom {
         if (s[i]) this.camXTarget = s[i].xTarget;
       }
     }
-    this.camX = ease(this.camX, this.camXTarget, k);
+    // tight while held so the room stays under the finger, softer for wheel and snaps
+    this.camX = ease(this.camX, this.camXTarget, this.grabbed ? 28 : this.settle > 0 ? 11 : k);
 
     const f = this.items[this.focus];
     let tx: number, ty: number, tz: number, lx: number, ly: number;
@@ -564,8 +623,10 @@ export class Showroom {
       tz = dist;
     }
     const intro = this.started ? Math.min(1, (now - this.started) / 2400) : 1;
-    const kc = intro < 1 ? 2.2 : k;
+    // in the row the camera already eases through camX, so it follows that closely instead of easing twice
+    const kc = intro < 1 ? 2.2 : this.focus < 0 && !this.leaving ? 22 : k;
     const c = this.cam;
+    if (this.leaving && Math.abs(c.z - tz) < 0.03 && Math.abs(c.y - ty) < 0.03) this.leaving = false;
     c.x = ease(c.x, tx, kc);
     c.y = ease(c.y, ty, kc);
     c.z = ease(c.z, tz, kc);
@@ -580,8 +641,15 @@ export class Showroom {
     this.bgColor.copy(moods.bg[0]).lerp(moods.bg[1], m);
     this.key.color.copy(moods.key[0]).lerp(moods.key[1], m);
     this.key.intensity = 1.6 - m * 0.75;
-    this.key.position.set(c.lx - 2.5 - m * 2.5, 5 - m * 3, 3.5 - m * 1);
-    this.key.target.position.set(c.lx, 0, 0);
+    // the light only shifts in whole metres, so its shadow map need not be redrawn while you walk
+    const kx = Math.round(c.lx);
+    if (kx !== this.keyX || Math.abs(m - this.keyMood) > 0.002) {
+      this.keyX = kx;
+      this.keyMood = m;
+      this.key.position.set(kx - 2.5 - m * 2.5, 5 - m * 3, 3.5 - m * 1);
+      this.key.target.position.set(kx, 0, 0);
+      this.renderer.shadowMap.needsUpdate = true;
+    }
     this.fill.intensity = 0.35 - m * 0.25;
     this.scene.environmentIntensity = 0.85 - m * 0.45;
     this.renderer.toneMappingExposure = 1.05 - m * 0.12;
@@ -599,13 +667,7 @@ export class Showroom {
     if (this.ptrDirty && this.focus < 0 && !this.coarse) {
       this.ptrDirty = false;
       this.ray.setFromCamera(this.ptr, this.camera);
-      const hits = this.ray.intersectObjects(
-        this.items.filter((i) => i.shown).map((i) => i.root),
-        true,
-      );
-      let o: THREE.Object3D | null = hits[0]?.object ?? null;
-      while (o && !this.items.some((i) => i.root === o)) o = o.parent;
-      const hi = this.items.findIndex((i) => i.root === o);
+      const hi = this.hit(0.01);
       if (hi !== this.hovered) {
         this.hovered = hi;
         this.onHover?.(hi >= 0 ? this.items[hi].spec.id : null);
@@ -615,9 +677,8 @@ export class Showroom {
       this.onHover?.(null);
     }
 
-    const t = now / 1000;
     const since = this.started ? (now - this.started) / 1000 : 99;
-    const sway = !this.coarse && !this.reduce;
+    const before = motion;
     this.items.forEach((it, i) => {
       it.x = ease(it.x, it.xTarget, 6);
       const arrived = since > it.delay;
@@ -648,9 +709,9 @@ export class Showroom {
       } else {
         it.spin = ease(it.spin, Math.round(it.spin / TAU) * TAU, 4);
       }
-      it.turn.rotation.y = it.spec.rot + it.spin + (this.focus === i || !sway ? 0 : Math.sin(t * 0.4 + i) * 0.03);
+      it.turn.rotation.y = it.spec.rot + it.spin;
     });
-    if (sway) motion += 1;
+    if (motion - before > 1e-5) this.renderer.shadowMap.needsUpdate = true;
 
     // the gap you are measuring for, as two thin walls either side
     this.spaceShow = ease(this.spaceShow, this.measuring && this.space && f ? 1 : 0, 6);

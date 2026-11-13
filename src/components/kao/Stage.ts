@@ -91,6 +91,8 @@ export class KaoStage {
   private touched = 0;
   private vel = 0;
   private started = 0;
+  private grabbed = false;
+  private from = 0;
   /** points on the shoe worth a closer look, in the shoe's own space */
   spots: Spot[] = [];
   private decal: THREE.Mesh | null = null;
@@ -272,7 +274,24 @@ export class KaoStage {
     this.poke();
     if (this.open) return;
     this.target += d;
-    this.settle = 0.3;
+    this.settle = this.grabbed ? 0 : 0.3;
+  }
+
+  /** a finger on the line: the shoes follow it directly until it lets go */
+  grab() {
+    if (this.open) return;
+    this.grabbed = true;
+    this.from = Math.round(this.target);
+  }
+
+  /** let go with a speed in shoes per second */
+  fling(v: number) {
+    if (!this.grabbed) return;
+    this.grabbed = false;
+    let next = Math.round(this.target + Math.max(-2, Math.min(2, v * 0.2)));
+    if (next === this.from && Math.abs(v) > 1.2) next += Math.sign(v);
+    this.target = next;
+    this.settle = 0;
   }
 
   setOpen(on: boolean) {
@@ -382,7 +401,7 @@ export class KaoStage {
       this.settle -= dt;
       if (this.settle <= 0) this.target = Math.round(this.target);
     }
-    this.pos = damp(this.pos, this.target, k, dt);
+    this.pos = damp(this.pos, this.target, this.grabbed ? 26 : k, dt);
 
     // camera: the front shoe fills a third of a wide screen, more of a phone;
     // open, it sits in the middle of the space the panel leaves

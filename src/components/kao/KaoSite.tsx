@@ -143,10 +143,15 @@ export function KaoSite() {
     let down: { lx: number; ly: number; t: number } | null = null;
     let dist = 0;
     let vel = 0;
+    let speed = 0;
+    let lastT = 0;
     const pd = (e: PointerEvent) => {
       if (e.button !== 0) return;
       down = { lx: e.clientX, ly: e.clientY, t: performance.now() };
       dist = 0;
+      speed = 0;
+      lastT = performance.now();
+      s.grab();
       el.setPointerCapture(e.pointerId);
     };
     const pm = (e: PointerEvent) => {
@@ -164,12 +169,19 @@ export function KaoSite() {
         s.turnBy(dx * 0.01, dy * 0.01);
         vel = vel * 0.5 + dx * 0.01 * 0.5;
         setView(null);
-      } else s.scrub(-(Math.abs(dx) >= Math.abs(dy) ? dx : -dy) / s.pixelsPerShoe());
+      } else {
+        const d = -(Math.abs(dx) >= Math.abs(dy) ? dx : -dy) / s.pixelsPerShoe();
+        s.scrub(d);
+        const now = performance.now();
+        speed = speed * 0.6 + (d / Math.max(8, now - lastT)) * 1000 * 0.4;
+        lastT = now;
+      }
     };
     const pu = (e: PointerEvent) => {
       if (!down) return;
       const tap = dist < 6 && performance.now() - down.t < 600;
       down = null;
+      s.fling(performance.now() - lastT > 90 ? 0 : speed);
       if (!tap && s.open) s.release(vel);
       vel = 0;
       if (!tap || s.open) return;

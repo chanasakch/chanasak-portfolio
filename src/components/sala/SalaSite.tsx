@@ -150,10 +150,15 @@ export function SalaSite() {
     let down: { x: number; y: number; lx: number; ly: number; t: number } | null = null;
     let dist = 0;
     let vel = 0;
+    let speed = 0;
+    let lastT = 0;
     const pd = (e: PointerEvent) => {
       if (e.button !== 0) return;
       down = { x: e.clientX, y: e.clientY, lx: e.clientX, ly: e.clientY, t: performance.now() };
       dist = 0;
+      speed = 0;
+      lastT = performance.now();
+      s.grab();
       el.setPointerCapture(e.pointerId);
     };
     const pm = (e: PointerEvent) => {
@@ -169,12 +174,21 @@ export function SalaSite() {
       if (s.focus >= 0) {
         s.turnBy(dx * 0.008);
         vel = vel * 0.5 + dx * 0.008 * 0.5;
-      } else s.pan(-(Math.abs(dx) >= Math.abs(dy) ? dx : dy * 0.6) * s.metresPerPixel() * 1.2);
+      } else {
+        const m = -(Math.abs(dx) >= Math.abs(dy) ? dx : dy * 0.6) * s.metresPerPixel() * 1.2;
+        s.pan(m);
+        // metres per second, smoothed over the last few moves
+        const now = performance.now();
+        speed = speed * 0.6 + (m / Math.max(8, now - lastT)) * 1000 * 0.4;
+        lastT = now;
+      }
     };
     const pu = (e: PointerEvent) => {
       if (!down) return;
       const tap = dist < 6 && performance.now() - down.t < 600;
       down = null;
+      // a finger that stopped before lifting should not fling
+      s.fling(performance.now() - lastT > 90 ? 0 : speed);
       if (!tap && s.focus >= 0) s.release(vel);
       vel = 0;
       if (!tap || s.focus >= 0) return;

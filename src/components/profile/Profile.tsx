@@ -361,8 +361,19 @@ const wallRows = [
 
 /** Phones: the same tilted wall drifting on its own, so it runs on the GPU and never fights the finger. */
 function WallTouch() {
+  // the drift stops while the wall is off screen, so it costs nothing as you read on
+  const ref = useRef<HTMLDivElement>(null);
+  const [on, setOn] = useState(true);
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    const io = new IntersectionObserver(([e]) => setOn(e.isIntersecting));
+    io.observe(el);
+    return () => io.disconnect();
+  }, []);
   return (
     <div
+      ref={ref}
       className="relative overflow-hidden py-4 [perspective:1100px]"
       aria-hidden
     >
@@ -371,6 +382,7 @@ function WallTouch() {
           <div
             key={r}
             className={`flex w-max gap-3 pr-3 will-change-transform ${r ? "animate-[wall_46s_linear_infinite_reverse]" : "animate-[wall_40s_linear_infinite]"}`}
+            style={{ animationPlayState: on ? "running" : "paused" }}
           >
             {[...items, ...items].map((s, i) => (
               // eslint-disable-next-line @next/next/no-img-element
@@ -716,13 +728,17 @@ function BuildVisual({ on }: { on: boolean }) {
         animate={{ width: on ? "100%" : "0%" }}
         transition={{ duration: 2.4, ease: "easeInOut" }}
       />
-      <div
-        className="h-full w-full bg-[length:100%_auto] transition-[background-position] duration-[6000ms] ease-in-out"
-        style={{
-          backgroundImage: `url(${IMG_BASE}work/furniture-long.webp)`,
-          backgroundPosition: on ? "50% 70%" : "50% 0%",
-        }}
-      />
+      {/* the page scrolls by moving the picture on the GPU, not by repainting it */}
+      <div className="h-full w-full overflow-hidden [container-type:size]">
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img
+          src={`${IMG_BASE}work/furniture-long.webp`}
+          alt=""
+          loading="lazy"
+          className="block w-full transition-transform duration-[6000ms] ease-in-out will-change-transform"
+          style={{ transform: on ? "translateY(calc((100cqh - 100%) * 0.7))" : "translateY(0)" }}
+        />
+      </div>
       <motion.span
         initial={false}
         animate={{ opacity: on ? 1 : 0, y: on ? 0 : 8 }}
@@ -1043,7 +1059,6 @@ function Process() {
     target: ref,
     offset: ["start 70%", "end 50%"],
   });
-  const fill = useTransform(scrollYProgress, [0, 1], ["0%", "100%"]);
 
   useEffect(() => {
     const io = new IntersectionObserver(
@@ -1098,9 +1113,9 @@ function Process() {
                   className="h-0.5 flex-1 overflow-hidden rounded-full bg-line"
                 >
                   <motion.span
-                    className="block h-full bg-ink"
+                    className="block h-full origin-left bg-ink"
                     initial={false}
-                    animate={{ width: i <= active ? "100%" : "0%" }}
+                    animate={{ scaleX: i <= active ? 1 : 0 }}
                     transition={{ duration: 0.6, ease }}
                   />
                 </span>
@@ -1112,8 +1127,8 @@ function Process() {
         <div ref={ref} className="relative pl-10 sm:pl-14">
           <span className="absolute bottom-2 left-[11px] top-2 w-px bg-line sm:left-[15px]" />
           <motion.span
-            className="absolute left-[11px] top-2 w-px origin-top bg-ink sm:left-[15px]"
-            style={{ height: fine ? fill : "calc(100% - 16px)" }}
+            className="absolute bottom-2 left-[11px] top-2 w-px origin-top bg-ink will-change-transform sm:left-[15px]"
+            style={{ scaleY: fine ? scrollYProgress : 1 }}
           />
           <ol className="space-y-16 lg:space-y-[22vh] lg:py-[14vh]">
             {steps.map((s, i) => {
@@ -1455,10 +1470,12 @@ function WorkCard({
     [i / n, 1],
     [1, 1 - (n - 1 - i) * 0.035],
   );
+  // cards buried three deep under the stack are never seen, so they stop being drawn
+  const shown = useTransform(progress, (v) => (v * n > i + 3.2 ? "hidden" : "visible"));
   const fine = useFinePointer();
   const [peek, setPeek] = useState(false);
   return (
-    <div className="lg:sticky lg:top-0 lg:flex lg:h-svh lg:items-center">
+    <motion.div className="lg:sticky lg:top-0 lg:flex lg:h-svh lg:items-center" style={{ visibility: fine ? shown : "visible" }}>
       <motion.article
         style={{
           scale: fine ? scale : 1,
@@ -1466,7 +1483,7 @@ function WorkCard({
           color: w.ink,
           top: fine ? `${i * 14}px` : 0,
         }}
-        className="relative grid origin-top items-center gap-8 overflow-hidden rounded-2xl will-change-transform p-6 sm:p-10 lg:grid-cols-[minmax(0,0.9fr)_minmax(0,1.3fr)] lg:gap-14 lg:p-14"
+        className="relative grid origin-top items-center gap-8 overflow-hidden rounded-2xl p-6 pointer-fine:will-change-transform sm:p-10 lg:grid-cols-[minmax(0,0.9fr)_minmax(0,1.3fr)] lg:gap-14 lg:p-14"
       >
         <div className="min-w-0">
           <p className="text-[13px] opacity-60">{w.job}</p>
@@ -1509,13 +1526,19 @@ function WorkCard({
           aria-label={`Open ${w.name}`}
         >
           {peek && w.shot !== "ceramics" && (
-            <span
-              aria-hidden
-              className="absolute inset-0 z-10 bg-[length:100%_auto] bg-top opacity-0 transition-[opacity,background-position] duration-[400ms,7000ms] ease-[ease,cubic-bezier(0.45,0,0.55,1)] group-hover:bg-bottom group-hover:opacity-100"
-              style={{
-                backgroundImage: `url(${IMG_BASE}work/${w.shot}-long.webp)`,
-              }}
-            />
+            <span aria-hidden className="absolute inset-0 z-10 overflow-hidden opacity-0 transition-opacity duration-[400ms] [container-type:size] group-hover:opacity-100">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src={`${IMG_BASE}work/${w.shot}-long.webp`}
+                alt=""
+                // the pan starts only once the picture is in, so it always runs from the top
+                onLoad={(e) => {
+                  const img = e.currentTarget;
+                  requestAnimationFrame(() => (img.dataset.ready = ""));
+                }}
+                className="block w-full transition-transform duration-[7000ms] ease-[cubic-bezier(0.45,0,0.55,1)] will-change-transform group-hover:data-ready:[transform:translateY(calc(100cqh-100%))]"
+              />
+            </span>
           )}
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
@@ -1528,7 +1551,7 @@ function WorkCard({
           />
         </Link>
       </motion.article>
-    </div>
+    </motion.div>
   );
 }
 
