@@ -45,8 +45,8 @@ const work = [
     bg: "#ecebe7",
     ink: "#191918",
     job: "Furniture showroom",
-    what: "Walk a white showroom where the collection stands in one row. Pick a sofa and the room clears around it, turn it in 3D, switch the fabric and order.",
-    tags: ["Three.js", "Fabric swap", "Order and visit booking"],
+    what: "Walk a showroom where the collection stands in one row. Pick a sofa and the room clears around it. Try the fabrics, measure it against the gap in your living room, and see it by day or by lamplight.",
+    tags: ["Three.js", "Fit check", "Day and evening light"],
   },
   {
     href: "/parfum",
@@ -84,8 +84,8 @@ const work = [
     bg: "#efefec",
     ink: "#161616",
     job: "Running shoe drop",
-    what: "Six colours of one shoe float in a line. Scroll and the next one comes forward, open it to turn it, look at the sole, pick a size and check out.",
-    tags: ["Three.js", "Colourways", "Size and checkout"],
+    what: "Six colours of one shoe float in a line. Open one to turn it and tap through the details, stitch your initials on the heel in 3D, find your size from your foot length and check out.",
+    tags: ["Three.js", "Initials in 3D", "Size finder"],
   },
   {
     href: "/ceramics",

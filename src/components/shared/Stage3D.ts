@@ -1,5 +1,6 @@
 import * as THREE from "three";
 import { RoomEnvironment } from "three/examples/jsm/environments/RoomEnvironment.js";
+import { Quality } from "@/components/shared/quality";
 
 const lerp = (a: number, b: number, t: number) => a + (b - a) * t;
 
@@ -33,6 +34,9 @@ export class Stage3D {
   private vel = 0;
   private dragging = false;
   private raf = 0;
+  private quality: Quality;
+  private lastDraw = 0;
+  private drew = false;
   private ro: ResizeObserver;
   private io?: IntersectionObserver;
   /** true while nothing of the scene is on screen; the loop keeps ticking but skips the render */
@@ -41,7 +45,7 @@ export class Stage3D {
 
   constructor(private canvas: HTMLCanvasElement, background: string, envIntensity = 0.04) {
     this.renderer = new THREE.WebGLRenderer({ canvas, antialias: true, powerPreference: "high-performance" });
-    this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, window.matchMedia("(pointer: coarse)").matches ? 1.5 : 2));
+    this.quality = new Quality(this.renderer, { mobile: 1.5 });
     this.renderer.toneMapping = THREE.ACESFilmicToneMapping;
     if (window.matchMedia("(pointer: coarse)").matches) this.renderer.transmissionResolutionScale = 0.5;
     this.renderer.outputColorSpace = THREE.SRGBColorSpace;
@@ -96,7 +100,10 @@ export class Stage3D {
 
   private loop = () => {
     this.raf = requestAnimationFrame(this.loop);
-    if (this.paused || document.hidden) return;
+    if (this.paused || document.hidden) {
+      this.drew = false;
+      return;
+    }
     const t = performance.now() / 1000;
     if (!this.dragging) {
       this.vel *= 0.94;
@@ -114,6 +121,10 @@ export class Stage3D {
     this.camera.position.set(this.shift * 0.2, this.look.y + this.curDist * this.tilt, this.curDist);
     this.camera.lookAt(this.shift * 0.2, this.look.y, 0);
     this.onFrame?.(t);
+    const now = performance.now();
+    if (this.drew) this.quality.frame(now - this.lastDraw);
+    this.lastDraw = now;
+    this.drew = true;
     this.renderer.render(this.scene, this.camera);
   };
 

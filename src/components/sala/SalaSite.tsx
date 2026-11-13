@@ -32,6 +32,10 @@ export function SalaSite() {
   const [visitOpen, setVisitOpen] = useState(false);
   const [moved, setMoved] = useState(false);
   const [added, setAdded] = useState<string | null>(null);
+  const [evening, setEvening] = useState(false);
+  const [measure, setMeasure] = useState(false);
+  const [gap, setGap] = useState(0);
+  const rulers = useRef<(HTMLDivElement | null)[]>([]);
 
   const shown = useMemo(() => pieces.filter((p) => filter === "All" || p.kind === filter), [filter]);
   const current = open ? pieces.find((p) => p.id === open)! : shown[Math.min(index, shown.length - 1)];
@@ -40,7 +44,7 @@ export function SalaSite() {
   useEffect(() => {
     if (!canvas.current) return;
     let alive = true;
-    const s = new Showroom(canvas.current, "#ecebe7");
+    const s = new Showroom(canvas.current);
     room.current = s;
     s.onIndex = setIndex;
     s.onHover = (id) => {
@@ -48,6 +52,13 @@ export function SalaSite() {
       if (wrap.current) wrap.current.dataset.cursor = id ? "View" : "Drag";
     };
     s.onFrame = () => {
+      const pts = s.labels();
+      rulers.current.forEach((el, i) => {
+        if (!el) return;
+        const p = pts?.[i];
+        el.style.opacity = p ? "1" : "0";
+        if (p) el.style.transform = `translate(${p.x}px, ${p.y}px) translate(-50%, -50%)`;
+      });
       const el = tag.current;
       const id = el?.dataset.id;
       if (!el || !id) return;
@@ -57,7 +68,7 @@ export function SalaSite() {
     s.load(pieces, (n) => alive && setProgress(n))
       .then(() => {
         if (!alive) return;
-        s.goTo(1);
+        s.begin(1);
         setReady(true);
       })
       .catch(() => alive && setFailed(true));
@@ -69,6 +80,10 @@ export function SalaSite() {
 
   const choose = useCallback((id: string) => {
     room.current?.open(id);
+    const p = pieces.find((x) => x.id === id)!;
+    const next = Math.ceil((p.dims[0] + 30) / 10) * 10;
+    setGap(next);
+    if (room.current?.measuring) room.current.setMeasure(true, next);
     setOpen(id);
     setQty(1);
     setMoved(true);
@@ -77,7 +92,24 @@ export function SalaSite() {
   const back = useCallback(() => {
     room.current?.close();
     setOpen(null);
+    setMeasure(false);
   }, []);
+
+  const toggleMeasure = () => {
+    const on = !measure;
+    setMeasure(on);
+    room.current?.setMeasure(on, gap);
+  };
+  const changeGap = (cm: number) => {
+    setGap(cm);
+    if (measure) room.current?.setMeasure(true, cm);
+  };
+  const toggleEvening = () => {
+    setEvening((e) => {
+      room.current?.setMood(e ? 0 : 1);
+      return !e;
+    });
+  };
 
   const step = useCallback(
     (d: number) => {
@@ -117,6 +149,7 @@ export function SalaSite() {
     if (!el || !s) return;
     let down: { x: number; y: number; lx: number; ly: number; t: number } | null = null;
     let dist = 0;
+    let vel = 0;
     const pd = (e: PointerEvent) => {
       if (e.button !== 0) return;
       down = { x: e.clientX, y: e.clientY, lx: e.clientX, ly: e.clientY, t: performance.now() };
@@ -133,13 +166,17 @@ export function SalaSite() {
       dist += Math.abs(dx) + Math.abs(dy);
       if (dist < 6) return;
       setMoved(true);
-      if (s.focus >= 0) s.turnBy(dx * 0.008);
-      else s.pan(-(Math.abs(dx) >= Math.abs(dy) ? dx : dy * 0.6) * s.metresPerPixel() * 1.2);
+      if (s.focus >= 0) {
+        s.turnBy(dx * 0.008);
+        vel = vel * 0.5 + dx * 0.008 * 0.5;
+      } else s.pan(-(Math.abs(dx) >= Math.abs(dy) ? dx : dy * 0.6) * s.metresPerPixel() * 1.2);
     };
     const pu = (e: PointerEvent) => {
       if (!down) return;
       const tap = dist < 6 && performance.now() - down.t < 600;
       down = null;
+      if (!tap && s.focus >= 0) s.release(vel);
+      vel = 0;
       if (!tap || s.focus >= 0) return;
       const r = el.getBoundingClientRect();
       const id = s.pick(e.clientX - r.left, e.clientY - r.top);
@@ -229,8 +266,21 @@ export function SalaSite() {
             </button>
           ))}
         </nav>
-        <div className="flex items-center gap-5 text-[13px]">
-          <button type="button" onClick={() => setVisitOpen(true)} className="hidden hover:opacity-60 sm:block">
+        <div className="flex items-center gap-4 text-[13px] sm:gap-5">
+          <button
+            type="button"
+            onClick={toggleEvening}
+            aria-pressed={evening}
+            aria-label={evening ? "Switch to daylight" : "Switch to evening light"}
+            className="flex items-center gap-2 rounded-full border border-line bg-white/50 py-1.5 pl-2 pr-3 transition-colors hover:border-ink"
+          >
+            <span className="relative block size-4 overflow-hidden rounded-full" aria-hidden>
+              <span className={`absolute inset-0 rounded-full transition-colors duration-700 ${evening ? "bg-[#e79a55]" : "bg-[#f1c453]"}`} />
+              <span className={`absolute inset-0 rounded-full bg-bg transition-transform duration-700 ${evening ? "translate-x-[35%] -translate-y-[25%]" : "translate-x-[120%]"}`} />
+            </span>
+            <span className="hidden sm:inline">{evening ? "Evening" : "Daylight"}</span>
+          </button>
+          <button type="button" onClick={() => setVisitOpen(true)} className="hidden hover:opacity-60 lg:block">
             Visit the showroom
           </button>
           <button type="button" onClick={() => setBagOpen(true)} className="flex items-center gap-2 hover:opacity-60">
@@ -314,6 +364,20 @@ export function SalaSite() {
         )}
       </AnimatePresence>
 
+      {/* measurements on the piece */}
+      {open &&
+        current.dims.map((d, i) => (
+          <div
+            key={i}
+            ref={(el) => {
+              rulers.current[i] = el;
+            }}
+            className="pointer-events-none absolute left-0 top-0 z-10 whitespace-nowrap rounded-full bg-ink px-2.5 py-1 text-[12px] tabular-nums text-bg opacity-0 transition-opacity duration-300"
+          >
+            {["W", "D", "H"][i]} {d} cm
+          </div>
+        ))}
+
       {/* the piece up close */}
       <AnimatePresence>
         {open && (
@@ -329,6 +393,10 @@ export function SalaSite() {
             added={added}
             onBack={back}
             onStep={step}
+            measure={measure}
+            onMeasure={toggleMeasure}
+            gap={gap}
+            onGap={changeGap}
           />
         )}
       </AnimatePresence>
@@ -387,6 +455,10 @@ function Detail({
   added,
   onBack,
   onStep,
+  measure,
+  onMeasure,
+  gap,
+  onGap,
 }: {
   piece: Piece;
   finish: number;
@@ -398,7 +470,12 @@ function Detail({
   added: string | null;
   onBack: () => void;
   onStep: (d: number) => void;
+  measure: boolean;
+  onMeasure: () => void;
+  gap: number;
+  onGap: (cm: number) => void;
 }) {
+  const spare = gap - p.dims[0];
   const f = p.finishes[finish] ?? p.finishes[0];
   const justAdded = added === `${p.id}-${finish}`;
   const fabric = p.kind === "Seating" && p.finishes.length > 1;
@@ -474,14 +551,49 @@ function Detail({
               </div>
             </div>
 
-            <dl className="mt-4 grid grid-cols-3 border-y border-line py-3 text-[13px] md:mt-6 md:py-4">
-              {(["Width", "Depth", "Height"] as const).map((k, i) => (
-                <div key={k}>
-                  <dt className="text-muted">{k}</dt>
-                  <dd className="mt-0.5 tabular-nums">{p.dims[i]} cm</dd>
-                </div>
-              ))}
-            </dl>
+            <div className="mt-4 border-y border-line py-3 md:mt-6 md:py-4">
+              <div className="flex items-center gap-3">
+                <dl className="grid flex-1 grid-cols-3 text-[13px]">
+                  {(["Width", "Depth", "Height"] as const).map((k, i) => (
+                    <div key={k}>
+                      <dt className="text-muted">{k}</dt>
+                      <dd className="mt-0.5 tabular-nums">{p.dims[i]} cm</dd>
+                    </div>
+                  ))}
+                </dl>
+                <button
+                  type="button"
+                  onClick={onMeasure}
+                  aria-pressed={measure}
+                  className={`shrink-0 rounded-full border px-3.5 py-2 text-[12px] transition-colors ${measure ? "border-ink bg-ink text-bg" : "border-line hover:border-ink"}`}
+                >
+                  Will it fit?
+                </button>
+              </div>
+              <AnimatePresence initial={false}>
+                {measure && (
+                  <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: "auto", opacity: 1 }} exit={{ height: 0, opacity: 0 }} transition={{ duration: 0.35, ease }} className="overflow-hidden">
+                    <label className="mt-3 flex items-center justify-between text-[13px]">
+                      <span className="text-muted">Width of your space</span>
+                      <span className="tabular-nums">{gap} cm</span>
+                    </label>
+                    <input
+                      type="range"
+                      min={Math.max(30, Math.floor((p.dims[0] - 60) / 10) * 10)}
+                      max={Math.ceil((p.dims[0] + 200) / 10) * 10}
+                      step={5}
+                      value={gap}
+                      onChange={(e) => onGap(Number(e.target.value))}
+                      aria-label="Width of your space in centimetres"
+                      className="mt-2 w-full accent-[#191918]"
+                    />
+                    <p className={`mt-1 text-[13px] ${spare < 0 ? "text-[#b5432f]" : ""}`} aria-live="polite">
+                      {spare < 0 ? `Needs ${-spare} cm more space` : spare < 10 ? `Fits, with only ${spare} cm to spare` : `Fits, with ${spare} cm to spare`}
+                    </p>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </div>
             <p className="mt-4 hidden text-[13px] text-muted md:block">{p.made}</p>
             <p className="mt-1 hidden text-[13px] md:block">{p.lead}</p>
 

@@ -1,6 +1,7 @@
 import * as THREE from "three";
 import { RoundedBoxGeometry } from "three/examples/jsm/geometries/RoundedBoxGeometry.js";
 import { RoomEnvironment } from "three/examples/jsm/environments/RoomEnvironment.js";
+import { Quality } from "@/components/shared/quality";
 
 /** What the page asks of the bottle. The scene eases towards it every frame. */
 export type Pose = {
@@ -32,6 +33,9 @@ export class BottleScene {
   private fadeMats: THREE.Material[] = [];
   private glowMat: THREE.MeshBasicMaterial;
   private raf = 0;
+  private quality: Quality;
+  private lastDraw = 0;
+  private drew = false;
   private current: Pose = { x: 0, y: 0, dist: 7, look: 0, spin: 1, opacity: 0, scale: 1, lift: 0 };
   target: Pose = { x: 0, y: 0, dist: 7, look: 0, spin: 1, opacity: 1, scale: 1, lift: 0 };
   /** extra zoom from the viewer's own controls, multiplies camera distance */
@@ -47,7 +51,7 @@ export class BottleScene {
   constructor(private canvas: HTMLCanvasElement) {
     this.reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     this.renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: false, powerPreference: "high-performance" });
-    this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, window.matchMedia("(pointer: coarse)").matches ? 1.5 : 2));
+    this.quality = new Quality(this.renderer, { mobile: 1.5 });
     // phones: render the see-through glass at half resolution, which halves its cost and looks the same at that size
     if (window.matchMedia("(pointer: coarse)").matches) this.renderer.transmissionResolutionScale = 0.5;
     this.renderer.toneMapping = THREE.ACESFilmicToneMapping;
@@ -202,7 +206,10 @@ export class BottleScene {
 
   private loop = () => {
     this.raf = requestAnimationFrame(this.loop);
-    if (document.hidden) return;
+    if (document.hidden) {
+      this.drew = false;
+      return;
+    }
     const c = this.current;
     const t = this.target;
     const k = this.reduce ? 1 : 0.075;
@@ -235,8 +242,15 @@ export class BottleScene {
     this.camera.lookAt(c.x * 0.15, c.y + c.look, 0);
     // once the bottle has left and the background has settled, stop redrawing an empty frame
     if (!this.group.visible) {
-      if (++this.hiddenFrames > 45) return;
+      if (++this.hiddenFrames > 45) {
+        this.drew = false;
+        return;
+      }
     } else this.hiddenFrames = 0;
+    const now = performance.now();
+    if (this.drew) this.quality.frame(now - this.lastDraw);
+    this.lastDraw = now;
+    this.drew = true;
     this.renderer.render(this.scene, this.camera);
   };
 

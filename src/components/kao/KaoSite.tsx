@@ -7,7 +7,16 @@ import { Drawer } from "@/components/shared/ui";
 import { KaoStage } from "./Stage";
 import { chart, PRICE, sizes, thb, ways } from "./data";
 
-type Line = { key: string; way: number; size: number; qty: number };
+type Line = { key: string; way: number; size: number; qty: number; initials: string };
+const INITIALS = 190;
+const spotInfo: Record<string, { title: string; text: string; view: "side" | "back" | "top" | "sole" }> = {
+  upper: { title: "Knit upper", text: "One piece of recycled polyester knit. Tighter round the middle of the foot, open over the toes so it breathes in the heat.", view: "top" },
+  heel: { title: "Heel", text: "A padded collar and a firm counter hold your heel in place. You can have your initials stitched here.", view: "back" },
+  midsole: { title: "Foam midsole", text: "28 mm under the heel and 20 mm under the toes. Soft for long runs, steady enough to walk in all day.", view: "side" },
+  outsole: { title: "Outsole", text: "Rubber only where you land and push off, which keeps one shoe at 230 g.", view: "sole" },
+};
+/** dark colourways get light thread */
+const lightWay = (i: number) => !["ember", "forest", "lagoon"].includes(ways[i].id);
 const views = ["side", "front", "back", "top", "sole"] as const;
 
 export function KaoSite() {
@@ -25,6 +34,10 @@ export function KaoSite() {
   const [bagOpen, setBagOpen] = useState(false);
   const [guide, setGuide] = useState(false);
   const [flash, setFlash] = useState(false);
+  const [initials, setInitials] = useState("");
+  const [spot, setSpot] = useState<string | null>(null);
+  const dots = useRef<(HTMLButtonElement | null)[]>([]);
+  const [spotIds, setSpotIds] = useState<string[]>([]);
   const [moved, setMoved] = useState(false);
   const way = ways[index];
   const count = bag.reduce((s, l) => s + l.qty, 0);
@@ -39,13 +52,42 @@ export function KaoSite() {
       setSize((z) => (z && ways[i].soldOut.includes(z) ? null : z));
     };
     s.load("/models/kao/runner.glb", ways, (n) => alive && setProgress(n))
-      .then(() => alive && setReady(true))
+      .then(() => {
+        if (!alive) return;
+        s.begin();
+        setSpotIds(s.spots.map((x) => x.id));
+        setReady(true);
+      })
       .catch(() => alive && setFailed(true));
     return () => {
       alive = false;
       s.dispose();
     };
   }, []);
+
+  // keep the hotspot dots pinned to the turning shoe
+  useEffect(() => {
+    if (!open) return;
+    let raf = 0;
+    const tick = () => {
+      raf = requestAnimationFrame(tick);
+      const pts = stage.current?.spotsOnScreen();
+      dots.current.forEach((el, i) => {
+        if (!el) return;
+        const p = pts?.[i];
+        el.style.opacity = p?.facing ? "1" : "0";
+        el.style.pointerEvents = p?.facing ? "auto" : "none";
+        if (p) el.style.transform = `translate(${p.x}px, ${p.y}px) translate(-50%, -50%)`;
+      });
+    };
+    tick();
+    return () => cancelAnimationFrame(raf);
+  }, [open]);
+
+  // the initials follow the shoe in front, in a thread that shows on its colour
+  useEffect(() => {
+    stage.current?.setInitials(initials, lightWay(index));
+  }, [initials, index, ready]);
 
   const openShoe = useCallback(() => {
     stage.current?.setOpen(true);
@@ -56,6 +98,7 @@ export function KaoSite() {
   const close = useCallback(() => {
     stage.current?.setOpen(false);
     setOpen(false);
+    setSpot(null);
   }, []);
   const pickWay = useCallback((i: number) => {
     stage.current?.goTo(i);
@@ -99,6 +142,7 @@ export function KaoSite() {
     if (!el || !s) return;
     let down: { lx: number; ly: number; t: number } | null = null;
     let dist = 0;
+    let vel = 0;
     const pd = (e: PointerEvent) => {
       if (e.button !== 0) return;
       down = { lx: e.clientX, ly: e.clientY, t: performance.now() };
@@ -118,6 +162,7 @@ export function KaoSite() {
       setMoved(true);
       if (s.open) {
         s.turnBy(dx * 0.01, dy * 0.01);
+        vel = vel * 0.5 + dx * 0.01 * 0.5;
         setView(null);
       } else s.scrub(-(Math.abs(dx) >= Math.abs(dy) ? dx : -dy) / s.pixelsPerShoe());
     };
@@ -125,6 +170,8 @@ export function KaoSite() {
       if (!down) return;
       const tap = dist < 6 && performance.now() - down.t < 600;
       down = null;
+      if (!tap && s.open) s.release(vel);
+      vel = 0;
       if (!tap || s.open) return;
       const r = el.getBoundingClientRect();
       const i = s.pick(e.clientX - r.left, e.clientY - r.top);
@@ -165,8 +212,8 @@ export function KaoSite() {
 
   const add = () => {
     if (!size) return;
-    const key = `${index}-${size}`;
-    setBag((b) => (b.some((l) => l.key === key) ? b.map((l) => (l.key === key ? { ...l, qty: Math.min(5, l.qty + 1) } : l)) : [...b, { key, way: index, size, qty: 1 }]));
+    const key = `${index}-${size}-${initials}`;
+    setBag((b) => (b.some((l) => l.key === key) ? b.map((l) => (l.key === key ? { ...l, qty: Math.min(5, l.qty + 1) } : l)) : [...b, { key, way: index, size, qty: 1, initials }]));
     setFlash(true);
     window.setTimeout(() => setFlash(false), 1600);
   };
@@ -289,6 +336,49 @@ export function KaoSite() {
                 All colours
               </button>
             </motion.div>
+            {spotIds.map((id, i) => (
+              <button
+                key={id}
+                ref={(el) => {
+                  dots.current[i] = el;
+                }}
+                type="button"
+                aria-label={spotInfo[id].title}
+                aria-expanded={spot === id}
+                onClick={() => {
+                  setSpot(spot === id ? null : id);
+                  stage.current?.view(spotInfo[id].view);
+                  setView(spotInfo[id].view);
+                }}
+                className="group absolute left-0 top-0 z-[15] flex size-9 items-center justify-center opacity-0 transition-opacity duration-300"
+              >
+                <span className={`absolute size-7 rounded-full bg-white/50 ${spot === id ? "" : "animate-ping [animation-duration:2.4s]"}`} aria-hidden />
+                <span className={`relative flex size-5 items-center justify-center rounded-full text-[13px] leading-none shadow-[0_2px_10px_rgb(0_0_0/0.18)] transition-colors ${spot === id ? "bg-ink text-bg" : "bg-white text-ink group-hover:bg-ink group-hover:text-bg"}`} aria-hidden>
+                  {spot === id ? "−" : "+"}
+                </span>
+              </button>
+            ))}
+            <AnimatePresence>
+              {spot && (
+                <motion.div
+                  key={spot}
+                  role="status"
+                  className="absolute left-5 top-[116px] z-20 w-[min(300px,calc(100vw-40px))] rounded-2xl bg-white/95 p-4 shadow-[0_12px_40px_rgb(0_0_0/0.1)] sm:left-8 md:top-[148px]"
+                  initial={{ opacity: 0, y: 8 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: 6 }}
+                  transition={{ duration: 0.3, ease }}
+                >
+                  <div className="flex items-start justify-between gap-3">
+                    <p className="text-[14px] font-medium">{spotInfo[spot].title}</p>
+                    <button type="button" onClick={() => setSpot(null)} aria-label="Close" className="-mr-1 -mt-1 flex size-7 items-center justify-center rounded-full text-muted hover:text-ink">
+                      ×
+                    </button>
+                  </div>
+                  <p className="mt-1.5 text-[13px] leading-relaxed text-muted">{spotInfo[spot].text}</p>
+                </motion.div>
+              )}
+            </AnimatePresence>
             <motion.div
               key="views"
               className="absolute inset-x-0 bottom-[calc(var(--kao-sheet,0px)+14px)] z-20 flex justify-center md:bottom-8 md:right-[min(440px,40vw)]"
@@ -330,6 +420,14 @@ export function KaoSite() {
                 setView(null);
               }}
               onGuide={() => setGuide(true)}
+              initials={initials}
+              onInitials={(t) => {
+                setInitials(t);
+                if (t) {
+                  stage.current?.view("back");
+                  setView("back");
+                }
+              }}
             />
           </>
         )}
@@ -369,6 +467,14 @@ export function KaoSite() {
       <Bag open={bagOpen} onClose={() => setBagOpen(false)} lines={bag} setLines={setBag} />
       <Drawer open={guide} onClose={() => setGuide(false)} title="Size guide">
         <p className="text-[14px] leading-relaxed text-muted">Stand on a sheet of paper, mark your heel and longest toe, and measure between them. If you are between sizes, go up. Runner 01 fits true to size with a roomy toe.</p>
+        <SizeFinder
+          onPick={(eu) => {
+            setSize(eu);
+            setGuide(false);
+            if (!open) openShoe();
+          }}
+          soldOut={ways[index].soldOut}
+        />
         <table className="mt-6 w-full text-left text-[14px] tabular-nums">
           <thead className="text-[12px] text-muted">
             <tr className="border-b border-line">
@@ -395,6 +501,32 @@ export function KaoSite() {
   );
 }
 
+function SizeFinder({ onPick, soldOut }: { onPick: (eu: number) => void; soldOut: number[] }) {
+  const [cm, setCm] = useState(26);
+  // the smallest size whose length leaves the foot at least 0.3 cm of room
+  const fit = chart.find(([, len]) => len >= cm + 0.3) ?? chart[chart.length - 1];
+  const out = soldOut.includes(fit[0]);
+  return (
+    <div className="mt-6 rounded-2xl bg-[#f3f3f0] p-4">
+      <label className="flex items-baseline justify-between text-[13px]">
+        <span>Your foot length</span>
+        <span className="tabular-nums">{cm.toFixed(1)} cm</span>
+      </label>
+      <input type="range" min={22} max={29.5} step={0.1} value={cm} onChange={(e) => setCm(Number(e.target.value))} aria-label="Foot length in centimetres" className="mt-2 w-full accent-[#161616]" />
+      <div className="mt-3 flex items-center justify-between gap-3">
+        <p className="text-[14px]" aria-live="polite">
+          Your size is <span className="font-semibold">EU {fit[0]}</span>
+          <span className="text-muted">, US {fit[2]}</span>
+          {out && <span className="block text-[12px] text-muted">Sold out in this colour</span>}
+        </p>
+        <button type="button" disabled={out} onClick={() => onPick(fit[0])} className="shrink-0 rounded-full bg-ink px-4 py-2 text-[13px] text-bg hover:opacity-90 disabled:opacity-30">
+          Use EU {fit[0]}
+        </button>
+      </div>
+    </div>
+  );
+}
+
 function Panel({
   index,
   size,
@@ -403,6 +535,8 @@ function Panel({
   flash,
   onWay,
   onGuide,
+  initials,
+  onInitials,
 }: {
   index: number;
   size: number | null;
@@ -411,7 +545,11 @@ function Panel({
   flash: boolean;
   onWay: (i: number) => void;
   onGuide: () => void;
+  initials: string;
+  onInitials: (t: string) => void;
 }) {
+  const [personal, setPersonal] = useState(!!initials);
+  const price = PRICE + (initials ? INITIALS : 0);
   const w = ways[index];
   const ref = useRef<HTMLElement>(null);
   // keep the view buttons just above the sheet on phones
@@ -491,6 +629,33 @@ function Panel({
         })}
       </div>
 
+      <div className="mt-3 flex min-h-11 items-center gap-3 rounded-xl border border-line px-3 md:mt-4">
+        <label className="flex flex-1 cursor-pointer items-center gap-2.5 text-[13px]">
+          <input
+            type="checkbox"
+            checked={personal}
+            onChange={(e) => {
+              setPersonal(e.target.checked);
+              if (!e.target.checked) onInitials("");
+            }}
+            className="size-4 accent-[#161616]"
+          />
+          Initials on the heel <span className="text-muted">+{thb(INITIALS)}</span>
+        </label>
+        {personal && (
+          <input
+            autoFocus
+            value={initials}
+            onChange={(e) => onInitials(e.target.value.replace(/[^a-z]/gi, "").toUpperCase().slice(0, 3))}
+            placeholder="ABC"
+            aria-label="Up to three initials"
+            maxLength={3}
+            autoCapitalize="characters"
+            className="h-8 w-[74px] rounded-lg border border-line bg-white px-2 text-center text-[14px] font-semibold tracking-[0.18em] outline-none focus:border-ink"
+          />
+        )}
+      </div>
+
       <button
         type="button"
         onClick={onAdd}
@@ -499,7 +664,7 @@ function Panel({
       >
         <AnimatePresence mode="wait" initial={false}>
           <motion.span key={flash ? "a" : size ? "b" : "c"} className="block" initial={{ y: 14, opacity: 0 }} animate={{ y: 0, opacity: 1 }} exit={{ y: -14, opacity: 0 }} transition={{ duration: 0.25 }}>
-            {flash ? "Added to your bag" : size ? `Add size ${size} to bag` : "Choose a size"}
+            {flash ? "Added to your bag" : size ? `Add size ${size} to bag, ${thb(price)}` : "Choose a size"}
           </motion.span>
         </AnimatePresence>
       </button>
@@ -526,7 +691,7 @@ function Bag({ open, onClose, lines, setLines }: { open: boolean; onClose: () =>
   const [stage, setStage] = useState<"bag" | "pay" | "done">("bag");
   const [ref, setRef] = useState("");
   const [pay, setPay] = useState("PromptPay");
-  const total = lines.reduce((s, l) => s + PRICE * l.qty, 0);
+  const total = lines.reduce((s, l) => s + (PRICE + (l.initials ? INITIALS : 0)) * l.qty, 0);
   const done = () => {
     onClose();
     if (stage === "done") window.setTimeout(() => setStage("bag"), 500);
@@ -614,10 +779,11 @@ function Bag({ open, onClose, lines, setLines }: { open: boolean; onClose: () =>
                 <div className="flex flex-1 flex-col">
                   <div className="flex justify-between gap-3 text-[14px]">
                     <span>Runner 01</span>
-                    <span className="tabular-nums">{thb(PRICE * l.qty)}</span>
+                    <span className="tabular-nums">{thb((PRICE + (l.initials ? INITIALS : 0)) * l.qty)}</span>
                   </div>
                   <p className="text-[12px] text-muted">
                     {w.name}, EU {l.size}
+                    {l.initials ? `, initials ${l.initials}` : ""}
                   </p>
                   <div className="mt-auto flex items-center gap-3 pt-2 text-[13px]">
                     <div className="flex items-center rounded-full border border-line">
