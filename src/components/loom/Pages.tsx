@@ -16,8 +16,8 @@ export function ProductCard({ product: p, sizes = "(min-width:1024px) 25vw, 50vw
   const alt = p.photos[1];
   return (
     <Link href={`${base}/products/${p.slug}`} className="group block min-w-0">
-      <div className="relative">
-        <Photo photo={p.photos[0]} className="aspect-[4/5]" sizes={sizes} position={p.pos} />
+      <div className="relative overflow-hidden rounded-[18px]">
+        <Photo photo={p.photos[0]} className="aspect-[4/5]" sizes={sizes} position={p.pos} imgClassName="transition-transform duration-[1.2s] ease-out group-hover:scale-[1.04]" />
         {alt && (
           <Photo
             photo={alt}
@@ -45,35 +45,54 @@ export function ProductCard({ product: p, sizes = "(min-width:1024px) 25vw, 50vw
 function Hero() {
   const ref = useRef<HTMLElement>(null);
   const { scrollYProgress } = useScroll({ target: ref, offset: ["start start", "end start"] });
-  const y = useTransform(scrollYProgress, [0, 1], ["0%", "18%"]);
+  const y = useTransform(scrollYProgress, [0, 1], ["0%", "14%"]);
   const fade = useTransform(scrollYProgress, [0, 0.6], [1, 0]);
   const lift = useTransform(scrollYProgress, [0, 1], [0, -60]);
   const fine = useFinePointer();
   return (
-    <section ref={ref} className="relative h-[min(88svh,880px)] min-h-[540px] overflow-hidden">
-      <motion.div className="absolute inset-0 will-change-transform" style={fine ? { y } : undefined}>
-        <motion.div className="h-full w-full" initial={{ scale: 1.14 }} animate={{ scale: 1 }} transition={{ duration: 2.2, ease }}>
-          <Photo photo={photos.archedTerraceChairs} className="h-full w-full" priority position="62% 60%" />
+    <section ref={ref} className="px-2 pt-2 sm:px-3 sm:pt-3">
+      <div className="relative h-[min(86svh,860px)] min-h-[540px] overflow-hidden rounded-[22px] sm:rounded-[30px]">
+        <motion.div className="absolute inset-0 will-change-transform" style={fine ? { y } : undefined}>
+          <motion.div className="h-full w-full" initial={{ scale: 1.14 }} animate={{ scale: 1.02 }} transition={{ duration: 2.2, ease }}>
+            <Photo photo={photos.archedTerraceChairs} className="h-full w-full" priority position="62% 60%" />
+          </motion.div>
         </motion.div>
-      </motion.div>
-      <div className="absolute inset-0 bg-[linear-gradient(to_top,rgb(0_0_0/0.5),transparent_55%)]" />
-      <motion.div style={fine ? { opacity: fade, y: lift } : undefined} className={`${wrap} relative flex h-full flex-col justify-end pb-24 text-white sm:pb-14`}>
-        <SplitLines
-          as="h1"
-          lines={["Rattan furniture and lighting,", "woven by hand in Ayutthaya"]}
-          delay={0.35}
-          className="text-[clamp(2.1rem,4.6vw,3.9rem)] font-medium leading-[1.06] tracking-[-0.025em]"
-        />
-        <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.9, delay: 0.9, ease }} className="mt-7 flex flex-wrap gap-3">
-          <Link href={`${base}/shop`} className={`${btn} bg-white text-[#1d1c1a]`}>
-            Shop the collection
-          </Link>
-          <Link href={`${base}/trade`} className={`${btn} border border-white/70 text-white backdrop-blur-sm`}>
-            For hotels and restaurants
-          </Link>
+        <div className="absolute inset-0 bg-[linear-gradient(to_top,rgb(0_0_0/0.55),transparent_55%)]" />
+        <motion.div style={fine ? { opacity: fade, y: lift } : undefined} className="relative flex h-full flex-col justify-end gap-8 px-5 pb-24 text-white sm:px-10 sm:pb-12 lg:flex-row lg:items-end lg:justify-between">
+          <SplitLines
+            as="h1"
+            lines={["Rattan furniture", "and lighting, woven", "by hand in Ayutthaya"]}
+            delay={0.35}
+            className="text-[clamp(2.4rem,5.6vw,5.4rem)] font-semibold leading-[0.98] tracking-[-0.04em]"
+          />
+          <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.9, delay: 0.9, ease }} className="flex flex-wrap gap-3 lg:pb-2">
+            <Link href={`${base}/shop`} className={`${btn} bg-white text-[#1d1c1a] transition-transform hover:-translate-y-0.5`}>
+              Shop the collection
+            </Link>
+            <Link href={`${base}/trade`} className={`${btn} border border-white/60 bg-white/10 text-white backdrop-blur-md hover:bg-white/20`}>
+              For hotels and restaurants
+            </Link>
+          </motion.div>
         </motion.div>
-      </motion.div>
+      </div>
     </section>
+  );
+}
+
+/** A slow band of what the workshop works in, so the page says rattan before it says anything else. */
+function Materials() {
+  const words = ["Manau rattan", "Peeled cane", "Teak", "Seagrass", "Outdoor fibre", "Linen", "Bamboo"];
+  return (
+    <div className="overflow-hidden border-b border-line py-5" aria-hidden>
+      <div className="flex w-max animate-[wall_40s_linear_infinite] gap-10 whitespace-nowrap pl-10 text-[clamp(1.4rem,2.4vw,2.2rem)] font-medium tracking-[-0.02em] text-ink/80">
+        {[...words, ...words].map((w, i) => (
+          <span key={i} className="flex items-center gap-10">
+            {w}
+            <span className="size-2 rounded-full bg-ink/25" />
+          </span>
+        ))}
+      </div>
+    </div>
   );
 }
 
@@ -82,15 +101,22 @@ export function Home() {
   return (
     <>
       <Hero />
+      <Materials />
 
       <section className={`${wrap} pt-16`}>
-        <div className="grid grid-cols-2 gap-x-4 gap-y-8 lg:grid-cols-4">
+        <div className="grid grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-4">
           {categories.map((c) => (
-            <Link key={c} href={`${base}/${c.toLowerCase()}`} className="group">
-              <Photo photo={categoryPhoto[c]} className="aspect-[3/4]" sizes="(min-width:1024px) 25vw, 50vw" imgClassName="transition-transform duration-700 group-hover:scale-[1.03]" />
-              <p className="mt-3 flex justify-between text-[15px]">
-                {c}
-                <span className="text-muted">{products.filter((p) => p.category === c).length}</span>
+            <Link key={c} href={`${base}/${c.toLowerCase()}`} className="group relative block overflow-hidden rounded-[20px]">
+              <Photo photo={categoryPhoto[c]} className="aspect-[3/4]" sizes="(min-width:1024px) 25vw, 50vw" imgClassName="transition-transform duration-[1.2s] ease-out group-hover:scale-[1.06]" />
+              <div className="absolute inset-0 bg-[linear-gradient(to_top,rgb(0_0_0/0.5),transparent_50%)]" />
+              <p className="absolute inset-x-4 bottom-4 flex items-end justify-between text-white">
+                <span>
+                  <span className="block text-[20px] font-semibold tracking-[-0.02em]">{c}</span>
+                  <span className="text-[13px] text-white/75">{products.filter((p) => p.category === c).length} pieces</span>
+                </span>
+                <span className="grid size-9 place-items-center rounded-full bg-white text-[#1d1c1a] transition-transform duration-500 group-hover:-rotate-45">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M5 12h14M13 6l6 6-6 6" /></svg>
+                </span>
               </p>
             </Link>
           ))}
@@ -112,7 +138,7 @@ export function Home() {
       </section>
 
       <section className={`${wrap} grid items-center gap-10 pt-28 lg:grid-cols-2 lg:gap-20`}>
-        <RevealImage photo={photos.balconyRattanPods} className="aspect-[4/3]" sizes="(min-width:1024px) 50vw, 100vw" />
+        <RevealImage photo={photos.balconyRattanPods} className="aspect-[4/3] overflow-hidden rounded-[24px]" sizes="(min-width:1024px) 50vw, 100vw" />
         <div className="max-w-[46ch]">
           <h2 className="text-[clamp(1.5rem,2.4vw,2rem)] font-medium leading-tight tracking-[-0.02em]">Twenty-two weavers, one workshop</h2>
           <p className="mt-5 text-[15.5px] leading-relaxed text-muted">
@@ -136,7 +162,7 @@ export function Home() {
         <div className="mt-7 grid gap-x-4 gap-y-10 md:grid-cols-3">
           {projects.slice(0, 3).map((pr) => (
             <Link key={pr.name} href={`${base}/projects`} className="group">
-              <Photo photo={pr.photo} className="aspect-[4/3]" sizes="(min-width:768px) 33vw, 100vw" imgClassName="transition-transform duration-700 group-hover:scale-[1.03]" />
+              <Photo photo={pr.photo} className="aspect-[4/3] overflow-hidden rounded-[20px]" sizes="(min-width:768px) 33vw, 100vw" imgClassName="transition-transform duration-[1.2s] group-hover:scale-[1.05]" />
               <p className="mt-3 text-[15px] font-medium">{pr.name}</p>
               <p className="text-[14px] text-muted">
                 {pr.place}. {pr.scope}.
@@ -154,7 +180,7 @@ export function Home() {
 function TradeBand() {
   return (
     <section className={`${wrap} pt-28`}>
-      <div className="grid gap-8 bg-[var(--deep)] px-6 py-12 text-[#f4f2ee] sm:px-12 lg:grid-cols-[1.2fr_1fr] lg:items-center lg:py-16">
+      <div className="grid gap-8 rounded-[28px] bg-[var(--deep)] px-6 py-12 text-[#f4f2ee] sm:px-12 lg:grid-cols-[1.2fr_1fr] lg:items-center lg:py-16">
         <div>
           <h2 className="text-[clamp(1.5rem,2.4vw,2rem)] font-medium tracking-[-0.02em]">Furnishing a hotel or restaurant?</h2>
           <p className="mt-4 max-w-[52ch] text-[15px] leading-relaxed text-white/70">

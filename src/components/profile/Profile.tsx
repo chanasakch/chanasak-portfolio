@@ -49,6 +49,32 @@ const work = [
     tags: ["Collection and filters", "Quote list", "E-catalogue"],
   },
   {
+    href: "/hattha",
+    shot: "hattha",
+    name: "Hattha Works",
+    font: '"Archivo Variable", sans-serif',
+    weight: 800,
+    track: "0.02em",
+    bg: "#2443d6",
+    ink: "#ffffff",
+    job: "Rattan furniture factory, OEM and export",
+    what: "A manufacturer site for buyers: capabilities by material, a process that follows you down the page, and a quote request that checks the minimum order and estimates lead time as you change it.",
+    tags: ["Factory and services", "Quote request", "Scroll story"],
+  },
+  {
+    href: "/khom",
+    shot: "khom",
+    name: "khom",
+    font: '"Familjen Grotesk Variable", sans-serif',
+    weight: 600,
+    track: "-0.03em",
+    bg: "#16130f",
+    ink: "#f2e9da",
+    job: "Woven lighting",
+    what: "One switch turns the whole site to evening so the lamps glow. A size guide works out how many pendants a table needs and how wide, then adds them to a quote list.",
+    tags: ["Day and night", "Size guide", "Quote list"],
+  },
+  {
     href: "/orra",
     shot: "orra",
     name: "ORRA",
@@ -112,58 +138,6 @@ const work = [
     job: "Riverside condominium",
     what: "Pick a floor on the tower to see which units are left, open the plan room by room and work out the down payment.",
     tags: ["Stacking plan", "Floor plans", "Payment calculator"],
-  },
-  {
-    href: "/parfum",
-    shot: "parfum",
-    name: "HOM",
-    font: '"Cormorant Garamond", Georgia, serif',
-    weight: 300,
-    track: "0.3em",
-    bg: "#1d1a14",
-    ink: "#efe9df",
-    job: "Perfume house",
-    what: "The bottle is real-time 3D. It turns as you scroll, then you spin it, change the scent and print your initials on the label.",
-    tags: ["Three.js", "360° product", "Label preview"],
-  },
-  {
-    href: "/jewelry",
-    shot: "jewelry",
-    name: "PHLOI",
-    font: '"Italiana", Georgia, serif',
-    weight: 400,
-    track: "0.4em",
-    bg: "#0b0d11",
-    ink: "#eee9df",
-    job: "Fine jewellery",
-    what: "Build a solitaire ring in 3D under studio light. Stone, metal, cut and carat change the ring and the price, and your engraving appears inside the band.",
-    tags: ["Three.js", "Configurator", "Booking"],
-  },
-  {
-    href: "/silk",
-    shot: "silk",
-    name: "Mudmee House",
-    font: '"Gilda Display", Georgia, serif',
-    weight: 400,
-    track: "0.01em",
-    bg: "#170f15",
-    ink: "#f1e6d4",
-    job: "Hand-woven silk",
-    what: "Design an ikat scarf in natural dyes. The pattern is woven on screen row by row, then hangs as real-time 3D silk that moves in the breeze.",
-    tags: ["Generative weaving", "3D silk", "Made to order"],
-  },
-  {
-    href: "/coffee",
-    shot: "coffee",
-    name: "Sung Coffee",
-    font: '"Fraunces Variable", Georgia, serif',
-    weight: 300,
-    track: "-0.02em",
-    bg: "#15100d",
-    ink: "#efe4d2",
-    job: "Coffee roaster",
-    what: "A contour map of the farms, a taste chart that reshapes for each coffee, a brew timer that walks you through the pour, and subscriptions.",
-    tags: ["Map", "Taste chart", "Brew timer", "Cart"],
   },
   {
     href: "/charter",
@@ -387,8 +361,8 @@ function Nav() {
 }
 
 const wallRows = [
-  ["saan", "furniture", "orra", "sala", "ceramics", "hotel", "residence", "parfum", "silk", "jewelry", "coffee", "charter", "kao", "soniq", "tera"],
-  ["orra", "saan", "residence", "furniture", "hotel", "sala", "ceramics", "jewelry", "tera", "parfum", "soniq", "silk", "kao", "coffee", "charter"],
+  ["saan", "furniture", "hattha", "khom", "orra", "sala", "ceramics", "hotel", "residence", "charter", "kao", "soniq", "tera"],
+  ["khom", "orra", "saan", "hattha", "residence", "furniture", "hotel", "sala", "ceramics", "tera", "soniq", "kao", "charter"],
 ];
 
 /** Phones: the same tilted wall drifting on its own, so it runs on the GPU and never fights the finger. */
@@ -1381,120 +1355,6 @@ function Faq() {
   );
 }
 
-/**
- * The sites in use, recorded from the browser. Plays muted when it scrolls
- * into view and pauses when it leaves, with a button to stop it.
- */
-function Reel() {
-  const video = useRef<HTMLVideoElement>(null);
-  const [playing, setPlaying] = useState(false);
-  const [userPaused, setUserPaused] = useState(false);
-  const [progress, setProgress] = useState(0);
-
-  useEffect(() => {
-    const v = video.current;
-    if (!v) return;
-    const reduce = window.matchMedia(
-      "(prefers-reduced-motion: reduce)",
-    ).matches;
-    const io = new IntersectionObserver(
-      ([e]) => {
-        if (e.isIntersecting && !userPaused && !reduce)
-          v.play().catch(() => {});
-        else v.pause();
-      },
-      { threshold: 0.35 },
-    );
-    io.observe(v);
-    return () => io.disconnect();
-  }, [userPaused]);
-
-  const toggle = () => {
-    const v = video.current;
-    if (!v) return;
-    if (v.paused) {
-      setUserPaused(false);
-      v.play().catch(() => {});
-    } else {
-      setUserPaused(true);
-      v.pause();
-    }
-  };
-
-  return (
-    <section className="px-[var(--gutter)] pt-24" aria-label="Showreel">
-      <motion.div
-        initial={{ opacity: 0, y: 40, scale: 0.97 }}
-        whileInView={{ opacity: 1, y: 0, scale: 1 }}
-        viewport={{ once: true, margin: "-10% 0px" }}
-        transition={{ duration: 1.1, ease }}
-        className="group relative overflow-hidden rounded-2xl bg-ink shadow-[0_50px_100px_-50px_rgb(20_20_19/0.6)]"
-      >
-        <video
-          ref={video}
-          className="block aspect-[16/10] w-full object-cover"
-          poster="/video/showreel.jpg"
-          muted
-          loop
-          playsInline
-          preload="metadata"
-          onPlay={() => setPlaying(true)}
-          onPause={() => setPlaying(false)}
-          onTimeUpdate={(e) =>
-            setProgress(
-              e.currentTarget.currentTime / (e.currentTarget.duration || 1),
-            )
-          }
-        >
-          <source src="/video/showreel-hd.mp4" type="video/mp4" media="(min-width: 900px)" />
-          <source src="/video/showreel.mp4" type="video/mp4" />
-        </video>
-        <button
-          type="button"
-          onClick={toggle}
-          aria-label={playing ? "Pause the showreel" : "Play the showreel"}
-          className="absolute bottom-4 right-4 flex size-11 items-center justify-center rounded-full bg-white/90 text-[#141413] shadow-lg transition-transform hover:scale-105 sm:bottom-6 sm:right-6"
-        >
-          {playing ? (
-            <svg viewBox="0 0 12 12" className="size-3.5" aria-hidden>
-              <rect
-                x="2.5"
-                y="2"
-                width="2.4"
-                height="8"
-                rx="0.6"
-                fill="currentColor"
-              />
-              <rect
-                x="7.1"
-                y="2"
-                width="2.4"
-                height="8"
-                rx="0.6"
-                fill="currentColor"
-              />
-            </svg>
-          ) : (
-            <svg viewBox="0 0 12 12" className="ml-0.5 size-3.5" aria-hidden>
-              <path d="M3 1.8v8.4L10 6z" fill="currentColor" />
-            </svg>
-          )}
-        </button>
-        <span className="absolute inset-x-0 bottom-0 h-0.5 bg-white/15">
-          <span
-            className="block h-full bg-white/80"
-            style={{ width: `${progress * 100}%` }}
-          />
-        </span>
-      </motion.div>
-      <p className="mt-4 text-[14px] text-muted">
-        The sites in use, recorded straight from the browser. Each one is live
-        below.
-      </p>
-    </section>
-  );
-}
-
 function WorkCard({
   w,
   i,
@@ -1677,7 +1537,6 @@ export function Profile() {
         <Wall />
       </div>
 
-      <Reel />
 
       <Work />
       <Process />

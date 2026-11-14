@@ -3,7 +3,7 @@ import { Profile } from "@/components/profile/Profile";
 
 export const metadata: Metadata = {
   title: "Chanasak Choonuch | Full Stack Engineer",
-  description: "Full stack engineer in Bangkok. Fifteen working websites: shops, booking, configurators and planners, plus experience and contact.",
+  description: "Full stack engineer in Bangkok. Thirteen working websites: shops, booking, configurators and planners, plus experience and contact.",
 };
 
 export default function Home() {
