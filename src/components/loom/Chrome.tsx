@@ -16,6 +16,7 @@ const nav = [
   { href: `${base}/lighting`, label: "Lighting" },
   { href: `${base}/outdoor`, label: "Outdoor" },
   { href: `${base}/projects`, label: "Projects" },
+  { href: `${base}/catalogue`, label: "E-catalogue" },
   { href: `${base}/about`, label: "About" },
 ];
 
@@ -284,7 +285,7 @@ export function Footer() {
           )}
         </div>
         <FooterCol title="Shop" links={[["Seating", "seating"], ["Tables", "tables"], ["Lighting", "lighting"], ["Outdoor", "outdoor"]]} />
-        <FooterCol title="Company" links={[["About the workshop", "about"], ["Projects", "projects"], ["Trade programme", "trade"], ["Contact", "contact"]]} />
+        <FooterCol title="Company" links={[["About the workshop", "about"], ["Projects", "projects"], ["Trade programme", "trade"], ["E-catalogue", "catalogue"], ["Contact", "contact"]]} />
         <div className="space-y-3 text-[14px]">
           <p className="font-medium">Showroom</p>
           <p className="leading-relaxed text-muted">

@@ -427,3 +427,4 @@ body:has([role="dialog"]) .back-pill {
   min-height: 100dvh;
 }
 .b-tera .font-display { font-weight: 700; font-stretch: 112%; letter-spacing: -0.02em; }
+@keyframes fadein { from { opacity: 0; } to { opacity: 1; } }

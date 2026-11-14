@@ -7,7 +7,7 @@ export const instant = false;
 export function generateStaticParams() {
   return [
     { slug: [] },
-    ...["shop", "projects", "about", "trade", "contact", ...categories.map((c) => c.toLowerCase())].map((s) => ({ slug: [s] })),
+    ...["shop", "projects", "about", "trade", "contact", "catalogue", ...categories.map((c) => c.toLowerCase())].map((s) => ({ slug: [s] })),
     ...products.map((p) => ({ slug: ["products", p.slug] })),
   ];
 }

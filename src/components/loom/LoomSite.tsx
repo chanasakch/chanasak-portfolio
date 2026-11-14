@@ -4,7 +4,7 @@ import { useEffect } from "react";
 import { resetScroll } from "@/components/shared/motion";
 import { bySlug, categories } from "@/data/loom";
 import { Footer, Header } from "./Chrome";
-import { About, Contact, Home, NotFound, Projects, Shop, Trade } from "./Pages";
+import { About, Catalogue, Contact, Home, NotFound, Projects, Shop, Trade } from "./Pages";
 import { ProductPage } from "./Product";
 
 export function LoomSite({ segs = [] }: { segs?: string[] }) {
@@ -24,6 +24,7 @@ export function LoomSite({ segs = [] }: { segs?: string[] }) {
   else if (a === "about") view = <About />;
   else if (a === "trade") view = <Trade />;
   else if (a === "contact") view = <Contact />;
+  else if (a === "catalogue") view = <Catalogue />;
   else view = <NotFound />;
 
   return (

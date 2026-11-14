@@ -389,6 +389,70 @@ export function Trade() {
   );
 }
 
+/* ---------------- Catalogue ---------------- */
+
+const PAGES = 17;
+const pageSrc = (i: number) => `/catalogue/page-${String(i + 1).padStart(2, "0")}.webp`;
+
+export function Catalogue() {
+  const [i, setI] = useState(0);
+  const go = (n: number) => setI(Math.max(0, Math.min(PAGES - 1, n)));
+  return (
+    <div className={`${wrap} pt-10`}>
+      <PageHead title="E-catalogue" text="The 2027 collection in one file: every piece with its sizes, materials, finishes, lead time and price. Flip through it here or download the PDF for your team." />
+      <div className="mt-12 grid gap-10 lg:grid-cols-[1fr_300px] lg:gap-16">
+        <div
+          className="grid min-w-0 gap-4"
+          tabIndex={0}
+          aria-label="Catalogue viewer, use the arrow keys to turn pages"
+          onKeyDown={(e) => {
+            if (e.key === "ArrowRight") go(i + 1);
+            if (e.key === "ArrowLeft") go(i - 1);
+          }}
+        >
+          <div className="relative overflow-hidden rounded-[4px] bg-soft shadow-[0_30px_60px_-30px_rgb(0_0_0/0.35)]" style={{ aspectRatio: "1754 / 1240" }}>
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img key={i} src={pageSrc(i)} alt={`Catalogue page ${i + 1} of ${PAGES}`} className="absolute inset-0 size-full animate-[fadein_.35s_ease] object-cover" />
+            <button onClick={() => go(i - 1)} disabled={i === 0} aria-label="Previous page" className="absolute inset-y-0 left-0 w-1/4 cursor-w-resize disabled:cursor-default" />
+            <button onClick={() => go(i + 1)} disabled={i === PAGES - 1} aria-label="Next page" className="absolute inset-y-0 right-0 w-1/4 cursor-e-resize disabled:cursor-default" />
+          </div>
+          <div className="flex items-center justify-between gap-4 text-[14px]">
+            <button onClick={() => go(i - 1)} disabled={i === 0} className="rounded-full border border-line px-4 py-2 disabled:opacity-30">
+              Previous
+            </button>
+            <span className="tabular text-muted">
+              Page {i + 1} of {PAGES}
+            </span>
+            <button onClick={() => go(i + 1)} disabled={i === PAGES - 1} className="rounded-full border border-line px-4 py-2 disabled:opacity-30">
+              Next
+            </button>
+          </div>
+          <div className="-mx-1 flex gap-2 overflow-x-auto px-1 pb-2" data-lenis-prevent>
+            {Array.from({ length: PAGES }, (_, k) => (
+              <button key={k} onClick={() => go(k)} aria-label={`Go to page ${k + 1}`} aria-current={k === i} className={`w-24 shrink-0 overflow-hidden rounded-[3px] border-2 transition-opacity ${k === i ? "border-ink" : "border-transparent opacity-60 hover:opacity-100"}`}>
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img src={pageSrc(k)} alt="" loading="lazy" className="aspect-[1754/1240] w-full object-cover" />
+              </button>
+            ))}
+          </div>
+        </div>
+        <aside className="grid content-start gap-5 lg:sticky lg:top-28 lg:self-start">
+          <a href="/catalogue/loom-and-tide-collection-2027.pdf" download className="inline-flex h-12 items-center justify-center rounded-full bg-ink px-6 text-[15px] text-bg hover:opacity-90">
+            Download PDF, 3.7 MB
+          </a>
+          <p className="text-[14px] leading-relaxed text-muted">17 pages, A4 landscape. Prices include VAT. Trade prices for hotels, restaurants and designers are on the trade programme.</p>
+          <Link href={`${base}/trade`} className="text-[14px] underline underline-offset-4">
+            Trade programme
+          </Link>
+          <Link href={`${base}/contact`} className="text-[14px] underline underline-offset-4">
+            Ask for a printed copy
+          </Link>
+        </aside>
+      </div>
+    </div>
+  );
+}
+
 /* ---------------- Contact ---------------- */
 
 export function Contact() {
