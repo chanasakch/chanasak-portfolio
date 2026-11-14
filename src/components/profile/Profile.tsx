@@ -23,6 +23,19 @@ import { IMG_BASE } from "@/data/images";
 
 const work = [
   {
+    href: "/saan",
+    shot: "saan",
+    name: "SAAN",
+    font: '"Bricolage Grotesque Variable", sans-serif',
+    weight: 700,
+    track: "-0.05em",
+    bg: "#d5dccb",
+    ink: "#141713",
+    job: "Rattan furniture, homes and hotels",
+    what: "A modern rebuild of a classic rattan brand site: Living, Dining, Outdoor and Lighting, hotel projects with the pieces used, a quote list instead of a cart, a page by page e-catalogue, and every page in Thai and English.",
+    tags: ["Thai and English", "Quote list", "E-catalogue"],
+  },
+  {
     href: "/furniture",
     shot: "furniture",
     name: "Loom & Tide",
@@ -374,8 +387,8 @@ function Nav() {
 }
 
 const wallRows = [
-  ["furniture", "orra", "sala", "ceramics", "hotel", "residence", "parfum", "silk", "jewelry", "coffee", "charter", "kao", "soniq", "tera"],
-  ["orra", "residence", "furniture", "hotel", "sala", "ceramics", "jewelry", "tera", "parfum", "soniq", "silk", "kao", "coffee", "charter"],
+  ["saan", "furniture", "orra", "sala", "ceramics", "hotel", "residence", "parfum", "silk", "jewelry", "coffee", "charter", "kao", "soniq", "tera"],
+  ["orra", "saan", "residence", "furniture", "hotel", "sala", "ceramics", "jewelry", "tera", "parfum", "soniq", "silk", "kao", "coffee", "charter"],
 ];
 
 /** Phones: the same tilted wall drifting on its own, so it runs on the GPU and never fights the finger. */

@@ -428,3 +428,25 @@ body:has([role="dialog"]) .back-pill {
 }
 .b-tera .font-display { font-weight: 700; font-stretch: 112%; letter-spacing: -0.02em; }
 @keyframes fadein { from { opacity: 0; } to { opacity: 1; } }
+
+/* SAAN: daylight on a terrace, sage and pool tones from the outdoor range */
+.b-saan {
+  --bg: #f3f4ef;
+  --ink: #141713;
+  --muted: #676c63;
+  --line: rgb(20 23 19 / 0.12);
+  --soft: #e7e9e1;
+  --accent: #1f4d3a;
+  --accent-ink: #ffffff;
+  --bad: #b8432c;
+  --r-sm: 14px;
+  --r-lg: 26px;
+  --font-display: "Bricolage Grotesque Variable", "Anuphan", system-ui, sans-serif;
+  --font-body: "Inter Tight Variable", "Anuphan", system-ui, sans-serif;
+  font-family: var(--font-body);
+  background: var(--bg);
+  color: var(--ink);
+  min-height: 100dvh;
+}
+.b-saan .font-th { font-family: "Anuphan", sans-serif; }
+.b-saan .saan-th .font-display:not(.saan-mark) { letter-spacing: -0.01em !important; line-height: 1.12; }
