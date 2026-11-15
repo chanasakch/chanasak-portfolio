@@ -454,19 +454,32 @@ function Planner({ st: { plan, setPlan, ready } }: { st: PlanState }) {
               <rect x="10" y="10" width={W * k} height={D * k} rx="6" fill="#e9e4d8" />
               <rect x="10" y="10" width={W * k} height={D * k} rx="6" fill="url(#tiles)" />
               {ready &&
-                placed.map((it) => {
+                [...placed].sort((a, b) => Number(!!a.p.round) - Number(!!b.p.round)).map((it) => {
                   const cx = 10 + it.x * k;
                   const cy = 10 + it.y * k;
                   return (
                     <motion.g key={`${it.p.id}-${it.n}`} layout initial={{ opacity: 0, scale: 0.8 }} animate={{ opacity: 1, scale: 1, x: cx, y: cy }} transition={{ duration: 0.45, ease }} style={{ originX: 0, originY: 0 }}>
                       {it.p.round ? (
-                        <circle cx={(it.w * k) / 2} cy={(it.d * k) / 2} r={(it.w * k) / 2} fill="rgb(31 77 58 / 0.22)" stroke="#1f4d3a" strokeDasharray="4 4" />
+                        <circle cx={(it.w * k) / 2} cy={(it.d * k) / 2} r={(it.w * k) / 2} fill="rgb(31 77 58 / 0.14)" stroke="#1f4d3a" strokeDasharray="4 4" />
                       ) : (
                         <rect width={it.w * k} height={it.d * k} rx="5" fill="#1f4d3a" />
                       )}
-                      <text x={(it.w * k) / 2} y={(it.d * k) / 2 + 4} textAnchor="middle" className={`text-[11px] ${it.p.round ? "fill-[#1f4d3a]" : "fill-white"}`}>
-                        {it.p.name}
-                      </text>
+                      {it.p.round ? (
+                        <text x={(it.w * k) / 2} y={16} textAnchor="middle" stroke="#e9e4d8" strokeWidth="3" paintOrder="stroke" className="fill-[#1f4d3a] text-[11px] font-medium">
+                          {it.p.name}
+                        </text>
+                      ) : (
+                        <text
+                          x={(it.w * k) / 2}
+                          y={(it.d * k) / 2}
+                          textAnchor="middle"
+                          dominantBaseline="central"
+                          transform={it.w < it.d && it.w * k < it.p.name.length * 7 + 8 ? `rotate(-90 ${(it.w * k) / 2} ${(it.d * k) / 2})` : undefined}
+                          className="fill-white text-[11px] font-medium"
+                        >
+                          {it.p.name}
+                        </text>
+                      )}
                     </motion.g>
                   );
                 })}

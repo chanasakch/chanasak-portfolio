@@ -93,7 +93,7 @@ export function StaySite() {
         </button>
       </section>
 
-      <footer className="flex flex-col justify-between gap-3 border-t border-current/15 px-[var(--gutter)] pb-24 pt-8 text-[13px] opacity-60 sm:flex-row sm:pb-8">
+      <footer className="flex flex-col justify-between gap-3 border-t border-current/15 px-[var(--gutter)] pb-24 pt-8 text-[13px] opacity-60 sm:flex-row">
         <span>Ruen Doi, Mae Suai, Chiang Rai. stay@ruendoi.example</span>
         <span>© 2026 Ruen Doi</span>
       </footer>
@@ -110,7 +110,7 @@ function Clock({ index, time }: { index: number; time: string }) {
   const x = 40 + Math.cos(a) * 32;
   const y = 40 - Math.sin(a) * 26;
   return (
-    <div className="pointer-events-none fixed bottom-6 right-[var(--gutter)] z-30 flex items-end gap-3 mix-blend-difference text-white" aria-live="polite">
+    <div className="pointer-events-none fixed bottom-6 left-[var(--gutter)] z-30 flex items-end gap-3 mix-blend-difference sm:left-auto sm:right-[var(--gutter)] text-white" aria-live="polite">
       <svg width="80" height="44" viewBox="0 0 80 44" aria-hidden>
         <path d="M8 40 A32 26 0 0 1 72 40" fill="none" stroke="currentColor" strokeOpacity="0.4" strokeDasharray="2 3" />
         <circle cx={x} cy={y} r="4" fill="currentColor" style={{ transition: "cx 1s, cy 1s" }} />
