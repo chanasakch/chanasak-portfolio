@@ -1,9 +1,9 @@
 "use client";
 
 import Link from "next/link";
-import { createContext, useContext, useEffect, useMemo, useState, type ReactNode } from "react";
+import { createContext, useContext, useEffect, useMemo, useRef, useState, type ReactNode } from "react";
 import { AnimatePresence, motion } from "motion/react";
-import { resetScroll } from "@/components/shared/motion";
+import { resetScroll, SplitLines } from "@/components/shared/motion";
 import { btn } from "@/components/kit/panels";
 import { baht, isEmail, isPhone, makeRef, usePersist } from "@/components/kit/persist";
 import { Field, Icon, Img, Qty, Sheet, Toast } from "@/components/kit/ui";
@@ -23,7 +23,7 @@ const use = () => useContext(C)!;
 export function KhomSite({ segs = [] }: { segs?: string[] }) {
   const [a, b] = segs;
   useEffect(resetScroll, [segs.join("/")]);
-  const [night, setNight] = usePersist("khom:night", false);
+  const [night, setNight] = usePersist("khom:night", true);
   const [lines, setLines] = usePersist<Line[]>("khom:list", []);
   const [panel, setPanel] = useState<Ctx["panel"]>(null);
   const [msg, setMsg] = useState<string | null>(null);
@@ -87,7 +87,7 @@ function LightSwitch() {
   return (
     <button role="switch" aria-checked={night} aria-label="Evening light" onClick={() => setNight(!night)} className="flex items-center gap-2 text-[13px]">
       <span className={`relative h-7 w-12 rounded-full transition-colors duration-500 ${night ? "bg-[#e9a23b]" : "bg-ink/15"}`}>
-        <span className={`absolute top-1 size-5 rounded-full bg-white shadow transition-transform duration-500 ${night ? "translate-x-6 shadow-[0_0_8px_2px_rgb(255_200_120/0.6)]" : "translate-x-1"}`} />
+        <span className={`absolute left-0 top-1 size-5 rounded-full bg-white shadow transition-transform duration-500 ${night ? "translate-x-6 shadow-[0_0_8px_2px_rgb(255_200_120/0.6)]" : "translate-x-1"}`} />
       </span>
       <span className="ml-1 hidden w-[62px] sm:inline">{night ? "Lights on" : "Daylight"}</span>
     </button>
@@ -153,54 +153,202 @@ function Home() {
   );
 }
 
-// where the three pendants hang in the dining photo, as fractions of the frame
-const GLOWS = [
-  { x: 0.335, y: 0.38 },
-  { x: 0.46, y: 0.38 },
-  { x: 0.593, y: 0.38 },
+type Hang = { id: string; shape: "bell" | "dome" | "drum" | "lantern"; x: number; xm: number; len: number; w: number; mobile: boolean };
+// four pendants on cords of different lengths; on a phone the lantern stays in the workshop
+const HANG: Hang[] = [
+  { id: "nok", shape: "bell", x: 0.16, xm: 0.2, len: 0.3, w: 150, mobile: true },
+  { id: "khao", shape: "dome", x: 0.4, xm: 0.55, len: 0.18, w: 230, mobile: true },
+  { id: "lanna", shape: "lantern", x: 0.63, xm: 0.5, len: 0.38, w: 104, mobile: false },
+  { id: "trio", shape: "drum", x: 0.85, xm: 0.84, len: 0.26, w: 150, mobile: true },
 ];
 
-function Hero() {
-  const { night, setNight } = use();
+const SHADE: Record<Hang["shape"], { h: number; d: string }> = {
+  bell: { h: 132, d: "M100 2C64 2 42 34 34 128h132C158 34 136 2 100 2Z" },
+  dome: { h: 86, d: "M100 6C46 6 10 40 2 82h196C190 40 154 6 100 6Z" },
+  drum: { h: 100, d: "M30 10Q100 0 170 10L180 88Q100 100 20 88Z" },
+  lantern: { h: 150, d: "M100 4C52 4 36 40 36 75s16 71 64 71 64-36 64-71S148 4 100 4Z" },
+};
+
+function Shade({ h, lit, night }: { h: Hang; lit: boolean; night: boolean }) {
+  const sh = SHADE[h.shape];
+  const pid = `weave-${h.id}`;
+  const on = lit && night;
   return (
-    <section className="px-3 pt-20 sm:px-5 sm:pt-24">
-      <div
-        className="relative mx-auto max-w-[1440px] overflow-hidden rounded-[20px]"
-        style={{ aspectRatio: "16 / 9.2" }}
-        onPointerMove={(e) => {
-          if (e.pointerType !== "mouse") return;
-          const r = e.currentTarget.getBoundingClientRect();
-          e.currentTarget.style.setProperty("--mx", `${e.clientX - r.left}px`);
-          e.currentTarget.style.setProperty("--my", `${e.clientY - r.top}px`);
-        }}
-      >
-        <Img src="khom/dining" alt="Three woven pendants over a dining table" className="absolute inset-0" priority sizes="100vw" />
-        {/* evening: the room darkens and each shade glows */}
-        <div className="pointer-events-none absolute inset-0 bg-[#0c0906] transition-opacity duration-[1200ms]" style={{ opacity: night ? 0.72 : 0 }} />
-        {GLOWS.map((g, i) => (
-          <span
-            key={i}
-            className="pointer-events-none absolute h-[42%] w-[20%] -translate-x-1/2 -translate-y-1/2 rounded-full mix-blend-screen transition-opacity duration-[1400ms]"
-            style={{ left: `${g.x * 100}%`, top: `${g.y * 100}%`, opacity: night ? 1 : 0, transitionDelay: `${i * 160}ms`, background: "radial-gradient(closest-side, rgb(255 196 110 / 0.85), rgb(255 160 60 / 0.25) 45%, transparent)" }}
-          />
-        ))}
-        <span className="pointer-events-none absolute left-[46%] top-[66%] h-[30%] w-[62%] -translate-x-1/2 -translate-y-1/2 rounded-full mix-blend-screen transition-opacity delay-500 duration-[1600ms]" style={{ opacity: night ? 0.55 : 0, background: "radial-gradient(closest-side, rgb(255 190 110 / 0.6), transparent)" }} />
-        {/* a hand torch: at night the pointer carries a little warm light around the room */}
-        <span className="pointer-events-none absolute inset-0 hidden mix-blend-screen transition-opacity duration-700 [@media(pointer:fine)]:block" style={{ opacity: night ? 1 : 0, background: "radial-gradient(220px circle at var(--mx, -500px) var(--my, -500px), rgb(255 200 130 / 0.35), transparent 70%)" }} />
-        <div className="absolute inset-0 bg-[linear-gradient(to_top,rgb(10_8_6/0.6),transparent_45%)]" />
-        <div className="absolute inset-x-5 bottom-5 flex flex-wrap items-end justify-between gap-5 text-white sm:inset-x-10 sm:bottom-9">
-          <motion.h1 initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 1, ease }} className="font-display max-w-[13ch] text-[clamp(38px,6.4vw,96px)] font-semibold leading-[0.95] tracking-[-0.04em]">
-            Lamps woven by hand in Ayutthaya
-          </motion.h1>
-          <div className="grid gap-3">
-            <button onClick={() => setNight(!night)} className="inline-flex h-12 items-center gap-3 rounded-full bg-white/15 px-5 text-[15px] backdrop-blur-md hover:bg-white/25">
-              <span className={`size-2.5 rounded-full transition-colors ${night ? "bg-[#ffc46e] shadow-[0_0_10px_3px_rgb(255_196_110/0.8)]" : "bg-white/60"}`} />
-              {night ? "Back to daylight" : "See them at night"}
-            </button>
-            <Link href={`${R}/lamps`} className="inline-flex h-12 items-center gap-2 rounded-full bg-white px-6 text-[15px] text-[#14110e]">
+    <svg viewBox={`0 0 200 ${sh.h}`} className="block w-full overflow-visible" aria-hidden>
+      <defs>
+        <pattern id={pid} width="9" height="9" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
+          <path d="M0 0v9M0 0h9" stroke={on ? "#ffd99a" : "rgb(70 42 18 / 0.45)"} strokeWidth={on ? 1.6 : 1.2} />
+        </pattern>
+        <linearGradient id={`${pid}-g`} x1="0" x2="1">
+          <stop offset="0" stopColor={on ? "#7a4a1c" : "#b8874c"} />
+          <stop offset="0.5" stopColor={on ? "#b06d26" : "#dcb57e"} />
+          <stop offset="1" stopColor={on ? "#6b3f17" : "#a8773f"} />
+        </linearGradient>
+      </defs>
+      <path d={sh.d} fill={`url(#${pid}-g)`} style={{ transition: "fill 0.8s" }} />
+      <path d={sh.d} fill={`url(#${pid})`} />
+      <path d={sh.d} fill="none" stroke={on ? "#ffcf86" : "rgb(70 42 18 / 0.5)"} strokeWidth="2" />
+    </svg>
+  );
+}
+
+/**
+ * The opening is the product hanging in the room. Each lamp is a pendulum: move the pointer through it
+ * or scroll and it swings, tap it to switch it on or off. At night the light comes through the weave.
+ */
+function Hero() {
+  const { night } = use();
+  const [lit, setLit] = useState(() => HANG.map(() => true));
+  const box = useRef<HTMLElement>(null);
+  const els = useRef<(HTMLDivElement | null)[]>([]);
+  const st = useRef(HANG.map((_, i) => ({ a: (i % 2 ? -1 : 1) * 0.2, v: 0 })));
+  const kick = useRef<() => void>(() => {});
+
+  useEffect(() => {
+    const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    let raf = 0;
+    let running = false;
+    const draw = () => els.current.forEach((el, i) => el && (el.style.transform = `translateX(-50%) rotate(${st.current[i].a}rad)`));
+    if (reduce) {
+      st.current.forEach((x) => (x.a = 0));
+      draw();
+      return;
+    }
+    const step = () => {
+      let moving = false;
+      st.current.forEach((x, i) => {
+        const k = 9 + (0.4 - HANG[i].len) * 22;
+        for (let n = 0; n < 2; n++) {
+          x.v += (-k * Math.sin(x.a) - 0.9 * x.v) / 120;
+          x.a = Math.max(-0.7, Math.min(0.7, x.a + x.v / 120));
+        }
+        if (Math.abs(x.a) > 0.0008 || Math.abs(x.v) > 0.0008) moving = true;
+      });
+      draw();
+      if (moving) raf = requestAnimationFrame(step);
+      else running = false;
+    };
+    kick.current = () => {
+      if (!running) {
+        running = true;
+        raf = requestAnimationFrame(step);
+      }
+    };
+    kick.current();
+    let lastY = window.scrollY;
+    const onScroll = () => {
+      const y = window.scrollY;
+      const d = y - lastY;
+      lastY = y;
+      if (y > window.innerHeight) return;
+      st.current.forEach((x, i) => (x.v += Math.max(-0.5, Math.min(0.5, d * 0.006)) * (i % 2 ? 0.8 : 1)));
+      kick.current();
+    };
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => {
+      cancelAnimationFrame(raf);
+      window.removeEventListener("scroll", onScroll);
+    };
+  }, []);
+
+  const onMove = (e: React.PointerEvent) => {
+    if (!e.movementX && !e.movementY) return;
+    els.current.forEach((el, i) => {
+      if (!el) return;
+      const shade = el.lastElementChild?.getBoundingClientRect();
+      if (!shade) return;
+      const dx = e.clientX - (shade.left + shade.width / 2);
+      const dy = e.clientY - (shade.top + shade.height / 2);
+      const r = Math.max(110, shade.width * 0.9);
+      const dist = Math.hypot(dx, dy);
+      if (dist < r) st.current[i].v += Math.max(-0.35, Math.min(0.35, e.movementX * 0.012)) * (1 - dist / r);
+    });
+    kick.current();
+  };
+
+  return (
+    <section
+      ref={box}
+      onPointerMove={onMove}
+      className="relative h-[100svh] min-h-[600px] overflow-hidden"
+      style={{ background: night ? "radial-gradient(120% 80% at 50% 0%, #1b2033, #0c0f1a 70%)" : "radial-gradient(120% 80% at 50% 0%, #fbf9f4, #e9e5dc 75%)", transition: "background 0.9s" }}
+    >
+      {/* the floor the light lands on */}
+      <div className="absolute inset-x-0 bottom-0 h-[34%] transition-colors duration-700" style={{ background: night ? "linear-gradient(to top, #0a0c14, transparent)" : "linear-gradient(to top, #dcd6ca, transparent)" }} />
+      {HANG.map((h, i) => {
+        const sh = SHADE[h.shape];
+        const on = lit[i];
+        const lamp = byId(h.id)!;
+        return (
+          <div
+            key={h.id}
+            ref={(el) => {
+              els.current[i] = el;
+            }}
+            className={`absolute top-0 left-[calc(var(--xm)*100%)] origin-top sm:left-[calc(var(--x)*100%)] ${h.mobile ? "" : "hidden sm:block"}`}
+            style={{ "--x": h.x, "--xm": h.xm, width: `clamp(${Math.round(h.w * 0.5)}px, ${(h.w / 14.4).toFixed(1)}vw, ${h.w}px)`, transform: `translateX(-50%) rotate(${(i % 2 ? -1 : 1) * 0.2}rad)` } as React.CSSProperties}
+          >
+            <motion.span
+              className="mx-auto block w-[2px] origin-top"
+              style={{ height: `calc(${h.len} * max(600px, 100svh))`, background: night ? "#5b5f73" : "#8a8172" }}
+              initial={{ scaleY: 0 }}
+              animate={{ scaleY: 1 }}
+              transition={{ duration: 1.1, delay: 0.1 + i * 0.12, ease }}
+            />
+            <motion.button
+              type="button"
+              aria-pressed={on}
+              aria-label={`${on ? "Switch off" : "Switch on"} the ${lamp.name} ${lamp.shape.toLowerCase()} pendant`}
+              onClick={() => {
+                setLit((p) => p.map((x, j) => (j === i ? !x : x)));
+                st.current[i].v += 0.18;
+                kick.current();
+              }}
+              initial={{ opacity: 0, y: -30 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 1, delay: 0.5 + i * 0.12, ease }}
+              className="relative -mt-px block w-full cursor-pointer"
+            >
+              {/* light falling from the rim */}
+              <span
+                aria-hidden
+                className="pointer-events-none absolute left-1/2 top-[70%] -z-10 h-[260%] w-[320%] -translate-x-1/2 transition-opacity duration-700"
+                style={{
+                  opacity: night && on ? 1 : 0,
+                  background: "radial-gradient(50% 70% at 50% 0%, rgb(255 196 120 / 0.34), rgb(255 170 80 / 0.08) 55%, transparent 80%)",
+                  clipPath: "polygon(38% 0, 62% 0, 100% 100%, 0 100%)",
+                  filter: "blur(14px)",
+                }}
+              />
+              <span
+                aria-hidden
+                className="pointer-events-none absolute left-1/2 top-1/2 size-[190%] -translate-x-1/2 -translate-y-1/2 rounded-full transition-opacity duration-700"
+                style={{ opacity: night && on ? 1 : 0, background: "radial-gradient(closest-side, rgb(255 200 130 / 0.38), transparent)" }}
+              />
+              <span className="block" style={{ aspectRatio: `200 / ${sh.h}` }}>
+                <Shade h={h} lit={on} night={night} />
+              </span>
+            </motion.button>
+          </div>
+        );
+      })}
+
+      <div className={`pointer-events-none absolute inset-x-0 bottom-0 px-5 pb-8 sm:px-8 sm:pb-12 ${night ? "text-[#f2e9da]" : "text-[#1b1915]"}`}>
+        <div className="mx-auto flex max-w-[1440px] flex-wrap items-end justify-between gap-6">
+          <div className="max-w-[920px]">
+            <SplitLines lines={["Light that comes", "through the weave"]} delay={0.6} className="font-display text-[clamp(40px,6.2vw,96px)] font-semibold leading-[0.92] tracking-[-0.045em]" />
+            <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 1.2, duration: 0.8 }} className="mt-4 max-w-[46ch] text-[15px] leading-relaxed opacity-75">
+              Pendants and wall lights in rattan and bamboo, woven in Bang Pahan. Tap a lamp to switch it {night ? "off and on" : "on"}, or push it with the pointer.
+            </motion.p>
+          </div>
+          <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 1.3, duration: 0.8, ease }} className="pointer-events-auto flex flex-wrap gap-3">
+            <Link href={`${R}/lamps`} className="inline-flex h-12 items-center gap-2 rounded-full bg-[#ffc46e] px-6 text-[15px] font-medium text-[#14110e] hover:bg-[#ffd08a]">
               Browse lamps {Icon.arrow}
             </Link>
-          </div>
+            <Link href={`${R}#size`} className={`inline-flex h-12 items-center rounded-full border px-6 text-[15px] ${night ? "border-white/25 hover:border-white/60" : "border-black/20 hover:border-black/50"}`}>
+              Size guide
+            </Link>
+          </motion.div>
         </div>
       </div>
     </section>
@@ -238,9 +386,9 @@ function Shapes() {
 function LampCard({ l }: { l: Lamp }) {
   return (
     <Link href={`${R}/lamp/${l.id}`} className="group grid content-start gap-3">
-      <div className="relative overflow-hidden rounded-[18px]">
+      <div className="relative overflow-hidden rounded-t-[999px] rounded-b-[14px]">
         <Img src={l.img} alt={`${l.name}, ${l.line.toLowerCase()}`} ratio={4 / 5} widths={[800]} position={l.pos} sizes="(min-width:1024px) 33vw, 50vw" imgClassName="transition-[transform,filter] duration-[1.2s] ease-out group-hover:scale-[1.05] group-hover:brightness-110" />
-        <span className="absolute left-3 top-3 rounded-full bg-black/35 px-3 py-1 text-[12px] text-white backdrop-blur">{l.sizes.map((s) => `${s}`).join(" / ")} cm</span>
+        <span className="absolute bottom-3 left-1/2 -translate-x-1/2 whitespace-nowrap rounded-full bg-black/40 px-3 py-1 text-[12px] text-white backdrop-blur">{l.sizes.map((s) => `${s}`).join(" / ")} cm</span>
         <span className="pointer-events-none absolute inset-0 opacity-0 mix-blend-screen transition-opacity duration-700 group-hover:opacity-100" style={{ background: "radial-gradient(60% 45% at 50% 30%, rgb(255 196 120 / 0.45), transparent)" }} />
       </div>
       <div className="flex items-baseline justify-between gap-3">
@@ -384,9 +532,9 @@ function Projects() {
       <h2 className="font-display mb-10 text-[clamp(30px,4vw,56px)] font-semibold leading-[1] tracking-[-0.035em]">Where they hang</h2>
       <div className="grid gap-4 md:grid-cols-3">
         {list.map((p) => (
-          <figure key={p.name} className="group grid gap-3">
-            <div className="overflow-hidden rounded-[18px]">
-              <Img src={p.img} alt={p.name} ratio={4 / 5} widths={[800]} position={p.pos} sizes="(min-width:768px) 33vw, 100vw" imgClassName="transition-transform duration-[1.2s] group-hover:scale-[1.04]" />
+          <figure key={p.name} className="group grid justify-items-center gap-4 text-center">
+            <div className="overflow-hidden rounded-full">
+              <Img src={p.img} alt={p.name} ratio={1} widths={[800]} position={p.pos} sizes="(min-width:768px) 33vw, 100vw" imgClassName="transition-transform duration-[1.2s] group-hover:scale-[1.04]" />
             </div>
             <figcaption>
               <span className="block text-[16px] font-medium">{p.name}</span>
@@ -669,14 +817,22 @@ function Contact() {
 }
 
 function Footer() {
+  const { night, setNight } = use();
   return (
     <footer className="border-t border-line">
-      <div className="mx-auto flex max-w-[1440px] flex-wrap items-end justify-between gap-6 px-5 py-12 sm:px-8">
-        <p className="font-display text-[clamp(60px,12vw,160px)] font-semibold leading-[0.8] tracking-[-0.06em]">khom</p>
-        <div className="grid gap-1 text-[14px] text-muted">
-          <p>Workshop in Bang Pahan, Ayutthaya</p>
-          <p>A concept site by Chanasak Choonuch. khom is a fictional brand.</p>
+      <div className="mx-auto grid max-w-[1440px] gap-8 px-5 py-14 sm:px-8 md:grid-cols-[1fr_auto] md:items-center">
+        <div className="grid gap-3">
+          <p className="font-display text-[clamp(26px,3vw,40px)] font-semibold leading-[1.05] tracking-[-0.03em]">{night ? "Still up? So are the lamps." : "Come and see them lit."}</p>
+          <p className="text-[14px] text-muted">Workshop and showroom in Bang Pahan, Ayutthaya. Open Saturday and Sunday, 10:00 to 17:00.</p>
         </div>
+        <button onClick={() => setNight(!night)} className="inline-flex h-12 items-center gap-3 justify-self-start rounded-full border border-line px-5 text-[15px] hover:border-ink/40 md:justify-self-end">
+          <span className={`size-2.5 rounded-full transition-colors ${night ? "bg-[#ffc46e] shadow-[0_0_10px_3px_rgb(255_196_110/0.8)]" : "bg-ink/30"}`} />
+          {night ? "Switch to daylight" : "Switch to evening"}
+        </button>
+      </div>
+      <div className="mx-auto flex max-w-[1440px] flex-wrap justify-between gap-3 border-t border-line px-5 py-5 pb-20 text-[13px] text-muted sm:px-8 sm:pb-5">
+        <span>khom woven lighting</span>
+        <span>A concept site by Chanasak Choonuch. khom is a fictional brand.</span>
       </div>
     </footer>
   );

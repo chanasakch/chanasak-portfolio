@@ -68,13 +68,20 @@ export function LommSite({ segs = [] }: { segs?: string[] }) {
         </nav>
       </Sheet>
       <main>{a === "enquire" ? <Enquire /> : <Home />}</main>
-      <footer className="bg-ink text-bg">
-        <div className="mx-auto grid max-w-[1500px] gap-8 px-5 pb-8 pt-20 sm:px-8">
-          <p className="font-display text-[22vw] font-bold leading-[0.75] tracking-[-0.07em] text-bg/90" aria-hidden>
-            lomm
-          </p>
-          <div className="flex flex-wrap justify-between gap-4 text-[13.5px] text-bg/60">
-            <p>Outdoor furniture for terraces, pool decks and hotels. Workshop in Pathum Thani.</p>
+      <footer className="relative overflow-hidden bg-[#0b2a30] text-[#eef0ec]">
+        <svg aria-hidden viewBox="0 0 1440 120" preserveAspectRatio="none" className="absolute inset-x-0 top-0 h-16 w-full text-bg sm:h-24">
+          <path fill="currentColor" d="M0 0h1440v58c-120 30-240 30-360 0S840 28 720 58s-240 30-360 0S120 28 0 58Z">
+            <animate attributeName="d" dur="9s" repeatCount="indefinite" values="M0 0h1440v58c-120 30-240 30-360 0S840 28 720 58s-240 30-360 0S120 28 0 58Z;M0 0h1440v58c-120-26-240-26-360 0S840 88 720 58s-240-26-360 0S120 88 0 58Z;M0 0h1440v58c-120 30-240 30-360 0S840 28 720 58s-240 30-360 0S120 28 0 58Z" />
+          </path>
+        </svg>
+        <div className="mx-auto grid max-w-[1500px] gap-10 px-5 pb-8 pt-32 sm:px-8 md:grid-cols-[1.4fr_1fr] md:items-end">
+          <p className="font-display max-w-[16ch] text-[clamp(34px,5vw,72px)] font-bold leading-[0.95] tracking-[-0.04em]">See you on the terrace.</p>
+          <div className="grid gap-2 text-[14px] text-[#eef0ec]/70 md:justify-self-end">
+            <p>Workshop in Pathum Thani. Showroom by appointment.</p>
+            <p>Terraces, pool decks and hotels.</p>
+          </div>
+          <div className="flex flex-wrap justify-between gap-4 border-t border-white/15 pt-6 text-[13px] text-[#eef0ec]/55 md:col-span-2">
+            <p>lomm outdoor furniture</p>
             <p>A concept site by Chanasak Choonuch. lomm is a fictional brand.</p>
           </div>
         </div>
@@ -460,12 +467,12 @@ function Planner({ st: { plan, setPlan, ready } }: { st: PlanState }) {
                   return (
                     <motion.g key={`${it.p.id}-${it.n}`} layout initial={{ opacity: 0, scale: 0.8 }} animate={{ opacity: 1, scale: 1, x: cx, y: cy }} transition={{ duration: 0.45, ease }} style={{ originX: 0, originY: 0 }}>
                       {it.p.round ? (
-                        <circle cx={(it.w * k) / 2} cy={(it.d * k) / 2} r={(it.w * k) / 2} fill="rgb(31 77 58 / 0.14)" stroke="#1f4d3a" strokeDasharray="4 4" />
+                        <circle cx={(it.w * k) / 2} cy={(it.d * k) / 2} r={(it.w * k) / 2} fill="rgb(13 85 96 / 0.14)" stroke="#0d5560" strokeDasharray="4 4" />
                       ) : (
-                        <rect width={it.w * k} height={it.d * k} rx="5" fill="#1f4d3a" />
+                        <rect width={it.w * k} height={it.d * k} rx="5" fill="#0d5560" />
                       )}
                       {it.p.round ? (
-                        <text x={(it.w * k) / 2} y={16} textAnchor="middle" stroke="#e9e4d8" strokeWidth="3" paintOrder="stroke" className="fill-[#1f4d3a] text-[11px] font-medium">
+                        <text x={(it.w * k) / 2} y={16} textAnchor="middle" stroke="#e9e4d8" strokeWidth="3" paintOrder="stroke" className="fill-[#0d5560] text-[11px] font-medium">
                           {it.p.name}
                         </text>
                       ) : (

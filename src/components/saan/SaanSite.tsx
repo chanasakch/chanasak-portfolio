@@ -167,7 +167,7 @@ function Home() {
     <>
       <Hero />
       <Intro />
-      <Bento />
+      <Rooms />
       <Rail title={["New this season", "คอลเลกชันใหม่"]} list={products.slice(0, 8)} />
       <Feature />
       <ProjectsStrip />
@@ -176,62 +176,88 @@ function Home() {
   );
 }
 
+/**
+ * The name is a window: at first the photo shows only through the letters of SAAN. Scrolling pushes
+ * the letters forward until the wall falls away and you are standing on the balcony.
+ */
 function Hero() {
   const { t, l } = use();
   const ref = useRef<HTMLElement>(null);
-  const { scrollYProgress } = useScroll({ target: ref, offset: ["start start", "end start"] });
-  const scale = useTransform(scrollYProgress, [0, 1], [1.04, 1.18]);
-  const y = useTransform(scrollYProgress, [0, 1], ["0%", "12%"]);
+  const { scrollYProgress: p } = useScroll({ target: ref, offset: ["start start", "end end"] });
+  const scale = useTransform(p, [0, 0.55], [1, 3.2]);
+  const veil = useTransform(p, [0.25, 0.55], [1, 0]);
+  const photo = useTransform(p, [0, 0.6], [1.22, 1]);
+  const copy = useTransform(p, [0.5, 0.7], [0, 1]);
+  const copyY = useTransform(p, [0.5, 0.7], [30, 0]);
+  const hint = useTransform(p, [0, 0.12], [1, 0]);
   const k = byId("kloud")!;
   return (
-    <section ref={ref} className="px-2 pt-[88px] sm:px-3 sm:pt-[96px]">
-      <div className="grid items-end gap-5 px-3 pb-5 sm:px-5 lg:grid-cols-[auto_1fr] lg:gap-12 lg:pb-7">
-        <h1 aria-label="SAAN" className="saan-mark font-display flex overflow-hidden text-[34vw] font-bold leading-[0.76] tracking-[-0.065em] lg:text-[21vw]">
-          {"SAAN".split("").map((ch, i) => (
-            <motion.span key={i} className="block" initial={{ y: "70%" }} animate={{ y: "0%" }} transition={{ duration: 1.1, delay: 0.05 + i * 0.07, ease }}>
-              {ch}
-            </motion.span>
-          ))}
-        </h1>
-        <motion.div initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.9, delay: 0.35, ease }} className="grid max-w-[440px] gap-5 lg:justify-self-end lg:pb-[1.2vw]">
-          <p className="text-[17px] leading-relaxed text-ink/80 sm:text-[19px]">
-            {t("Rattan furniture for living rooms, terraces and hotels, woven by hand in Pathum Thani.", "เฟอร์นิเจอร์หวายสำหรับบ้าน ระเบียง และโรงแรม สานด้วยมือที่ปทุมธานี")}
-          </p>
-          <div className="flex flex-wrap gap-2">
-            <Link href={`${R}/collection`} className="inline-flex h-12 items-center gap-2 rounded-full bg-ink px-6 text-[15px] text-bg transition-transform hover:-translate-y-0.5">
-              {t("Explore the collection", "ดูสินค้าทั้งหมด")} {Icon.arrow}
-            </Link>
-            <Link href={`${R}/projects`} className="inline-flex h-12 items-center rounded-full bg-ink/[0.06] px-6 text-[15px] hover:bg-ink/10">
-              {t("Hotel projects", "งานโรงแรม")}
+    <section ref={ref} className="relative h-[230svh]">
+      <h1 className="sr-only">SAAN</h1>
+      <div className="sticky top-0 h-[100svh] overflow-hidden">
+        <motion.div className="absolute inset-0 will-change-transform" style={{ scale: photo }}>
+          <Img src="saan/nest" alt={t("Two woven egg chairs on a balcony facing the hills", "เก้าอี้ทรงไข่สองตัวบนระเบียงหันหน้าสู่ภูเขา")} className="absolute inset-0 bg-[#b9c3b2]" priority sizes="100vw" position="50% 75%" />
+        </motion.div>
+        <div className="absolute inset-0 bg-[linear-gradient(to_top,rgb(16_20_16/0.6),transparent_50%)]" />
+
+        <motion.svg aria-hidden className="pointer-events-none absolute inset-0 h-full w-full overflow-visible will-change-transform" viewBox="0 0 1000 420" preserveAspectRatio="xMidYMid meet" style={{ scale, opacity: veil }}>
+          <defs>
+            <mask id="saan-window" maskUnits="userSpaceOnUse" x="-6000" y="-6000" width="13000" height="13000">
+              <rect x="-6000" y="-6000" width="13000" height="13000" fill="white" />
+              <motion.text
+                x="500"
+                y="330"
+                textAnchor="middle"
+                fill="black"
+                style={{ fontFamily: "var(--font-display)", fontWeight: 800, fontSize: 340, letterSpacing: "-0.06em" }}
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ duration: 1.2, delay: 0.2 }}
+              >
+                SAAN
+              </motion.text>
+            </mask>
+          </defs>
+          <rect x="-6000" y="-6000" width="13000" height="13000" fill="var(--bg)" mask="url(#saan-window)" />
+        </motion.svg>
+
+        <motion.p style={{ opacity: hint }} className="absolute inset-x-0 bottom-[12svh] mx-auto max-w-[34ch] px-5 text-center text-[16px] leading-relaxed text-ink/75 sm:text-[18px]">
+          {t("Rattan furniture for living rooms, terraces and hotels, woven by hand in Pathum Thani.", "เฟอร์นิเจอร์หวายสำหรับบ้าน ระเบียง และโรงแรม สานด้วยมือที่ปทุมธานี")}
+          <span className="mt-6 block text-[13px] text-muted">{t("Scroll to step inside", "เลื่อนลงเพื่อเข้าไปข้างใน")}</span>
+        </motion.p>
+
+        <motion.div style={{ opacity: copy, y: copyY }} className="absolute inset-x-0 bottom-0 px-5 pb-8 text-white sm:px-8 sm:pb-12">
+          <div className="mx-auto flex max-w-[1400px] flex-wrap items-end justify-between gap-6">
+            <div className="grid max-w-[560px] gap-5">
+              <p className="font-display text-[clamp(32px,4.6vw,64px)] font-bold leading-[0.98] tracking-[-0.04em] [text-wrap:balance]">{t("Woven for the corner you sit in most", "สานให้มุมที่คุณนั่งบ่อยที่สุด")}</p>
+              <div className="flex flex-wrap gap-2">
+                <Link href={`${R}/collection`} className="inline-flex h-12 items-center gap-2 rounded-full bg-white px-6 text-[15px] text-ink transition-transform hover:-translate-y-0.5">
+                  {t("Explore the collection", "ดูสินค้าทั้งหมด")} {Icon.arrow}
+                </Link>
+                <Link href={`${R}/projects`} className="inline-flex h-12 items-center rounded-full bg-white/15 px-6 text-[15px] backdrop-blur-md hover:bg-white/25">
+                  {t("Hotel projects", "งานโรงแรม")}
+                </Link>
+              </div>
+            </div>
+            <Link
+              href={`${R}/p/${k.id}`}
+              className="group flex w-[290px] max-w-full items-center gap-3 rounded-[22px] bg-white/85 p-2.5 pr-4 text-ink shadow-[0_20px_50px_rgb(0_0_0/0.18)] backdrop-blur-xl transition-transform hover:-translate-y-1 max-sm:hidden"
+            >
+              <span className="grid size-[68px] shrink-0 place-items-center rounded-[16px] bg-[#d5dccb]">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img src={`/images/${k.cut!.img}-600.webp`} alt="" className="h-[58px] w-auto" />
+              </span>
+              <span className="min-w-0 flex-1">
+                <span className="block text-[12px] text-muted">{t("New", "ใหม่")}</span>
+                <span className="block truncate text-[15px] font-medium">
+                  {k.name} {tr(k.type, l).toLowerCase()}
+                </span>
+                <span className="block text-[13px] text-muted">{baht(k.price)}</span>
+              </span>
+              <span className="transition-transform group-hover:translate-x-0.5">{Icon.arrow}</span>
             </Link>
           </div>
         </motion.div>
-      </div>
-      <div className="relative h-[62svh] min-h-[380px] overflow-hidden rounded-[28px] bg-[#b9c3b2] sm:rounded-[36px] lg:h-[calc(100svh-96px-21vw*0.76-28px)] lg:min-h-[460px]">
-        <motion.div className="absolute inset-0 will-change-transform" style={{ scale, y }}>
-          <Img src="saan/nest" alt={t("Two woven egg chairs on a balcony facing the hills", "เก้าอี้ทรงไข่สองตัวบนระเบียงหันหน้าสู่ภูเขา")} className="absolute inset-0 bg-transparent" priority sizes="100vw" position="50% 78%" />
-        </motion.div>
-        <div className="absolute inset-0 bg-[linear-gradient(to_top,rgb(16_20_16/0.45),transparent_40%)]" />
-        <p className="absolute bottom-5 left-5 max-w-[60%] text-[13.5px] text-white/90 sm:bottom-7 sm:left-7">
-          {t("Nest egg chairs, outdoor rated", "เก้าอี้ Nest ใช้กลางแจ้งได้")}
-        </p>
-        <Link
-          href={`${R}/p/${k.id}`}
-          className="group absolute bottom-4 right-4 flex w-[290px] max-w-[calc(100%-32px)] items-center gap-3 rounded-[22px] bg-white/85 p-2.5 pr-4 text-ink shadow-[0_20px_50px_rgb(0_0_0/0.18)] backdrop-blur-xl transition-transform hover:-translate-y-1 max-sm:hidden sm:bottom-6 sm:right-6"
-        >
-          <span className="grid size-[68px] shrink-0 place-items-center rounded-[16px] bg-[#d5dccb]">
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src={`/images/${k.cut!.img}-600.webp`} alt="" className="h-[58px] w-auto" />
-          </span>
-          <span className="min-w-0 flex-1">
-            <span className="block text-[12px] text-muted">{t("New", "ใหม่")}</span>
-            <span className="block truncate text-[15px] font-medium">
-              {k.name} {tr(k.type, l).toLowerCase()}
-            </span>
-            <span className="block text-[13px] text-muted">{baht(k.price)}</span>
-          </span>
-          <span className="transition-transform group-hover:translate-x-0.5">{Icon.arrow}</span>
-        </Link>
       </div>
     </section>
   );
@@ -260,38 +286,75 @@ function Intro() {
   );
 }
 
-function Bento() {
-  const { t, l } = use();
-  const span = ["lg:col-span-2 lg:row-span-2", "lg:col-span-2", "", ""];
+const ROOM: Record<SaanCat, string> = { living: "#d3dcc5", dining: "#efd1b6", outdoor: "#bcd9da", lighting: "#f1cdbd" };
+
+/** Each room brings its own colour: the page behind it changes as you move from room to room. */
+function Rooms() {
+  const { t } = use();
+  const ref = useRef<HTMLElement>(null);
+  const { scrollYProgress: p } = useScroll({ target: ref, offset: ["start 60%", "end 40%"] });
+  const order = [cats[0], cats[1], cats[2], cats[3]];
+  const bg = useTransform(p, [0, 0.12, 0.38, 0.62, 0.88, 1], ["#f3f4ef", ROOM[order[0].id], ROOM[order[1].id], ROOM[order[2].id], ROOM[order[3].id], "#f3f4ef"]);
   return (
-    <section className="mx-auto max-w-[1400px] px-5 sm:px-8">
-      <div className="mb-8 flex items-end justify-between gap-4">
+    <motion.section ref={ref} style={{ backgroundColor: bg }} className="py-24 lg:py-32">
+      <div className="mx-auto flex max-w-[1400px] items-end justify-between gap-4 px-5 sm:px-8">
         <h2 className="font-display text-[clamp(28px,3.4vw,44px)] font-semibold tracking-[-0.035em]">{t("Shop by room", "เลือกตามห้อง")}</h2>
         <Link href={`${R}/collection`} className="text-[14px] underline underline-offset-4">
           {t("All pieces", "สินค้าทั้งหมด")}
         </Link>
       </div>
-      <div className="grid grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-4 lg:grid-rows-[300px_300px]">
-        {[cats[0], cats[2], cats[1], cats[3]].map((c, i) => {
-          const n = products.filter((p) => p.cat === c.id).length;
-          return (
-            <Link key={c.id} href={`${R}/collection/${c.id}`} className={`group relative block min-h-[220px] overflow-hidden rounded-[24px] ${i === 0 ? "col-span-2 min-h-[340px]" : i === 1 ? "col-span-2" : ""} ${span[i]}`}>
-              <Img src={c.img} alt="" className="absolute inset-0" sizes="(min-width:1024px) 50vw, 100vw" imgClassName="transition-transform duration-[1.4s] ease-out group-hover:scale-[1.06]" />
-              <div className="absolute inset-0 bg-[linear-gradient(to_top,rgb(16_20_16/0.55),transparent_50%)]" />
-              <div className="absolute inset-x-4 bottom-4 flex items-end justify-between gap-3 text-white sm:inset-x-5 sm:bottom-5">
-                <span>
-                  <span className="font-display block text-[22px] font-semibold tracking-[-0.03em] sm:text-[28px]">{tr(c.name, l)}</span>
-                  <span className="text-[13px] text-white/80">
-                    {n} {t("pieces", "รายการ")}
-                  </span>
-                </span>
-                <span className="grid size-10 shrink-0 place-items-center rounded-full bg-white text-ink transition-transform duration-500 group-hover:-rotate-45">{Icon.arrow}</span>
-              </div>
-            </Link>
-          );
-        })}
+      <div className="mx-auto mt-10 grid max-w-[1400px] gap-20 px-5 sm:px-8 lg:gap-28">
+        {order.map((c, i) => (
+          <Room key={c.id} c={c} flip={i % 2 === 1} />
+        ))}
       </div>
-    </section>
+    </motion.section>
+  );
+}
+
+function Room({ c, flip }: { c: (typeof cats)[number]; flip: boolean }) {
+  const { t, l } = use();
+  const ref = useRef<HTMLDivElement>(null);
+  const { scrollYProgress: p } = useScroll({ target: ref, offset: ["start end", "end start"] });
+  const y = useTransform(p, [0, 1], ["-8%", "8%"]);
+  const list = products.filter((x) => x.cat === c.id);
+  return (
+    <div ref={ref} className={`grid items-center gap-8 lg:grid-cols-[1.25fr_1fr] lg:gap-16 ${flip ? "lg:grid-cols-[1fr_1.25fr]" : ""}`}>
+      <Link href={`${R}/collection/${c.id}`} className={`group relative block overflow-hidden rounded-[40px] ${flip ? "lg:order-2" : ""}`} aria-label={tr(c.name, l)}>
+        <motion.div style={{ y }} className="scale-[1.18]">
+          <Img src={c.img} alt="" ratio={4 / 3} sizes="(min-width:1024px) 56vw, 100vw" className="bg-transparent" imgClassName="transition-transform duration-[1.4s] ease-out group-hover:scale-[1.05]" />
+        </motion.div>
+      </Link>
+      <div className="grid gap-6">
+        <motion.p
+          initial={{ opacity: 0, y: 40 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: "-15% 0px" }}
+          transition={{ duration: 0.9, ease }}
+          className="font-display text-[clamp(44px,7vw,108px)] font-bold leading-[0.9] tracking-[-0.05em] [text-wrap:balance]"
+        >
+          {tr(c.name, l)}
+        </motion.p>
+        <p className="text-[15px] text-ink/70">
+          {list.length} {t("pieces", "รายการ")}
+        </p>
+        <div className="flex flex-wrap gap-2">
+          {list.slice(0, 3).map((x, j) => (
+            <motion.div key={x.id} initial={{ opacity: 0, scale: 0.9 }} whileInView={{ opacity: 1, scale: 1 }} viewport={{ once: true }} transition={{ duration: 0.6, delay: 0.15 + j * 0.08, ease }}>
+              <Link href={`${R}/p/${x.id}`} className="flex items-center gap-2 rounded-full bg-white/70 py-1.5 pl-1.5 pr-4 text-[14px] backdrop-blur transition-colors hover:bg-white">
+                <span className="size-9 overflow-hidden rounded-full">
+                  <Img src={x.img} alt="" ratio={1} widths={[800]} sizes="40px" />
+                </span>
+                {x.name}
+              </Link>
+            </motion.div>
+          ))}
+        </div>
+        <Link href={`${R}/collection/${c.id}`} className="inline-flex h-12 w-fit items-center gap-2 rounded-full bg-ink px-6 text-[15px] text-bg transition-transform hover:-translate-y-0.5">
+          {t("Shop", "ดู")} {tr(c.name, l).toLowerCase()} {Icon.arrow}
+        </Link>
+      </div>
+    </div>
   );
 }
 
@@ -1039,9 +1102,11 @@ function Footer() {
               ))}
           </div>
         </div>
-        <p className="font-display mt-16 select-none text-[24vw] font-bold leading-[0.74] tracking-[-0.06em] text-bg/[0.08]" aria-hidden>
-          SAAN
-        </p>
+        <div className="mt-14 flex gap-1.5" aria-hidden>
+          {Object.values(ROOM).map((c) => (
+            <span key={c} className="h-2 flex-1 rounded-full" style={{ background: c }} />
+          ))}
+        </div>
         <p className="mt-6 text-[12.5px] text-bg/50">{t("A concept site by Chanasak Choonuch. SAAN is a fictional brand.", "เว็บตัวอย่างโดย ชนาศักดิ์ ชูนุช SAAN เป็นแบรนด์สมมติ")}</p>
       </div>
     </footer>

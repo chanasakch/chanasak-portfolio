@@ -78,7 +78,7 @@ export function ProductPage({ product: p }: { product: Product }) {
         {/* Buy box */}
         <div className="min-w-0 lg:sticky lg:top-24 lg:self-start">
           <div className="flex items-baseline justify-between gap-4">
-            <h1 className="text-[clamp(1.8rem,3vw,2.4rem)] font-medium leading-tight tracking-[-0.02em]">{p.name}</h1>
+            <h1 className="font-display uppercase leading-[0.98] text-[clamp(1.8rem,3vw,2.4rem)] font-bold leading-tight">{p.name}</h1>
             <p className="tabular text-[18px]">{thb(price)}</p>
           </div>
           <p className="mt-1 text-[15px] text-muted">{p.type}</p>
@@ -98,7 +98,7 @@ export function ProductPage({ product: p }: { product: Product }) {
                   aria-pressed={f === finish}
                   className={`size-9 rounded-full p-[3px] ring-1 transition ${f === finish ? "ring-ink" : "ring-transparent hover:ring-line"}`}
                 >
-                  <span className="block size-full rounded-full border border-black/10" style={{ background: finishSwatch[f] }} />
+                  <span className="block size-full border border-black/10" style={{ background: finishSwatch[f] }} />
                 </button>
               ))}
             </div>
@@ -117,7 +117,7 @@ export function ProductPage({ product: p }: { product: Product }) {
                     type="button"
                     onClick={() => setSize(s.label)}
                     aria-pressed={s.label === size}
-                    className={`rounded-full border px-4 py-2 text-[14px] transition-colors ${s.label === size ? "border-ink bg-ink text-bg" : "border-line hover:border-ink"}`}
+                    className={`border px-4 py-2 text-[14px] transition-colors ${s.label === size ? "border-ink bg-ink text-bg" : "border-line hover:border-ink"}`}
                   >
                     {s.label}
                   </button>
@@ -134,7 +134,7 @@ export function ProductPage({ product: p }: { product: Product }) {
                 add({ slug: p.slug, finish, size, qty });
                 setQty(1);
               }}
-              className="flex-1 rounded-full bg-ink py-3 text-[15px] text-bg transition-opacity hover:opacity-90"
+              className="flex-1 bg-ink py-3 text-[15px] text-bg transition-opacity hover:opacity-90"
             >
               Add to quote
             </button>
@@ -183,7 +183,7 @@ export function ProductPage({ product: p }: { product: Product }) {
 
       {seenIn.length > 0 && (
         <section className="mx-auto mt-20 max-w-[1440px] px-[var(--gutter)]">
-          <h2 className="text-[22px] font-medium tracking-[-0.01em]">In use</h2>
+          <h2 className="font-display uppercase leading-[0.98] text-[22px] font-bold">In use</h2>
           <div className="mt-6 grid gap-6 sm:grid-cols-2">
             {seenIn.map((pr) => (
               <Link key={pr.name} href={`${base}/projects`} className="group grid grid-cols-[120px_1fr] items-center gap-5 sm:grid-cols-[160px_1fr]">
@@ -202,7 +202,7 @@ export function ProductPage({ product: p }: { product: Product }) {
       )}
 
       <section className="mx-auto mt-20 max-w-[1440px] px-[var(--gutter)]">
-        <h2 className="text-[22px] font-medium tracking-[-0.01em]">Goes well with</h2>
+        <h2 className="font-display uppercase leading-[0.98] text-[22px] font-bold">Goes well with</h2>
         <div className="mt-6 grid grid-cols-2 gap-x-4 gap-y-10 lg:grid-cols-4">
           {related.map((r) => (
             <ProductCard key={r.slug} product={r} />
@@ -286,7 +286,7 @@ function ZoomViewer({ photos, index, onIndex, title }: { photos: PhotoType[]; in
             <span>
               {title} <span className="tabular text-muted">{index! + 1} of {photos.length}</span>
             </span>
-            <button type="button" onClick={() => go(null)} className="rounded-full border border-line px-4 py-2 hover:border-ink" autoFocus>
+            <button type="button" onClick={() => go(null)} className="border border-line px-4 py-2 hover:border-ink" autoFocus>
               Close
             </button>
           </div>

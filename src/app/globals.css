@@ -184,19 +184,24 @@ html.lenis body {
   font-family: var(--font-body);
   -webkit-font-smoothing: antialiased;
 }
+/* Loom & Tide: an evening showroom, espresso walls, bone type and a rattan amber */
 .b-loom {
-  --bg: #fbfbf9;
-  --ink: #1d1c1a;
-  --muted: #6f6c66;
-  --line: rgb(29 28 26 / 0.12);
-  --soft: #f0efeb;
-  --deep: #2b2f2a;
-  --font-display: "Hanken Grotesk Variable", "Hanken Grotesk", "Anuphan", system-ui, sans-serif;
-  --font-body: "Hanken Grotesk Variable", "Hanken Grotesk", "Anuphan", system-ui, sans-serif;
+  --bg: #16110d;
+  --ink: #efe6d6;
+  --muted: #a8998a;
+  --line: rgb(239 230 214 / 0.14);
+  --soft: #211a14;
+  --deep: #2a2119;
+  --amber: #e0a24c;
+  --font-display: "Syne Variable", "Anuphan", system-ui, sans-serif;
+  --font-body: "Manrope Variable", "Anuphan", system-ui, sans-serif;
   background: var(--bg);
   color: var(--ink);
+  color-scheme: dark;
   -webkit-font-smoothing: antialiased;
 }
+.b-loom .font-display { font-family: var(--font-display); }
+.b-loom ::selection { background: var(--amber); color: #16110d; }
 .b-din {
   --bg: #f2f2ef;
   --ink: #1b1b19;
@@ -413,11 +418,11 @@ body:has([role="dialog"]) .back-pill {
   transition: background-color 0.7s ease, color 0.7s ease;
 }
 .b-khom .khom-root.khom-night {
-  --bg: #16130f;
+  --bg: #0c0f1a;
   --ink: #f2e9da;
-  --muted: #a99d8b;
+  --muted: #a3a3b0;
   --line: rgb(242 233 218 / 0.13);
-  --soft: #211c16;
+  --soft: #151a28;
   --bad: #f09a7f;
   color-scheme: dark;
 }
@@ -427,7 +432,7 @@ body:has([role="dialog"]) .back-pill {
 
 /* Hattha Works: workshop concrete with a blueprint blue for every action */
 .b-hattha {
-  --bg: #ebeae6;
+  --bg: #eef0f3;
   --ink: #161615;
   --muted: #64635e;
   --line: rgb(22 22 21 / 0.13);
@@ -440,21 +445,25 @@ body:has([role="dialog"]) .back-pill {
   --r-btn: 12px;
   --font-display: "Archivo Variable", "Anuphan", system-ui, sans-serif;
   --font-body: "Inter Tight Variable", "Anuphan", system-ui, sans-serif;
+  --signal: #ff5b1f;
+  --grid: rgb(36 67 214 / 0.07);
   font-family: var(--font-body);
-  background: var(--bg);
+  background-color: var(--bg);
+  background-image: linear-gradient(var(--grid) 1px, transparent 1px), linear-gradient(90deg, var(--grid) 1px, transparent 1px);
+  background-size: 32px 32px;
   color: var(--ink);
   min-height: 100dvh;
 }
 .b-hattha .text-accent { color: var(--accent); }
 
-/* lomm: limestone terrace and deep pool green */
+/* lomm: sand, salt air and the deep teal of a pool at dusk */
 .b-lomm {
-  --bg: #f1efe9;
-  --ink: #131512;
-  --muted: #676a62;
-  --line: rgb(19 21 18 / 0.12);
-  --soft: #e3e3da;
-  --accent: #1f4d3a;
+  --bg: #eef0ec;
+  --ink: #0f1a1c;
+  --muted: #5f6b6b;
+  --line: rgb(15 26 28 / 0.12);
+  --soft: #dde6e3;
+  --accent: #0d5560;
   --accent-ink: #ffffff;
   --bad: #b8432c;
   --r-sm: 14px;

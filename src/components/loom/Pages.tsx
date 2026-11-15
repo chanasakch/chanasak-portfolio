@@ -2,21 +2,22 @@
 
 import Link from "next/link";
 import { useMemo, useRef, useState, type FormEvent, type ReactNode } from "react";
-import { motion, useScroll, useTransform } from "motion/react";
-import { ease, RevealImage, SplitLines, useFinePointer } from "@/components/shared/motion";
+import { AnimatePresence, motion, useScroll, useTransform, type MotionValue } from "motion/react";
+import { ease, RevealImage, ScrollText, SplitLines } from "@/components/shared/motion";
 import { Photo } from "@/components/shared/Photo";
 import { photos } from "@/data/images";
-import { bySlug, categories, categoryPhoto, products, projects, thb, type Category, type Product } from "@/data/loom";
+import { bySlug, categories, categoryPhoto, finishSwatch, products, projects, thb, type Category, type Product } from "@/data/loom";
+import { useQuote } from "./store";
 import { base } from "./Chrome";
 
 const wrap = "mx-auto max-w-[1440px] px-[var(--gutter)]";
-const btn = "inline-flex items-center justify-center rounded-full px-6 py-3 text-[14px] transition-opacity hover:opacity-85";
+const btn = "inline-flex items-center justify-center px-6 py-3 text-[14px] transition-[opacity,border-color] hover:opacity-90";
 
 export function ProductCard({ product: p, sizes = "(min-width:1024px) 25vw, 50vw" }: { product: Product; sizes?: string }) {
   const alt = p.photos[1];
   return (
     <Link href={`${base}/products/${p.slug}`} className="group block min-w-0">
-      <div className="relative overflow-hidden rounded-[18px]">
+      <div className="relative overflow-hidden bg-soft">
         <Photo photo={p.photos[0]} className="aspect-[4/5]" sizes={sizes} position={p.pos} imgClassName="transition-transform duration-[1.2s] ease-out group-hover:scale-[1.04]" />
         {alt && (
           <Photo
@@ -25,11 +26,14 @@ export function ProductCard({ product: p, sizes = "(min-width:1024px) 25vw, 50vw
             sizes={sizes}
           />
         )}
-        {p.isNew && <span className="absolute left-3 top-3 rounded-full bg-bg px-2.5 py-1 text-[12px]">New</span>}
+        {p.isNew && <span className="absolute left-0 top-3 bg-[var(--amber)] px-2.5 py-1 text-[12px] font-semibold text-[#16110d]">New</span>}
+        <span className="absolute inset-x-0 bottom-0 translate-y-full bg-[var(--amber)] px-3 py-2 text-[13px] font-semibold text-[#16110d] transition-transform duration-300 group-hover:translate-y-0 [@media(hover:none)]:hidden">
+          View {p.name}
+        </span>
       </div>
       <div className="mt-3 flex items-baseline justify-between gap-3 text-[14px]">
         <span className="min-w-0">
-          <span className="font-medium">{p.name}</span> <span className="text-muted">{p.type}</span>
+          <span className="font-display font-semibold">{p.name}</span> <span className="text-muted">{p.type}</span>
         </span>
         <span className="tabular shrink-0">{thb(p.price)}</span>
       </div>
@@ -42,53 +46,101 @@ export function ProductCard({ product: p, sizes = "(min-width:1024px) 25vw, 50vw
 
 /* ---------------- Home ---------------- */
 
+const blurbFor: Record<Category, string> = {
+  Seating: "Dining, desk and lounge chairs in cane and teak",
+  Tables: "Side and lounge tables to sit beside them",
+  Lighting: "Bell, globe and drum pendants in peeled rattan",
+  Outdoor: "UV-stable fibre over aluminium, for pools and terraces",
+};
+
+/**
+ * The opening is the showroom floor: four rooms side by side. Pointing at one (or tapping it on a phone)
+ * opens it up, so the page starts by asking what you came to look at.
+ */
 function Hero() {
-  const ref = useRef<HTMLElement>(null);
-  const { scrollYProgress } = useScroll({ target: ref, offset: ["start start", "end start"] });
-  const y = useTransform(scrollYProgress, [0, 1], ["0%", "14%"]);
-  const fade = useTransform(scrollYProgress, [0, 0.6], [1, 0]);
-  const lift = useTransform(scrollYProgress, [0, 1], [0, -60]);
-  const fine = useFinePointer();
+  const [open, setOpen] = useState(0);
   return (
-    <section ref={ref} className="px-2 pt-2 sm:px-3 sm:pt-3">
-      <div className="relative h-[min(86svh,860px)] min-h-[540px] overflow-hidden rounded-[22px] sm:rounded-[30px]">
-        <motion.div className="absolute inset-0 will-change-transform" style={fine ? { y } : undefined}>
-          <motion.div className="h-full w-full" initial={{ scale: 1.14 }} animate={{ scale: 1.02 }} transition={{ duration: 2.2, ease }}>
-            <Photo photo={photos.archedTerraceChairs} className="h-full w-full" priority position="62% 60%" />
-          </motion.div>
-        </motion.div>
-        <div className="absolute inset-0 bg-[linear-gradient(to_top,rgb(0_0_0/0.55),transparent_55%)]" />
-        <motion.div style={fine ? { opacity: fade, y: lift } : undefined} className="relative flex h-full flex-col justify-end gap-8 px-5 pb-24 text-white sm:px-10 sm:pb-12 lg:flex-row lg:items-end lg:justify-between">
+    <section className="px-[var(--gutter)] pb-6 pt-10 sm:pt-14">
+      <div className="mx-auto max-w-[1440px]">
+        <div className="grid gap-6 lg:grid-cols-[2fr_1fr] lg:items-end">
           <SplitLines
             as="h1"
-            lines={["Rattan furniture", "and lighting, woven", "by hand in Ayutthaya"]}
-            delay={0.35}
-            className="text-[clamp(2.4rem,5.6vw,5.4rem)] font-semibold leading-[0.98] tracking-[-0.04em]"
+            lines={["Rattan and teak,", "made to order"]}
+            delay={0.15}
+            className="font-display text-[clamp(2.4rem,4.4vw,4.6rem)] font-bold uppercase leading-[0.95] tracking-[-0.03em] lg:whitespace-nowrap"
           />
-          <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.9, delay: 0.9, ease }} className="flex flex-wrap gap-3 lg:pb-2">
-            <Link href={`${base}/shop`} className={`${btn} bg-white text-[#1d1c1a] transition-transform hover:-translate-y-0.5`}>
-              Shop the collection
-            </Link>
-            <Link href={`${base}/trade`} className={`${btn} border border-white/60 bg-white/10 text-white backdrop-blur-md hover:bg-white/20`}>
-              For hotels and restaurants
-            </Link>
+          <motion.div initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.9, delay: 0.6, ease }} className="max-w-[40ch] space-y-5 lg:pb-3">
+            <p className="text-[15.5px] leading-relaxed text-muted">
+              Chairs, tables and pendants from our workshop in Bang Pa-in. Every piece is on the floor of the Charoen Krung showroom, lit the way it will be at home.
+            </p>
+            <div className="flex flex-wrap gap-3">
+              <Link href={`${base}/shop`} className={`${btn} bg-[var(--amber)] font-semibold text-[#16110d]`}>
+                Shop the collection
+              </Link>
+              <Link href={`${base}/trade`} className={`${btn} border border-line hover:border-ink`}>
+                For hotels and restaurants
+              </Link>
+            </div>
           </motion.div>
-        </motion.div>
+        </div>
+
+        <div className="mt-8 flex h-[min(70svh,700px)] min-h-[480px] flex-col gap-2 lg:flex-row" role="list">
+          {categories.map((c, i) => {
+            const active = open === i;
+            const count = products.filter((p) => p.category === c).length;
+            return (
+              <motion.div
+                key={c}
+                role="listitem"
+                initial={{ clipPath: "inset(100% 0 0 0)" }}
+                animate={{ clipPath: "inset(0% 0 0 0)" }}
+                transition={{ duration: 1.1, delay: 0.25 + i * 0.1, ease }}
+                onMouseEnter={() => setOpen(i)}
+                onFocus={() => setOpen(i)}
+                onClick={() => setOpen(i)}
+                className="relative min-h-0 min-w-0 overflow-hidden bg-soft transition-[flex-grow] duration-700 ease-[cubic-bezier(.22,1,.36,1)]"
+                style={{ flexGrow: active ? 5 : 1, flexBasis: 0 }}
+              >
+                <Photo photo={categoryPhoto[c]} className="absolute inset-0 h-full w-full" sizes="(min-width:1024px) 60vw, 100vw" priority={i === 0} imgClassName={`transition-transform duration-[1.4s] ${active ? "scale-100" : "scale-110"}`} />
+                <div className={`absolute inset-0 transition-colors duration-700 ${active ? "bg-[linear-gradient(to_top,rgb(16_12_9/0.82),rgb(16_12_9/0.1)_60%)]" : "bg-[rgb(16_12_9/0.62)]"}`} />
+                <span
+                  aria-hidden
+                  className={`font-display absolute left-4 top-4 text-[20px] font-bold uppercase tracking-[0.02em] text-[#efe6d6] transition-opacity duration-300 lg:left-1/2 lg:top-6 lg:-translate-x-1/2 lg:[writing-mode:vertical-rl] ${active ? "opacity-0" : "opacity-100"}`}
+                >
+                  {c}
+                </span>
+                <div className={`absolute inset-x-0 bottom-0 flex flex-wrap items-end justify-between gap-4 p-5 text-[#efe6d6] transition-[opacity,transform] duration-500 sm:p-7 ${active ? "translate-y-0 opacity-100 delay-200" : "pointer-events-none translate-y-4 opacity-0"}`}>
+                  <div className="min-w-0">
+                    <p className="font-display text-[clamp(1.8rem,4vw,3.4rem)] font-bold uppercase leading-none">{c}</p>
+                    <p className="mt-2 text-[14px] text-[#efe6d6]/75">
+                      {blurbFor[c]}. {count} pieces.
+                    </p>
+                  </div>
+                  <Link href={`${base}/${c.toLowerCase()}`} tabIndex={active ? 0 : -1} className={`${btn} bg-[#efe6d6] font-semibold text-[#16110d]`}>
+                    Browse {c.toLowerCase()}
+                  </Link>
+                </div>
+              </motion.div>
+            );
+          })}
+        </div>
       </div>
     </section>
   );
 }
 
-/** A slow band of what the workshop works in, so the page says rattan before it says anything else. */
+/** A slow band of what the workshop works in. */
 function Materials() {
   const words = ["Manau rattan", "Peeled cane", "Teak", "Seagrass", "Outdoor fibre", "Linen", "Bamboo"];
   return (
-    <div className="overflow-hidden border-b border-line py-5" aria-hidden>
-      <div className="flex w-max animate-[wall_40s_linear_infinite] gap-10 whitespace-nowrap pl-10 text-[clamp(1.4rem,2.4vw,2.2rem)] font-medium tracking-[-0.02em] text-ink/80">
+    <div className="overflow-hidden border-y border-line py-5" aria-hidden>
+      <div className="font-display flex w-max animate-[wall_44s_linear_infinite] gap-10 whitespace-nowrap pl-10 text-[clamp(1.3rem,2.2vw,2rem)] font-semibold uppercase tracking-[0.01em] text-ink/70">
         {[...words, ...words].map((w, i) => (
           <span key={i} className="flex items-center gap-10">
             {w}
-            <span className="size-2 rounded-full bg-ink/25" />
+            <svg width="16" height="16" viewBox="0 0 16 16" className="text-[var(--amber)]">
+              <path d="M8 0v16M0 8h16M2.3 2.3l11.4 11.4M13.7 2.3 2.3 13.7" stroke="currentColor" strokeWidth="1.4" />
+            </svg>
           </span>
         ))}
       </div>
@@ -96,57 +148,106 @@ function Materials() {
   );
 }
 
-export function Home() {
+/** New pieces arrive one at a time: each sheet sticks and the next slides over it, pushing it back. */
+function NewPieces() {
   const fresh = ["krachao-pendant", "kanok-armchair", "khom-pendant", "talay-bistro-chair"].map((s) => bySlug(s)!);
+  const ref = useRef<HTMLDivElement>(null);
+  const { scrollYProgress } = useScroll({ target: ref, offset: ["start start", "end end"] });
+  return (
+    <section className={`${wrap} pt-24`}>
+      <div className="flex items-end justify-between gap-4">
+        <h2 className="font-display text-[clamp(1.8rem,3.4vw,3rem)] font-bold uppercase leading-none">New this season</h2>
+        <Link href={`${base}/shop`} className="text-[14px] underline underline-offset-4">
+          View all {products.length}
+        </Link>
+      </div>
+      <div ref={ref} className="mt-8">
+        {fresh.map((p, i) => (
+          <StackCard key={p.slug} p={p} i={i} n={fresh.length} progress={scrollYProgress} />
+        ))}
+      </div>
+    </section>
+  );
+}
+
+function StackCard({ p, i, n, progress }: { p: Product; i: number; n: number; progress: MotionValue<number> }) {
+  const scale = useTransform(progress, [i / n, 1], [1, 1 - (n - 1 - i) * 0.04]);
+  const dim = useTransform(progress, [i / n, Math.min(1, (i + 1) / n)], [0, i === n - 1 ? 0 : 0.45]);
+  const { add } = useQuote();
+  return (
+    <div className="sticky mb-6 h-[min(84svh,640px)]" style={{ top: `calc(5rem + ${i * 18}px)` }}>
+      <motion.article style={{ scale }} className="relative grid h-full origin-top grid-rows-[minmax(0,1fr)_auto] overflow-hidden border border-line bg-soft md:grid-cols-[1.15fr_1fr] md:grid-rows-1">
+        <Link href={`${base}/products/${p.slug}`} className="relative min-h-0 overflow-hidden" aria-label={`${p.name} ${p.type}`}>
+          <Photo photo={p.photos[0]} className="absolute inset-0 h-full w-full" sizes="(min-width:768px) 55vw, 100vw" position={p.pos} />
+        </Link>
+        <div className="flex min-w-0 flex-col justify-end gap-4 p-5 sm:p-8 md:justify-between">
+          <p className="hidden text-[13px] text-muted md:block">
+            {p.category}, {p.setting.toLowerCase()}
+          </p>
+          <div className="space-y-3">
+            <h3 className="font-display text-[clamp(2rem,5vw,4.4rem)] font-bold uppercase leading-[0.9]">{p.name}</h3>
+            <p className="text-[15px] text-muted">
+              {p.type}. {p.material}.
+            </p>
+            <p className="hidden max-w-[44ch] text-[15px] leading-relaxed text-ink/85 sm:block">{p.blurb}</p>
+            <div className="flex flex-wrap items-center gap-2 pt-1">
+              {p.finishes.map((f) => (
+                <span key={f} className="flex items-center gap-1.5 border border-line px-2.5 py-1 text-[12.5px]">
+                  <span className="size-3 rounded-full" style={{ background: finishSwatch[f] }} />
+                  {f}
+                </span>
+              ))}
+            </div>
+          </div>
+          <div className="flex flex-wrap items-center justify-between gap-3 border-t border-line pt-4">
+            <span className="tabular text-[18px]">From {thb(p.price)}</span>
+            <div className="flex gap-2">
+              <button type="button" onClick={() => add({ slug: p.slug, finish: p.finishes[0], size: p.sizes?.[0]?.label, qty: 1 })} className={`${btn} border border-line hover:border-ink`}>
+                Add to quote
+              </button>
+              <Link href={`${base}/products/${p.slug}`} className={`${btn} bg-[var(--amber)] font-semibold text-[#16110d]`}>
+                See the piece
+              </Link>
+            </div>
+          </div>
+        </div>
+        <motion.div aria-hidden style={{ opacity: dim }} className="pointer-events-none absolute inset-0 bg-[#0d0a07]" />
+      </motion.article>
+    </div>
+  );
+}
+
+export function Home() {
   return (
     <>
       <Hero />
       <Materials />
+      <NewPieces />
 
-      <section className={`${wrap} pt-16`}>
-        <div className="grid grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-4">
-          {categories.map((c) => (
-            <Link key={c} href={`${base}/${c.toLowerCase()}`} className="group relative block overflow-hidden rounded-[20px]">
-              <Photo photo={categoryPhoto[c]} className="aspect-[3/4]" sizes="(min-width:1024px) 25vw, 50vw" imgClassName="transition-transform duration-[1.2s] ease-out group-hover:scale-[1.06]" />
-              <div className="absolute inset-0 bg-[linear-gradient(to_top,rgb(0_0_0/0.5),transparent_50%)]" />
-              <p className="absolute inset-x-4 bottom-4 flex items-end justify-between text-white">
-                <span>
-                  <span className="block text-[20px] font-semibold tracking-[-0.02em]">{c}</span>
-                  <span className="text-[13px] text-white/75">{products.filter((p) => p.category === c).length} pieces</span>
-                </span>
-                <span className="grid size-9 place-items-center rounded-full bg-white text-[#1d1c1a] transition-transform duration-500 group-hover:-rotate-45">
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M5 12h14M13 6l6 6-6 6" /></svg>
-                </span>
-              </p>
-            </Link>
-          ))}
-        </div>
-      </section>
-
-      <section className={`${wrap} pt-24`}>
-        <div className="flex items-end justify-between gap-4">
-          <h2 className="text-[clamp(1.5rem,2.4vw,2rem)] font-medium tracking-[-0.02em]">New this season</h2>
-          <Link href={`${base}/shop`} className="text-[14px] underline underline-offset-4">
-            View all {products.length}
-          </Link>
-        </div>
-        <div className="mt-7 grid grid-cols-2 gap-x-4 gap-y-10 lg:grid-cols-4">
-          {fresh.map((p) => (
-            <ProductCard key={p.slug} product={p} />
-          ))}
-        </div>
-      </section>
-
-      <section className={`${wrap} grid items-center gap-10 pt-28 lg:grid-cols-2 lg:gap-20`}>
-        <RevealImage photo={photos.balconyRattanPods} className="aspect-[4/3] overflow-hidden rounded-[24px]" sizes="(min-width:1024px) 50vw, 100vw" />
-        <div className="max-w-[46ch]">
-          <h2 className="text-[clamp(1.5rem,2.4vw,2rem)] font-medium leading-tight tracking-[-0.02em]">Twenty-two weavers, one workshop</h2>
-          <p className="mt-5 text-[15.5px] leading-relaxed text-muted">
-            Every piece is made in Bang Pa-in, an hour north of Bangkok, by a team that has worked together for most of fifteen years. The rattan comes from managed forests in
-            Kalimantan and is steamed, bent and bound by hand. A dining chair takes a weaver about two days.
+      <section className={`${wrap} grid gap-10 pt-28 lg:grid-cols-[1fr_1.2fr] lg:gap-20`}>
+        <RevealImage photo={photos.balconyRattanPods} className="aspect-[4/5] overflow-hidden lg:sticky lg:top-24 lg:self-start" sizes="(min-width:1024px) 40vw, 100vw" />
+        <div className="space-y-8">
+          <ScrollText
+            className="font-display text-[clamp(1.6rem,3vw,2.7rem)] font-semibold leading-[1.12]"
+            text="Twenty-two weavers in one workshop in Bang Pa-in, most of them together for fifteen years. The rattan is steamed, bent and bound by hand. A dining chair takes about two days."
+          />
+          <p className="max-w-[52ch] text-[15.5px] leading-relaxed text-muted">
+            The cane comes from managed forests in Kalimantan. For outdoor pieces we weave a UV-stable fibre over aluminium the same way, so a chair can live by a pool or the sea.
           </p>
-          <p className="mt-4 text-[15.5px] leading-relaxed text-muted">For outdoor pieces we use a UV-stable fibre over aluminium, woven the same way, so it lasts by a pool or the sea.</p>
-          <Link href={`${base}/about`} className="mt-7 inline-block text-[14px] underline underline-offset-4">
+          <dl className="grid grid-cols-3 border-t border-line pt-6">
+            {[
+              ["2009", "Workshop opened"],
+              ["22", "Weavers"],
+              ["2 days", "For one dining chair"],
+            ].map(([k, v]) => (
+              <div key={v}>
+                <dt className="sr-only">{v}</dt>
+                <dd className="font-display text-[clamp(1.4rem,2.6vw,2.2rem)] font-bold">{k}</dd>
+                <dd className="mt-1 text-[13px] text-muted">{v}</dd>
+              </div>
+            ))}
+          </dl>
+          <Link href={`${base}/about`} className="inline-block text-[14px] underline underline-offset-4">
             About the workshop
           </Link>
         </div>
@@ -154,20 +255,14 @@ export function Home() {
 
       <section className={`${wrap} pt-28`}>
         <div className="flex items-end justify-between gap-4">
-          <h2 className="text-[clamp(1.5rem,2.4vw,2rem)] font-medium tracking-[-0.02em]">Recent projects</h2>
+          <h2 className="font-display text-[clamp(1.8rem,3.4vw,3rem)] font-bold uppercase leading-none">Recent projects</h2>
           <Link href={`${base}/projects`} className="text-[14px] underline underline-offset-4">
             All projects
           </Link>
         </div>
-        <div className="mt-7 grid gap-x-4 gap-y-10 md:grid-cols-3">
+        <div className="mt-8 divide-y divide-line border-y border-line">
           {projects.slice(0, 3).map((pr) => (
-            <Link key={pr.name} href={`${base}/projects`} className="group">
-              <Photo photo={pr.photo} className="aspect-[4/3] overflow-hidden rounded-[20px]" sizes="(min-width:768px) 33vw, 100vw" imgClassName="transition-transform duration-[1.2s] group-hover:scale-[1.05]" />
-              <p className="mt-3 text-[15px] font-medium">{pr.name}</p>
-              <p className="text-[14px] text-muted">
-                {pr.place}. {pr.scope}.
-              </p>
-            </Link>
+            <ProjectRow key={pr.name} pr={pr} />
           ))}
         </div>
       </section>
@@ -177,21 +272,51 @@ export function Home() {
   );
 }
 
+/** Each project is a row; opening it unrolls the photo, so the list stays short until you ask. */
+function ProjectRow({ pr }: { pr: (typeof projects)[number] }) {
+  const [open, setOpen] = useState(false);
+  return (
+    <div>
+      <button type="button" onClick={() => setOpen((v) => !v)} aria-expanded={open} className="group flex w-full items-center gap-4 py-5 text-left sm:gap-8">
+        <span className="font-display min-w-0 flex-1 text-[clamp(1.3rem,2.6vw,2.2rem)] font-bold uppercase leading-tight transition-colors group-hover:text-[var(--amber)]">{pr.name}</span>
+        <span className="hidden w-[30%] text-[14px] text-muted md:block">{pr.place}</span>
+        <span className={`grid size-10 shrink-0 place-items-center border border-line transition-transform duration-500 ${open ? "rotate-45 bg-[var(--amber)] text-[#16110d]" : ""}`} aria-hidden>
+          <svg width="14" height="14" viewBox="0 0 14 14"><path d="M7 1v12M1 7h12" stroke="currentColor" strokeWidth="1.6" /></svg>
+        </span>
+      </button>
+      <AnimatePresence initial={false}>
+        {open && (
+          <motion.div initial={{ height: 0 }} animate={{ height: "auto" }} exit={{ height: 0 }} transition={{ duration: 0.6, ease }} className="overflow-hidden">
+            <div className="grid gap-5 pb-6 md:grid-cols-[1.4fr_1fr] md:items-end">
+              <motion.div initial={{ clipPath: "inset(0 0 100% 0)" }} animate={{ clipPath: "inset(0 0 0% 0)" }} transition={{ duration: 0.9, ease }}>
+                <Photo photo={pr.photo} className="aspect-[16/9]" sizes="(min-width:768px) 58vw, 100vw" />
+              </motion.div>
+              <p className="max-w-[40ch] text-[15px] leading-relaxed text-muted">
+                {pr.place}. {pr.scope}.
+              </p>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </div>
+  );
+}
+
 function TradeBand() {
   return (
     <section className={`${wrap} pt-28`}>
-      <div className="grid gap-8 rounded-[28px] bg-[var(--deep)] px-6 py-12 text-[#f4f2ee] sm:px-12 lg:grid-cols-[1.2fr_1fr] lg:items-center lg:py-16">
+      <div className="grid gap-8 bg-[var(--amber)] px-6 py-12 text-[#16110d] sm:px-12 lg:grid-cols-[1.3fr_1fr] lg:items-center lg:py-16">
         <div>
-          <h2 className="text-[clamp(1.5rem,2.4vw,2rem)] font-medium tracking-[-0.02em]">Furnishing a hotel or restaurant?</h2>
-          <p className="mt-4 max-w-[52ch] text-[15px] leading-relaxed text-white/70">
+          <h2 className="font-display text-[clamp(1.7rem,3.2vw,2.8rem)] font-bold uppercase leading-[0.95]">Furnishing a hotel or restaurant?</h2>
+          <p className="mt-4 max-w-[52ch] text-[15px] leading-relaxed text-[#16110d]/75">
             Our trade team handles projects from 20 chairs to 400 rooms. You get net pricing, CAD files, finish samples within a week, and a production schedule you can plan around.
           </p>
         </div>
         <div className="flex flex-wrap gap-3 lg:justify-end">
-          <Link href={`${base}/trade`} className={`${btn} bg-[#f4f2ee] text-[#1d1c1a]`}>
+          <Link href={`${base}/trade`} className={`${btn} bg-[#16110d] font-semibold text-[#efe6d6]`}>
             Join the trade programme
           </Link>
-          <Link href={`${base}/contact`} className={`${btn} border border-white/40`}>
+          <Link href={`${base}/contact`} className={`${btn} border border-[#16110d]/40 hover:border-[#16110d]`}>
             Book a showroom visit
           </Link>
         </div>
@@ -219,7 +344,7 @@ export function Shop({ category }: { category?: Category }) {
 
   return (
     <div className={`${wrap} pt-10`}>
-      <h1 className="text-[clamp(1.9rem,3.4vw,2.8rem)] font-medium tracking-[-0.025em]">{category ?? "All pieces"}</h1>
+      <h1 className="font-display text-[clamp(2.2rem,5vw,4.4rem)] font-bold uppercase leading-[0.95]">{category ?? "All pieces"}</h1>
       <p className="mt-2 max-w-[60ch] text-[15px] text-muted">
         {category === "Lighting"
           ? "Pendants in peeled and flat rattan, wired for E27 LED lamps and supplied with a ceiling rose."
@@ -238,7 +363,7 @@ export function Shop({ category }: { category?: Category }) {
             {tabs.map(([label, slug]) => {
               const active = (category ?? "All") === label;
               return (
-                <Link key={slug} href={`${base}/${slug}`} className={`shrink-0 rounded-full px-3.5 py-1.5 ${active ? "bg-ink text-bg" : "hover:bg-soft"}`}>
+                <Link key={slug} href={`${base}/${slug}`} className={`shrink-0 px-3.5 py-1.5 ${active ? "bg-ink text-bg" : "hover:bg-soft"}`}>
                   {label}
                 </Link>
               );
@@ -270,9 +395,21 @@ export function Shop({ category }: { category?: Category }) {
       <p className="mt-6 text-[13px] text-muted">{list.length === 1 ? "1 piece" : `${list.length} pieces`}</p>
       {list.length ? (
         <div className="mt-4 grid grid-cols-2 gap-x-4 gap-y-12 md:grid-cols-3 xl:grid-cols-4">
-          {list.map((p) => (
-            <ProductCard key={p.slug} product={p} />
-          ))}
+          <AnimatePresence mode="popLayout" initial={false}>
+            {list.map((p, i) => (
+              <motion.div
+                key={p.slug}
+                layout
+                initial={{ opacity: 0, y: 24 }}
+                animate={{ opacity: 1, y: 0, transition: { duration: 0.5, delay: Math.min(i, 8) * 0.04, ease } }}
+                exit={{ opacity: 0, scale: 0.96, transition: { duration: 0.25 } }}
+                transition={{ layout: { duration: 0.6, ease } }}
+                className="min-w-0"
+              >
+                <ProductCard product={p} />
+              </motion.div>
+            ))}
+          </AnimatePresence>
         </div>
       ) : (
         <p className="mt-10 text-[15px]">
@@ -300,7 +437,7 @@ export function Projects() {
               <p className="text-[14px] text-muted">
                 {pr.place}, {pr.year}
               </p>
-              <h2 className="mt-1 text-[clamp(1.5rem,2.4vw,2rem)] font-medium tracking-[-0.02em]">{pr.name}</h2>
+              <h2 className="font-display uppercase leading-[0.98] mt-1 text-[clamp(1.5rem,2.4vw,2rem)] font-bold">{pr.name}</h2>
               <p className="mt-3 text-[15.5px] text-muted">{pr.scope}.</p>
               <p className="mt-6 text-[14px]">Pieces used</p>
               <ul className="mt-2 divide-y divide-line border-y border-line text-[14px]">
@@ -350,7 +487,7 @@ export function About() {
         <RevealImage photo={photos.courtyardHouse} className="aspect-[16/9] max-h-[640px] w-full" sizes="100vw" position="50% 70%" parallax={10} />
       </div>
       <section className={`${wrap} grid gap-10 pt-20 lg:grid-cols-[1fr_1.4fr] lg:gap-20`}>
-        <h2 className="text-[clamp(1.5rem,2.4vw,2rem)] font-medium tracking-[-0.02em]">How a chair is made</h2>
+        <h2 className="font-display uppercase leading-[0.98] text-[clamp(1.5rem,2.4vw,2rem)] font-bold">How a chair is made</h2>
         <ol className="divide-y divide-line border-y border-line">
           {steps.map(([t, d], i) => (
             <li key={t} className="grid grid-cols-[2.5rem_1fr] gap-4 py-5 text-[15px]">
@@ -364,7 +501,7 @@ export function About() {
         </ol>
       </section>
       <section className={`${wrap} grid gap-10 pt-20 lg:grid-cols-[1fr_1.4fr] lg:gap-20`}>
-        <h2 className="text-[clamp(1.5rem,2.4vw,2rem)] font-medium tracking-[-0.02em]">Repairs and guarantee</h2>
+        <h2 className="font-display uppercase leading-[0.98] text-[clamp(1.5rem,2.4vw,2rem)] font-bold">Repairs and guarantee</h2>
         <div className="max-w-[60ch] space-y-4 text-[15.5px] leading-relaxed text-muted">
           <p>Indoor frames carry a ten-year guarantee. If a joint loosens, we collect the piece in Bangkok and fix it at the workshop.</p>
           <p>Cane seats wear over time. We reweave any Loom &amp; Tide seat or back for the cost of the cane, however old the chair is.</p>
@@ -443,13 +580,13 @@ export function Catalogue() {
             <button onClick={() => go(i + 1)} disabled={i === PAGES - 1} aria-label="Next page" className="absolute inset-y-0 right-0 w-1/4 cursor-e-resize disabled:cursor-default" />
           </div>
           <div className="flex items-center justify-between gap-4 text-[14px]">
-            <button onClick={() => go(i - 1)} disabled={i === 0} className="rounded-full border border-line px-4 py-2 disabled:opacity-30">
+            <button onClick={() => go(i - 1)} disabled={i === 0} className="border border-line px-4 py-2 disabled:opacity-30">
               Previous
             </button>
             <span className="tabular text-muted">
               Page {i + 1} of {PAGES}
             </span>
-            <button onClick={() => go(i + 1)} disabled={i === PAGES - 1} className="rounded-full border border-line px-4 py-2 disabled:opacity-30">
+            <button onClick={() => go(i + 1)} disabled={i === PAGES - 1} className="border border-line px-4 py-2 disabled:opacity-30">
               Next
             </button>
           </div>
@@ -463,7 +600,7 @@ export function Catalogue() {
           </div>
         </div>
         <aside className="grid content-start gap-5 lg:sticky lg:top-28 lg:self-start">
-          <a href="/catalogue/loom-and-tide-collection-2027.pdf" download className="inline-flex h-12 items-center justify-center rounded-full bg-ink px-6 text-[15px] text-bg hover:opacity-90">
+          <a href="/catalogue/loom-and-tide-collection-2027.pdf" download className="inline-flex h-12 items-center justify-center bg-ink px-6 text-[15px] text-bg hover:opacity-90">
             Download PDF, 3.7 MB
           </a>
           <p className="text-[14px] leading-relaxed text-muted">17 pages, A4 landscape. Prices include VAT. Trade prices for hotels, restaurants and designers are on the trade programme.</p>
@@ -540,7 +677,7 @@ export function Contact() {
 export function NotFound() {
   return (
     <div className={`${wrap} py-32`}>
-      <h1 className="text-[2rem] font-medium tracking-[-0.02em]">We could not find that page</h1>
+      <h1 className="font-display uppercase leading-[0.98] text-[2rem] font-bold">We could not find that page</h1>
       <p className="mt-3 text-muted">It may have moved when we updated the collection.</p>
       <Link href={`${base}/shop`} className={`${btn} mt-8 bg-ink text-bg`}>
         Go to the shop
@@ -554,13 +691,13 @@ export function NotFound() {
 function PageHead({ title, text }: { title: string; text: string }) {
   return (
     <header className="max-w-[60ch]">
-      <h1 className="text-[clamp(1.9rem,3.4vw,2.8rem)] font-medium tracking-[-0.025em]">{title}</h1>
+      <h1 className="font-display uppercase leading-[0.98] text-[clamp(1.9rem,3.4vw,2.8rem)] font-bold">{title}</h1>
       <p className="mt-3 text-[15.5px] leading-relaxed text-muted">{text}</p>
     </header>
   );
 }
 
-const input = "w-full rounded-md border border-line bg-bg px-3 py-2.5 text-[15px] outline-none focus:border-ink";
+const input = "w-full border border-line bg-bg px-3 py-2.5 text-[15px] outline-none focus:border-ink";
 
 function Field({ label, type = "text", auto, required, area }: { label: string; type?: string; auto?: string; required?: boolean; area?: boolean }) {
   return (
@@ -594,7 +731,7 @@ function FormCard({ title, done, sent, onSent, children }: { title: string; done
   };
   return (
     <div className="self-start bg-soft p-6 sm:p-10">
-      <h2 className="text-[20px] font-medium tracking-[-0.01em]">{title}</h2>
+      <h2 className="font-display uppercase leading-[0.98] text-[20px] font-bold">{title}</h2>
       {sent ? (
         <p className="mt-4 text-[15px]">{done}</p>
       ) : (

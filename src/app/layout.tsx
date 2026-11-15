@@ -18,6 +18,7 @@ import "@fontsource-variable/hanken-grotesk";
 import "@fontsource-variable/albert-sans";
 import "@fontsource-variable/bricolage-grotesque";
 import "@fontsource-variable/manrope";
+import "@fontsource-variable/syne";
 import "@fontsource/libre-caslon-display/400.css";
 import "./globals.css";
 

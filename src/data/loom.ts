@@ -193,7 +193,7 @@ export const products: Product[] = [
   },
   {
     slug: "khom-pendant",
-    name: "Khom",
+    name: "Wong",
     type: "Cylinder pendant",
     category: "Lighting",
     setting: "Indoor",

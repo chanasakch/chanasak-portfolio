@@ -38,7 +38,7 @@ export function Header({ path }: { path: string }) {
 
   return (
     <>
-      <p className="bg-ink px-[var(--gutter)] py-2 text-center text-[12.5px] text-bg/85">
+      <p className="bg-[var(--amber)] px-[var(--gutter)] py-2 text-center text-[12.5px] font-medium text-[#16110d]">
         Free delivery in Bangkok on orders over ฿40,000. Showroom on Charoen Krung open Tuesday to Sunday.
       </p>
       <header className="sticky top-0 z-40 border-b border-line bg-bg/[0.97]">
@@ -48,7 +48,7 @@ export function Header({ path }: { path: string }) {
               <path d="M2 6h16M2 14h16" stroke="currentColor" strokeWidth="1.4" />
             </svg>
           </button>
-          <Link href={base} className="text-[19px] font-semibold tracking-[-0.02em]">
+          <Link href={base} className="font-display text-[19px] font-bold uppercase tracking-[0.01em]">
             Loom &amp; Tide
           </Link>
           <nav className="ml-6 hidden gap-6 text-[14px] lg:flex" aria-label="Main">
@@ -76,7 +76,7 @@ export function Header({ path }: { path: string }) {
                 initial={{ scale: bump ? 1.35 : 1 }}
                 animate={{ scale: 1 }}
                 transition={{ duration: 0.35 }}
-                className={`tabular flex h-6 min-w-6 items-center justify-center rounded-full px-1.5 text-[12px] ${count ? "bg-ink text-bg" : "border border-line text-muted"}`}
+                className={`tabular flex h-6 min-w-6 items-center justify-center px-1.5 text-[12px] ${count ? "bg-ink text-bg" : "border border-line text-muted"}`}
               >
                 {count}
               </motion.span>
@@ -97,7 +97,7 @@ export function Header({ path }: { path: string }) {
             transition={{ duration: 0.2 }}
           >
             <div className="flex h-16 items-center justify-between border-b border-line px-[var(--gutter)]">
-              <span className="text-[19px] font-semibold tracking-[-0.02em]">Loom &amp; Tide</span>
+              <span className="font-display text-[19px] font-bold uppercase">Loom &amp; Tide</span>
               <button type="button" className="p-2" aria-label="Close menu" onClick={() => setMenu(false)}>
                 <svg width="18" height="18" viewBox="0 0 18 18" aria-hidden>
                   <path d="M3 3l12 12M15 3L3 15" stroke="currentColor" strokeWidth="1.4" />
@@ -121,7 +121,7 @@ export function Header({ path }: { path: string }) {
 
 function Stepper({ value, onChange }: { value: number; onChange: (n: number) => void }) {
   return (
-    <div className="flex h-9 items-center rounded-full border border-line text-[14px]">
+    <div className="flex h-9 items-center border border-line text-[14px]">
       <button type="button" className="h-full w-9 disabled:opacity-30" aria-label="One fewer" disabled={value <= 1} onClick={() => onChange(value - 1)}>
         −
       </button>
@@ -151,7 +151,7 @@ function QuoteDrawer() {
     clear();
   };
 
-  const field = "w-full rounded-md border border-line bg-transparent px-3 py-2.5 text-[15px] outline-none focus:border-ink";
+  const field = "w-full border border-line bg-transparent px-3 py-2.5 text-[15px] outline-none focus:border-ink";
 
   return (
     <Drawer
@@ -166,7 +166,7 @@ function QuoteDrawer() {
               <span className="tabular">{thb(total)}</span>
             </div>
             <p className="text-[13px] text-muted">Prices include VAT. Delivery and trade discounts are added to your quote.</p>
-            <button type="button" onClick={() => setStep("details")} className="w-full rounded-full bg-ink py-3.5 text-[15px] text-bg hover:opacity-90">
+            <button type="button" onClick={() => setStep("details")} className="w-full bg-ink py-3.5 text-[15px] text-bg hover:opacity-90">
               Continue
             </button>
           </div>
@@ -179,7 +179,7 @@ function QuoteDrawer() {
           <p className="text-muted">
             We reply within one working day with a quote, lead times and a delivery date. If you need samples of cane or finishes, mention it when we call.
           </p>
-          <button type="button" onClick={close} className="rounded-full border border-ink px-6 py-3 text-[14px]">
+          <button type="button" onClick={close} className="border border-ink px-6 py-3 text-[14px]">
             Back to the shop
           </button>
         </div>
@@ -210,10 +210,10 @@ function QuoteDrawer() {
             <textarea rows={3} className={field} placeholder="Deadlines, custom sizes, fabric" />
           </label>
           <div className="flex gap-3 pt-2">
-            <button type="button" onClick={() => setStep("list")} className="rounded-full border border-line px-5 py-3">
+            <button type="button" onClick={() => setStep("list")} className="border border-line px-5 py-3">
               Back
             </button>
-            <button type="submit" className="flex-1 rounded-full bg-ink py-3 text-bg hover:opacity-90">
+            <button type="submit" className="flex-1 bg-ink py-3 text-bg hover:opacity-90">
               Send request
             </button>
           </div>
@@ -221,7 +221,7 @@ function QuoteDrawer() {
       ) : lines.length === 0 ? (
         <div className="space-y-4 text-[15px]">
           <p className="text-muted">Your quote list is empty. Add pieces from any product page and we will price them together, with delivery.</p>
-          <Link href={`${base}/shop`} onClick={() => setOpen(false)} className="inline-block rounded-full bg-ink px-6 py-3 text-[14px] text-bg">
+          <Link href={`${base}/shop`} onClick={() => setOpen(false)} className="inline-block bg-ink px-6 py-3 text-[14px] text-bg">
             Browse the collection
           </Link>
         </div>
@@ -265,7 +265,7 @@ export function Footer() {
     <footer className="mt-24 border-t border-line bg-soft">
       <div className="mx-auto grid max-w-[1440px] gap-10 px-[var(--gutter)] py-14 sm:grid-cols-2 lg:grid-cols-[1.4fr_1fr_1fr_1fr]">
         <div className="max-w-sm space-y-4">
-          <p className="text-[19px] font-semibold tracking-[-0.02em]">Loom &amp; Tide</p>
+          <p className="font-display text-[19px] font-bold uppercase">Loom &amp; Tide</p>
           <p className="text-[14px] leading-relaxed text-muted">
             Rattan furniture and lighting, woven in our workshop in Bang Pa-in, Ayutthaya, since 2009. A letter every two months with new pieces and finished projects.
           </p>
@@ -279,8 +279,8 @@ export function Footer() {
                 setJoined(true);
               }}
             >
-              <input required type="email" placeholder="Email address" aria-label="Email address" className="min-w-0 flex-1 rounded-full border border-line bg-bg px-4 py-2.5 text-[14px] outline-none focus:border-ink" />
-              <button className="rounded-full bg-ink px-5 text-[14px] text-bg">Sign up</button>
+              <input required type="email" placeholder="Email address" aria-label="Email address" className="min-w-0 flex-1 border border-line bg-bg px-4 py-2.5 text-[14px] outline-none focus:border-ink" />
+              <button className="bg-ink px-5 text-[14px] text-bg">Sign up</button>
             </form>
           )}
         </div>

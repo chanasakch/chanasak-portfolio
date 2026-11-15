@@ -35,11 +35,11 @@ export function HatthaSite({ segs = [] }: { segs?: string[] }) {
                 {t}
               </Link>
             ))}
-            <Link href={`${R}/rfq`} className="inline-flex h-10 items-center gap-2 rounded-[10px] bg-accent px-4 text-accent-ink">
+            <Link href={`${R}/rfq`} className="inline-flex h-10 items-center gap-2 rounded-[3px] bg-accent px-4 text-accent-ink">
               Request a quote
             </Link>
           </nav>
-          <button className="ml-auto grid size-10 place-items-center rounded-[10px] border border-line md:hidden" aria-label="Menu" onClick={() => setMenu(true)}>
+          <button className="ml-auto grid size-10 place-items-center rounded-[3px] border border-line md:hidden" aria-label="Menu" onClick={() => setMenu(true)}>
             {Icon.menu}
           </button>
         </div>
@@ -88,7 +88,7 @@ function Home() {
 function Hero() {
   const ref = useRef<HTMLElement>(null);
   const { scrollYProgress } = useScroll({ target: ref, offset: ["start start", "end start"] });
-  const clip = useTransform(scrollYProgress, [0, 0.7], ["inset(0% 4% 0% 4% round 18px)", "inset(0% 0% 0% 0% round 0px)"]);
+  const clip = useTransform(scrollYProgress, [0, 0.7], ["inset(0% 4% 0% 4% round 3px)", "inset(0% 0% 0% 0% round 0px)"]);
   return (
     <section ref={ref} className="pt-16">
       <div className="mx-auto grid max-w-[1440px] gap-8 px-5 pb-10 pt-12 sm:px-8 lg:grid-cols-[1.4fr_1fr] lg:items-end lg:pt-20">
@@ -98,10 +98,10 @@ function Hero() {
         <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.9, delay: 0.2, ease }} className="grid gap-5 lg:pb-2">
           <p className="max-w-md text-[17px] leading-relaxed text-muted">We weave and build for furniture brands, hotel groups and retailers in 18 countries. Your design or ours, from one sample to full containers.</p>
           <div className="flex flex-wrap gap-2">
-            <Link href={`${R}/rfq`} className="inline-flex h-12 items-center gap-2 rounded-[12px] bg-accent px-6 text-[15px] text-accent-ink">
+            <Link href={`${R}/rfq`} className="inline-flex h-12 items-center gap-2 rounded-[3px] bg-accent px-6 text-[15px] text-accent-ink">
               Request a quote {Icon.arrow}
             </Link>
-            <Link href={`${R}#process`} className="inline-flex h-12 items-center rounded-[12px] border border-line px-6 text-[15px] hover:border-ink">
+            <Link href={`${R}#process`} className="inline-flex h-12 items-center rounded-[3px] border border-line px-6 text-[15px] hover:border-ink">
               How we work
             </Link>
           </div>
@@ -109,8 +109,63 @@ function Hero() {
       </div>
       <motion.div className="relative h-[72svh] min-h-[420px] will-change-[clip-path]" style={{ clipPath: clip }}>
         <Img src="hattha/weaver" alt="A weaver splitting rattan on the workshop floor" className="absolute inset-0" priority sizes="100vw" />
+        <Blueprint />
       </motion.div>
     </section>
+  );
+}
+
+/** A drawing-office frame over the photo: crop marks, a scale along the edge and the station's spec tag. */
+function Blueprint() {
+  const ticks = Array.from({ length: 41 }, (_, i) => i);
+  return (
+    <div aria-hidden className="pointer-events-none absolute inset-0 text-white">
+      {[
+        "left-4 top-4 border-l-2 border-t-2",
+        "right-4 top-4 border-r-2 border-t-2",
+        "bottom-4 left-4 border-b-2 border-l-2",
+        "bottom-4 right-4 border-b-2 border-r-2",
+      ].map((c, i) => (
+        <motion.span key={c} initial={{ opacity: 0, scale: 1.6 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 0.7, delay: 0.6 + i * 0.08, ease }} className={`absolute size-7 border-white/90 sm:size-10 ${c}`} />
+      ))}
+      <motion.div initial={{ scaleX: 0 }} animate={{ scaleX: 1 }} transition={{ duration: 1.4, delay: 0.9, ease }} className="absolute inset-x-[8%] bottom-6 flex origin-left items-end justify-between sm:bottom-8">
+        {ticks.map((i) => (
+          <span key={i} className={`w-px bg-white/80 ${i % 10 === 0 ? "h-4" : i % 5 === 0 ? "h-2.5" : "h-1.5"}`} />
+        ))}
+      </motion.div>
+      <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 1.8, duration: 0.6 }} className="absolute inset-x-[8%] bottom-11 hidden justify-between text-[11px] tabular-nums text-white/85 sm:flex sm:bottom-14">
+        <span>0</span>
+        <span>50</span>
+        <span>100</span>
+        <span>150</span>
+        <span>200 cm</span>
+      </motion.div>
+      <motion.div
+        initial={{ opacity: 0, x: -16 }}
+        animate={{ opacity: 1, x: 0 }}
+        transition={{ duration: 0.8, delay: 1.2, ease }}
+        className="absolute left-8 top-8 grid w-[230px] gap-1.5 bg-white/92 p-4 text-[13px] text-[#161615] shadow-[0_18px_40px_rgb(0_0_0/0.2)] sm:left-14 sm:top-14"
+      >
+        <span className="flex items-center gap-2 text-[11.5px] text-[#64635e]">
+          <span className="relative flex size-2">
+            <span className="absolute inset-0 animate-ping rounded-full bg-[var(--signal)] opacity-70" />
+            <span className="relative size-2 rounded-full bg-[var(--signal)]" />
+          </span>
+          Station 02, on the floor today
+        </span>
+        <span className="font-display text-[17px] font-extrabold uppercase" style={{ fontStretch: "112%" }}>
+          Splitting cane
+        </span>
+        <span className="grid grid-cols-[1fr_auto] gap-x-3 border-t border-black/10 pt-2 text-[12.5px]">
+          <span className="text-[#64635e]">Cane</span>
+          <span>Manau, Ø 28 mm</span>
+          <span className="text-[#64635e]">Strip</span>
+          <span>2.5 mm, by hand</span>
+          <span className="text-[#64635e]">Output</span>
+          <span>40 chairs a week</span>
+        </span>
+      </motion.div>
+    </div>
   );
 }
 
@@ -144,7 +199,10 @@ function Numbers() {
           <span className="font-display text-[clamp(34px,4.4vw,64px)] font-extrabold leading-none tracking-[-0.03em]" style={{ fontStretch: "112%" }}>
             <Counter to={n as number} suffix={s as string} />
           </span>
-          <span className="text-[14px] text-muted">{t}</span>
+          <span className="flex items-center gap-2 text-[14px] text-muted">
+            <span className="h-[3px] w-5 bg-[var(--signal)]" />
+            {t}
+          </span>
         </div>
       ))}
     </section>
@@ -186,7 +244,7 @@ function Compare() {
       </div>
       <div
         ref={box}
-        className="relative aspect-[16/9] touch-pan-y select-none overflow-hidden rounded-[18px]"
+        className="relative aspect-[16/9] touch-pan-y select-none overflow-hidden rounded-[3px]"
         onPointerDown={(e) => {
           drag.current = true;
           e.currentTarget.setPointerCapture(e.pointerId);
@@ -200,8 +258,8 @@ function Compare() {
         <div className="absolute inset-0" style={{ clipPath: `inset(0 ${100 - v}% 0 0)` }}>
           <Img src="hattha/weaver" alt="Cane being split on the workshop floor" className="absolute inset-0" widths={[800, 1600]} sizes="(min-width:1440px) 1380px, 100vw" />
         </div>
-        <span className="absolute left-4 top-4 rounded-[8px] bg-black/55 px-3 py-1.5 text-[13px] text-white">Workshop floor</span>
-        <span className="absolute right-4 top-4 rounded-[8px] bg-black/55 px-3 py-1.5 text-[13px] text-white">Finished</span>
+        <span className="absolute left-4 top-4 rounded-[3px] bg-black/55 px-3 py-1.5 text-[13px] text-white">Workshop floor</span>
+        <span className="absolute right-4 top-4 rounded-[3px] bg-black/55 px-3 py-1.5 text-[13px] text-white">Finished</span>
         <div className="pointer-events-none absolute inset-y-0 w-[2px] -translate-x-1/2 bg-white" style={{ left: `${v}%` }}>
           <span className="absolute left-1/2 top-1/2 grid size-12 -translate-x-1/2 -translate-y-1/2 place-items-center rounded-full bg-white text-ink shadow-lg">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
@@ -243,7 +301,7 @@ function Capabilities() {
             </li>
           ))}
         </ul>
-        <div className="relative aspect-[4/3] overflow-hidden rounded-[18px] bg-soft">
+        <div className="relative aspect-[4/3] overflow-hidden rounded-[3px] bg-soft">
           {materials.map((m, i) => (
             <div key={m.id} className="absolute inset-0 transition-[opacity,transform] duration-700" style={{ opacity: on === i ? 1 : 0, transform: `scale(${on === i ? 1 : 1.05})` }}>
               <Img src={m.img} alt={m.name} className="absolute inset-0" widths={[800, 1600]} sizes="(min-width:1024px) 55vw, 100vw" />
@@ -273,7 +331,7 @@ function Process() {
           <h2 className="font-display text-[clamp(30px,4vw,60px)] font-extrabold uppercase leading-[0.95]" style={{ fontStretch: "112%" }}>
             From drawing to container in twelve weeks
           </h2>
-          <div className="relative mt-10 hidden aspect-[4/3] overflow-hidden rounded-[18px] lg:block">
+          <div className="relative mt-10 hidden aspect-[4/3] overflow-hidden rounded-[3px] lg:block">
             {steps.map((s, i) => (
               <div key={s.t} className="absolute inset-0 transition-opacity duration-700" style={{ opacity: on === i ? 1 : 0 }}>
                 <Img src={s.img} alt={s.t} className="absolute inset-0" widths={[800, 1600]} sizes="45vw" />
@@ -299,7 +357,7 @@ function Step({ i, s, on, onSeen }: { i: number; s: (typeof steps)[number]; on: 
   }, [seen, onSeen]);
   return (
     <li ref={ref} className="grid gap-4 border-t border-bg/15 py-8 lg:min-h-[46svh] lg:content-center">
-      <div className="overflow-hidden rounded-[14px] lg:hidden">
+      <div className="overflow-hidden rounded-[3px] lg:hidden">
         <Img src={s.img} alt={s.t} ratio={1.5} widths={[800]} sizes="100vw" />
       </div>
       <span className={`text-[14px] transition-colors ${on ? "text-accent" : "text-bg/50"}`}>
@@ -323,7 +381,7 @@ function Tour() {
   const [on, setOn] = useState<number | null>(0);
   return (
     <div className="relative">
-      <Img src="hattha/hall" alt="The finishing hall" ratio={1.6} widths={[800, 1600]} sizes="(min-width:768px) 60vw, 100vw" className="rounded-[18px]" position="50% 60%" />
+      <Img src="hattha/hall" alt="The finishing hall" ratio={1.6} widths={[800, 1600]} sizes="(min-width:768px) 60vw, 100vw" className="rounded-[3px]" position="50% 60%" />
       {stations.map((s, i) => (
         <button
           key={s.t}
@@ -339,7 +397,7 @@ function Tour() {
       ))}
       <AnimatePresence>
         {on !== null && (
-          <motion.div key={on} initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} transition={{ duration: 0.25 }} className="mt-3 rounded-[14px] bg-soft p-4 text-ink sm:absolute sm:bottom-3 sm:left-3 sm:mt-0 sm:max-w-sm sm:bg-white/90 sm:backdrop-blur">
+          <motion.div key={on} initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} transition={{ duration: 0.25 }} className="mt-3 rounded-[3px] bg-soft p-4 text-ink sm:absolute sm:bottom-3 sm:left-3 sm:mt-0 sm:max-w-sm sm:bg-white/90 sm:backdrop-blur">
             <p className="text-[15px] font-semibold">
               {on + 1}. {stations[on].t}
             </p>
@@ -355,18 +413,18 @@ function Factory() {
   return (
     <section id="factory" className="mx-auto max-w-[1440px] scroll-mt-16 px-5 py-24 sm:px-8 lg:py-32">
       <div className="grid gap-4 md:grid-cols-[1fr_1.4fr]">
-        <Img src="hattha/loom" alt="Weaving in progress" ratio={0.75} widths={[800, 1600]} sizes="(min-width:768px) 40vw, 100vw" className="rounded-[18px]" />
+        <Img src="hattha/loom" alt="Weaving in progress" ratio={0.75} widths={[800, 1600]} sizes="(min-width:768px) 40vw, 100vw" className="rounded-[3px]" />
         <div className="grid gap-4">
           <Tour />
-          <div className="grid content-between gap-8 rounded-[18px] bg-soft p-7 sm:p-10">
+          <div className="grid content-between gap-8 rounded-[3px] bg-soft p-7 sm:p-10">
             <p className="font-display text-[clamp(26px,3vw,42px)] font-extrabold uppercase leading-[0.95]" style={{ fontStretch: "112%" }}>
               Visit the factory, or let us bring it to you on video
             </p>
             <div className="flex flex-wrap gap-3">
-              <Link href={`${R}/rfq`} className="inline-flex h-12 items-center gap-2 rounded-[12px] bg-accent px-6 text-[15px] text-accent-ink">
+              <Link href={`${R}/rfq`} className="inline-flex h-12 items-center gap-2 rounded-[3px] bg-accent px-6 text-[15px] text-accent-ink">
                 Start a project {Icon.arrow}
               </Link>
-              <a href="mailto:projects@hattha.example" className="inline-flex h-12 items-center rounded-[12px] border border-line px-6 text-[15px]">
+              <a href="mailto:projects@hattha.example" className="inline-flex h-12 items-center rounded-[3px] border border-line px-6 text-[15px]">
                 projects@hattha.example
               </a>
             </div>
@@ -417,7 +475,7 @@ function Rfq() {
   if (done)
     return (
       <div className="mx-auto grid max-w-[640px] gap-5 px-5 pb-24 pt-36">
-        <span className="grid size-12 place-items-center rounded-[12px] bg-accent text-accent-ink">{Icon.check}</span>
+        <span className="grid size-12 place-items-center rounded-[3px] bg-accent text-accent-ink">{Icon.check}</span>
         <h1 className="font-display text-[44px] font-extrabold uppercase leading-[0.95]" style={{ fontStretch: "112%" }}>
           Request received
         </h1>
@@ -452,7 +510,7 @@ function Rfq() {
               <h2 className="text-[17px] font-semibold">What should we make?</h2>
               <div className="flex flex-wrap gap-2">
                 {kinds.map((k) => (
-                  <button key={k} aria-pressed={kind === k} onClick={() => setKind(k)} className={`rounded-[10px] px-4 py-2.5 text-[14px] ${kind === k ? "bg-ink text-bg" : "border border-line hover:border-ink/40"}`}>
+                  <button key={k} aria-pressed={kind === k} onClick={() => setKind(k)} className={`rounded-[3px] px-4 py-2.5 text-[14px] ${kind === k ? "bg-ink text-bg" : "border border-line hover:border-ink/40"}`}>
                     {k}
                   </button>
                 ))}
@@ -494,9 +552,9 @@ function Rfq() {
               <h2 className="text-[17px] font-semibold">How many pieces?</h2>
               <div className="flex items-center gap-4">
                 <input type="range" min={10} max={2000} step={10} value={qty} onChange={(e) => setQty(+e.target.value)} className="hattha-range flex-1" aria-label="Quantity" />
-                <input type="number" min={1} max={20000} value={qty} onChange={(e) => setQty(Math.max(1, Math.min(20000, +e.target.value || 1)))} className="h-12 w-28 rounded-[10px] border border-line bg-transparent px-3 text-right text-[16px] tabular-nums outline-none focus:border-ink" aria-label="Quantity in numbers" />
+                <input type="number" min={1} max={20000} value={qty} onChange={(e) => setQty(Math.max(1, Math.min(20000, +e.target.value || 1)))} className="h-12 w-28 rounded-[3px] border border-line bg-transparent px-3 text-right text-[16px] tabular-nums outline-none focus:border-ink" aria-label="Quantity in numbers" />
               </div>
-              <p className={`rounded-[12px] px-4 py-3 text-[14px] ${qty >= moq ? "bg-soft" : "bg-[#fde8dc] text-[#7a2e12]"}`}>
+              <p className={`rounded-[3px] px-4 py-3 text-[14px] ${qty >= moq ? "bg-soft" : "bg-[#fde8dc] text-[#7a2e12]"}`}>
                 {qty >= moq
                   ? `Above our minimum of ${moq} pieces for ${materials.find((m) => m.id === mat)!.name.toLowerCase()}.`
                   : `Our minimum is ${moq} pieces for ${materials.find((m) => m.id === mat)!.name.toLowerCase()}. Smaller orders are possible with a set up fee, so send it anyway.`}
@@ -544,7 +602,7 @@ function Rfq() {
       </div>
 
       <aside className="order-first lg:order-none">
-        <div className="grid gap-4 rounded-[18px] border border-line p-5 lg:sticky lg:top-24">
+        <div className="grid gap-4 rounded-[3px] border border-line p-5 lg:sticky lg:top-24">
           <p className="text-[13px] text-muted">Your request</p>
           <dl className="grid gap-2 text-[14px]">
             {[
@@ -560,7 +618,7 @@ function Rfq() {
               </div>
             ))}
           </dl>
-          <div className="grid gap-1 rounded-[12px] bg-soft p-4">
+          <div className="grid gap-1 rounded-[3px] bg-soft p-4">
             <span className="text-[13px] text-muted">Estimated lead time</span>
             <span className="font-display text-[30px] font-extrabold leading-none" style={{ fontStretch: "112%" }}>
               {weeks} weeks
