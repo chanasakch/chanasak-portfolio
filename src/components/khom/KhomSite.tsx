@@ -164,7 +164,16 @@ function Hero() {
   const { night, setNight } = use();
   return (
     <section className="px-3 pt-20 sm:px-5 sm:pt-24">
-      <div className="relative mx-auto max-w-[1440px] overflow-hidden rounded-[20px]" style={{ aspectRatio: "16 / 9.2" }}>
+      <div
+        className="relative mx-auto max-w-[1440px] overflow-hidden rounded-[20px]"
+        style={{ aspectRatio: "16 / 9.2" }}
+        onPointerMove={(e) => {
+          if (e.pointerType !== "mouse") return;
+          const r = e.currentTarget.getBoundingClientRect();
+          e.currentTarget.style.setProperty("--mx", `${e.clientX - r.left}px`);
+          e.currentTarget.style.setProperty("--my", `${e.clientY - r.top}px`);
+        }}
+      >
         <Img src="khom/dining" alt="Three woven pendants over a dining table" className="absolute inset-0" priority sizes="100vw" />
         {/* evening: the room darkens and each shade glows */}
         <div className="pointer-events-none absolute inset-0 bg-[#0c0906] transition-opacity duration-[1200ms]" style={{ opacity: night ? 0.72 : 0 }} />
@@ -176,6 +185,8 @@ function Hero() {
           />
         ))}
         <span className="pointer-events-none absolute left-[46%] top-[66%] h-[30%] w-[62%] -translate-x-1/2 -translate-y-1/2 rounded-full mix-blend-screen transition-opacity delay-500 duration-[1600ms]" style={{ opacity: night ? 0.55 : 0, background: "radial-gradient(closest-side, rgb(255 190 110 / 0.6), transparent)" }} />
+        {/* a hand torch: at night the pointer carries a little warm light around the room */}
+        <span className="pointer-events-none absolute inset-0 hidden mix-blend-screen transition-opacity duration-700 [@media(pointer:fine)]:block" style={{ opacity: night ? 1 : 0, background: "radial-gradient(220px circle at var(--mx, -500px) var(--my, -500px), rgb(255 200 130 / 0.35), transparent 70%)" }} />
         <div className="absolute inset-0 bg-[linear-gradient(to_top,rgb(10_8_6/0.6),transparent_45%)]" />
         <div className="absolute inset-x-5 bottom-5 flex flex-wrap items-end justify-between gap-5 text-white sm:inset-x-10 sm:bottom-9">
           <motion.h1 initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 1, ease }} className="font-display max-w-[13ch] text-[clamp(38px,6.4vw,96px)] font-semibold leading-[0.95] tracking-[-0.04em]">
@@ -206,8 +217,9 @@ function Shapes() {
         <h2 className="font-display max-w-[18ch] text-[clamp(30px,4vw,56px)] font-semibold leading-[1] tracking-[-0.035em]">Five shapes, each in three weaves</h2>
         <div className="flex flex-wrap gap-2" role="tablist">
           {shapes.map((x) => (
-            <button key={x} role="tab" aria-selected={s === x} onClick={() => setS(x)} className={`rounded-full px-4 py-2 text-[14px] transition-colors ${s === x ? "bg-ink text-bg" : "border border-line hover:border-ink/40"}`}>
-              {x}
+            <button key={x} role="tab" aria-selected={s === x} onClick={() => setS(x)} className="relative rounded-full border border-line px-4 py-2 text-[14px] hover:border-ink/40">
+              {s === x && <motion.span layoutId="khom-shape" className="absolute inset-[-1px] rounded-full bg-ink" transition={{ duration: 0.4, ease }} />}
+              <span className={`relative transition-colors ${s === x ? "text-bg" : ""}`}>{x}</span>
             </button>
           ))}
         </div>
@@ -229,6 +241,7 @@ function LampCard({ l }: { l: Lamp }) {
       <div className="relative overflow-hidden rounded-[18px]">
         <Img src={l.img} alt={`${l.name}, ${l.line.toLowerCase()}`} ratio={4 / 5} widths={[800]} position={l.pos} sizes="(min-width:1024px) 33vw, 50vw" imgClassName="transition-[transform,filter] duration-[1.2s] ease-out group-hover:scale-[1.05] group-hover:brightness-110" />
         <span className="absolute left-3 top-3 rounded-full bg-black/35 px-3 py-1 text-[12px] text-white backdrop-blur">{l.sizes.map((s) => `${s}`).join(" / ")} cm</span>
+        <span className="pointer-events-none absolute inset-0 opacity-0 mix-blend-screen transition-opacity duration-700 group-hover:opacity-100" style={{ background: "radial-gradient(60% 45% at 50% 30%, rgb(255 196 120 / 0.45), transparent)" }} />
       </div>
       <div className="flex items-baseline justify-between gap-3">
         <span>
@@ -432,7 +445,7 @@ function LampPage({ l }: { l: Lamp }) {
         / {l.shape}
       </nav>
       <div className="grid gap-10 lg:grid-cols-[1.2fr_1fr] lg:gap-16">
-        <Img src={l.img} alt={`${l.name}, ${l.line.toLowerCase()}`} ratio={Math.max(0.8, Math.min(1.3, l.ratio))} position={l.pos} priority sizes="(min-width:1024px) 55vw, 100vw" className="rounded-[20px]" />
+        <Zoom l={l} />
         <div className="grid content-start gap-7 lg:sticky lg:top-24 lg:self-start">
           <div className="grid gap-2">
             <p className="text-[14px] text-muted">{l.shape}</p>
@@ -484,6 +497,47 @@ function LampPage({ l }: { l: Lamp }) {
           ))}
         </div>
       </section>
+    </div>
+  );
+}
+
+/** Hover the photo to look at the weave through a loupe. */
+function Zoom({ l }: { l: Lamp }) {
+  const [lens, setLens] = useState<{ x: number; y: number; bx: number; by: number; bw: number; bh: number } | null>(null);
+  const Z = 2.6;
+  const L = 180;
+  const ratio = Math.max(0.8, Math.min(1.3, l.ratio));
+  const [fx, fy] = (l.pos ?? "50% 50%").split(" ").map((v) => parseFloat(v) / 100);
+  return (
+    <div
+      className="relative cursor-zoom-in"
+      onPointerMove={(e) => {
+        if (e.pointerType !== "mouse") return;
+        const r = e.currentTarget.getBoundingClientRect();
+        // where the photo actually sits inside the box after object-fit: cover
+        const iw = Math.max(r.width, r.height * l.ratio);
+        const ih = iw / l.ratio;
+        const ox = (r.width - iw) * fx;
+        const oy = (r.height - ih) * fy;
+        const px = e.clientX - r.left;
+        const py = e.clientY - r.top;
+        setLens({ x: px, y: py, bx: -((px - ox) * Z - L / 2), by: -((py - oy) * Z - L / 2), bw: iw * Z, bh: ih * Z });
+      }}
+      onPointerLeave={() => setLens(null)}
+    >
+      <Img src={l.img} alt={`${l.name}, ${l.line.toLowerCase()}`} ratio={ratio} position={l.pos} priority sizes="(min-width:1024px) 55vw, 100vw" className="rounded-[20px]" />
+      <AnimatePresence>
+        {lens && (
+          <motion.span
+            initial={{ opacity: 0, scale: 0.6 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.6 }}
+            transition={{ duration: 0.2 }}
+            className="pointer-events-none absolute rounded-full border-2 border-white/80 shadow-[0_20px_40px_rgb(0_0_0/0.35)]"
+            style={{ width: L, height: L, left: lens.x - L / 2, top: lens.y - L / 2, backgroundImage: `url(/images/${l.img}-1600.webp)`, backgroundSize: `${lens.bw}px ${lens.bh}px`, backgroundPosition: `${lens.bx}px ${lens.by}px`, backgroundRepeat: "no-repeat" }}
+          />
+        )}
+      </AnimatePresence>
     </div>
   );
 }

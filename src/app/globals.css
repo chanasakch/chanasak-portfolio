@@ -446,3 +446,26 @@ body:has([role="dialog"]) .back-pill {
   min-height: 100dvh;
 }
 .b-hattha .text-accent { color: var(--accent); }
+
+/* lomm: limestone terrace and deep pool green */
+.b-lomm {
+  --bg: #f1efe9;
+  --ink: #131512;
+  --muted: #676a62;
+  --line: rgb(19 21 18 / 0.12);
+  --soft: #e3e3da;
+  --accent: #1f4d3a;
+  --accent-ink: #ffffff;
+  --bad: #b8432c;
+  --r-sm: 14px;
+  --r-lg: 24px;
+  --font-display: "Schibsted Grotesk Variable", "Anuphan", system-ui, sans-serif;
+  --font-body: "Inter Tight Variable", "Anuphan", system-ui, sans-serif;
+  font-family: var(--font-body);
+  background: var(--bg);
+  color: var(--ink);
+  min-height: 100dvh;
+}
+.lomm-range { accent-color: currentColor; height: 28px; }
+.b-lomm section .lomm-range { accent-color: var(--accent); }
+.b-lomm .bg-\[\#0e1420\] .lomm-range { accent-color: #ffd27a; }

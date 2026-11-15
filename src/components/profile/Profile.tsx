@@ -36,6 +36,19 @@ const work = [
     tags: ["Thai and English", "Quote list", "E-catalogue"],
   },
   {
+    href: "/lomm",
+    shot: "lomm",
+    name: "lomm",
+    font: '"Schibsted Grotesk Variable", sans-serif',
+    weight: 700,
+    track: "-0.05em",
+    bg: "#1f4d3a",
+    ink: "#f1efe9",
+    job: "Outdoor furniture",
+    what: "Drag the terrace from sunrise to night, scroll the collection sideways, and lay out your own terrace to scale before sending it for a quote.",
+    tags: ["Time of day", "Terrace planner", "Pinned scroll"],
+  },
+  {
     href: "/furniture",
     shot: "furniture",
     name: "Loom & Tide",
@@ -361,8 +374,8 @@ function Nav() {
 }
 
 const wallRows = [
-  ["saan", "furniture", "hattha", "khom", "orra", "sala", "ceramics", "hotel", "residence", "charter", "kao", "soniq", "tera"],
-  ["khom", "orra", "saan", "hattha", "residence", "furniture", "hotel", "sala", "ceramics", "tera", "soniq", "kao", "charter"],
+  ["saan", "lomm", "furniture", "hattha", "khom", "orra", "sala", "ceramics", "hotel", "residence", "charter", "kao", "soniq", "tera"],
+  ["khom", "lomm", "orra", "saan", "hattha", "residence", "furniture", "hotel", "sala", "ceramics", "tera", "soniq", "kao", "charter"],
 ];
 
 /** Phones: the same tilted wall drifting on its own, so it runs on the GPU and never fights the finger. */

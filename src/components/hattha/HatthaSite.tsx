@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useEffect, useMemo, useRef, useState } from "react";
-import { animate, motion, useInView, useScroll, useTransform } from "motion/react";
+import { animate, AnimatePresence, motion, useInView, useScroll, useTransform } from "motion/react";
 import { resetScroll } from "@/components/shared/motion";
 import { btn } from "@/components/kit/panels";
 import { addDays, isEmail, isPhone, longDay, makeRef, useNow } from "@/components/kit/persist";
@@ -76,7 +76,9 @@ function Home() {
     <>
       <Hero />
       <Numbers />
+      <Markets />
       <Capabilities />
+      <Compare />
       <Process />
       <Factory />
     </>
@@ -145,6 +147,70 @@ function Numbers() {
           <span className="text-[14px] text-muted">{t}</span>
         </div>
       ))}
+    </section>
+  );
+}
+
+function Markets() {
+  const list = ["Singapore", "Sydney", "Tokyo", "Dubai", "London", "Los Angeles", "Male", "Bali", "Hong Kong", "Phuket", "Copenhagen"];
+  return (
+    <div className="overflow-hidden border-y border-line bg-bg py-4" aria-label="Where our furniture ships">
+      <div className="flex w-max animate-[wall_36s_linear_infinite] gap-10 whitespace-nowrap pl-10 text-[15px] text-muted">
+        {[...list, ...list].map((c, i) => (
+          <span key={i} className="flex items-center gap-10">
+            {c}
+            <span className="size-1.5 rounded-full bg-accent" />
+          </span>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+/** Drag the handle to compare cane on the floor with the finished piece. */
+function Compare() {
+  const [v, setV] = useState(50);
+  const box = useRef<HTMLDivElement>(null);
+  const drag = useRef(false);
+  const move = (x: number) => {
+    const r = box.current!.getBoundingClientRect();
+    setV(Math.max(2, Math.min(98, ((x - r.left) / r.width) * 100)));
+  };
+  return (
+    <section className="mx-auto max-w-[1440px] px-5 pb-24 sm:px-8 lg:pb-32">
+      <div className="mb-8 flex flex-wrap items-end justify-between gap-4">
+        <h2 className="font-display max-w-[18ch] text-[clamp(30px,4vw,60px)] font-extrabold uppercase leading-[0.95]" style={{ fontStretch: "112%" }}>
+          Raw cane in, finished piece out
+        </h2>
+        <p className="max-w-sm text-[15px] text-muted">Drag across the photo. Everything between the two happens under our roof.</p>
+      </div>
+      <div
+        ref={box}
+        className="relative aspect-[16/9] touch-pan-y select-none overflow-hidden rounded-[18px]"
+        onPointerDown={(e) => {
+          drag.current = true;
+          e.currentTarget.setPointerCapture(e.pointerId);
+          move(e.clientX);
+        }}
+        onPointerMove={(e) => drag.current && move(e.clientX)}
+        onPointerUp={() => (drag.current = false)}
+        onPointerCancel={() => (drag.current = false)}
+      >
+        <Img src="hattha/colour" alt="Finished woven pieces in four colours" className="absolute inset-0" widths={[800, 1600]} sizes="(min-width:1440px) 1380px, 100vw" />
+        <div className="absolute inset-0" style={{ clipPath: `inset(0 ${100 - v}% 0 0)` }}>
+          <Img src="hattha/weaver" alt="Cane being split on the workshop floor" className="absolute inset-0" widths={[800, 1600]} sizes="(min-width:1440px) 1380px, 100vw" />
+        </div>
+        <span className="absolute left-4 top-4 rounded-[8px] bg-black/55 px-3 py-1.5 text-[13px] text-white">Workshop floor</span>
+        <span className="absolute right-4 top-4 rounded-[8px] bg-black/55 px-3 py-1.5 text-[13px] text-white">Finished</span>
+        <div className="pointer-events-none absolute inset-y-0 w-[2px] -translate-x-1/2 bg-white" style={{ left: `${v}%` }}>
+          <span className="absolute left-1/2 top-1/2 grid size-12 -translate-x-1/2 -translate-y-1/2 place-items-center rounded-full bg-white text-ink shadow-lg">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <path d="M9 6l-6 6 6 6M15 6l6 6-6 6" />
+            </svg>
+          </span>
+        </div>
+        <input type="range" min={2} max={98} value={Math.round(v)} onChange={(e) => setV(+e.target.value)} aria-label="Compare workshop and showroom" className="sr-only" />
+      </div>
     </section>
   );
 }
@@ -245,13 +311,53 @@ function Step({ i, s, on, onSeen }: { i: number; s: (typeof steps)[number]; on: 
   );
 }
 
+const stations = [
+  { x: 0.18, y: 0.7, t: "Frame shop", d: "Aluminium and hardwood frames are cut, welded or jointed here." },
+  { x: 0.42, y: 0.55, t: "Weaving line", d: "Thirty weavers, each on one piece from start to finish." },
+  { x: 0.66, y: 0.62, t: "Finishing", d: "Sanding, stain and a water based lacquer, dried overnight." },
+  { x: 0.86, y: 0.75, t: "Quality and packing", d: "Every piece checked against the approved sample, then wrapped." },
+];
+
+/** Tap the numbered stations to walk through the hall. */
+function Tour() {
+  const [on, setOn] = useState<number | null>(0);
+  return (
+    <div className="relative">
+      <Img src="hattha/hall" alt="The finishing hall" ratio={1.6} widths={[800, 1600]} sizes="(min-width:768px) 60vw, 100vw" className="rounded-[18px]" position="50% 60%" />
+      {stations.map((s, i) => (
+        <button
+          key={s.t}
+          onClick={() => setOn(on === i ? null : i)}
+          aria-label={s.t}
+          aria-expanded={on === i}
+          className="absolute grid size-10 -translate-x-1/2 -translate-y-1/2 place-items-center"
+          style={{ left: `${s.x * 100}%`, top: `${s.y * 100}%` }}
+        >
+          <span className="absolute inset-1 animate-ping rounded-full bg-white/50" />
+          <span className={`relative grid size-7 place-items-center rounded-full text-[12px] font-semibold shadow ${on === i ? "bg-accent text-accent-ink" : "bg-white text-ink"}`}>{i + 1}</span>
+        </button>
+      ))}
+      <AnimatePresence>
+        {on !== null && (
+          <motion.div key={on} initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} transition={{ duration: 0.25 }} className="mt-3 rounded-[14px] bg-soft p-4 text-ink sm:absolute sm:bottom-3 sm:left-3 sm:mt-0 sm:max-w-sm sm:bg-white/90 sm:backdrop-blur">
+            <p className="text-[15px] font-semibold">
+              {on + 1}. {stations[on].t}
+            </p>
+            <p className="text-[14px] text-muted">{stations[on].d}</p>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </div>
+  );
+}
+
 function Factory() {
   return (
     <section id="factory" className="mx-auto max-w-[1440px] scroll-mt-16 px-5 py-24 sm:px-8 lg:py-32">
       <div className="grid gap-4 md:grid-cols-[1fr_1.4fr]">
         <Img src="hattha/loom" alt="Weaving in progress" ratio={0.75} widths={[800, 1600]} sizes="(min-width:768px) 40vw, 100vw" className="rounded-[18px]" />
         <div className="grid gap-4">
-          <Img src="hattha/hall" alt="The finishing hall" ratio={1.6} widths={[800, 1600]} sizes="(min-width:768px) 60vw, 100vw" className="rounded-[18px]" position="50% 60%" />
+          <Tour />
           <div className="grid content-between gap-8 rounded-[18px] bg-soft p-7 sm:p-10">
             <p className="font-display text-[clamp(26px,3vw,42px)] font-extrabold uppercase leading-[0.95]" style={{ fontStretch: "112%" }}>
               Visit the factory, or let us bring it to you on video

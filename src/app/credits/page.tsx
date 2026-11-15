@@ -48,7 +48,7 @@ export default function Credits() {
           </li>
         ))}
       </ul>
-      <h2 className="mt-14 text-[1.5rem] font-[450] tracking-[-0.01em]">SAAN, khom, Hattha Works, ORRA, SONIQ and Tera</h2>
+      <h2 className="mt-14 text-[1.5rem] font-[450] tracking-[-0.01em]">SAAN, lomm, khom, Hattha Works, ORRA, SONIQ and Tera</h2>
       <p className="mt-3 text-[15px] leading-relaxed text-muted">
         These photographs are also from Pexels under the Pexels license, taken from the pexels_hq_diverse_40k collection on Hugging Face, which does not
         keep the photographers&apos; names. The products, buildings and landscapes shown belong to their makers and owners, not to these fictional brands.
@@ -58,6 +58,7 @@ export default function Credits() {
         {[
           ...saan.map((p) => ["SAAN", `${p.name}, ${p.type.en}`]),
           ...lamps.map((l) => ["khom", `${l.name}, ${l.line}`]),
+          ...["Stone terrace above a bay", "Rooftop terrace", "Cafe parasols", "Deck chair in the hills", "Villa pool", "Pool from above", "Pool house", "Beach resort", "Pool cabanas", "Beach umbrellas"].map((t) => ["lomm", t]),
           ...["Weaver at work", "Rattan on the workshop floor", "Weaving loom", "Wood carving", "Sanding a frame", "Workshop hall", "Showroom", "Woven trays"].map((t) => ["Hattha Works", t]),
           ...orra.map((p) => ["ORRA", p.alt]),
           ...soniq.map((p) => ["SONIQ", p.alt]),
